@@ -19,6 +19,11 @@ class InvoicePDF extends FPDF {
         $this->company = $company;
     }
     
+    // UTF-8 zu ISO-8859-1 konvertieren (für FPDF)
+    private function convertEncoding($text) {
+        return mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
+    }
+    
     // Kopfzeile
     function Header() {
         // Logo (falls vorhanden)
@@ -29,13 +34,13 @@ class InvoicePDF extends FPDF {
         // Firmeninfo rechts
         $this->SetFont('Arial', 'B', 10);
         $this->SetXY(120, 10);
-        $this->Cell(80, 5, utf8_decode($this->company['company_name']), 0, 1, 'R');
+        $this->Cell(80, 5, $this->convertEncoding($this->company['company_name']), 0, 1, 'R');
         
         $this->SetFont('Arial', '', 8);
         $this->SetX(120);
-        $this->Cell(80, 4, utf8_decode($this->company['address_street']), 0, 1, 'R');
+        $this->Cell(80, 4, $this->convertEncoding($this->company['address_street']), 0, 1, 'R');
         $this->SetX(120);
-        $this->Cell(80, 4, utf8_decode($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 1, 'R');
+        $this->Cell(80, 4, $this->convertEncoding($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 1, 'R');
         $this->SetX(120);
         $this->Cell(80, 4, 'Tel: ' . $this->company['phone'], 0, 1, 'R');
         $this->SetX(120);
@@ -58,17 +63,17 @@ class InvoicePDF extends FPDF {
         $col2Width = 63;
         $col3Width = 64;
         
-        $this->Cell($col1Width, 4, utf8_decode($this->company['company_name']), 0, 0);
+        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['company_name']), 0, 0);
         $this->Cell($col2Width, 4, 'IBAN: ' . $this->company['iban'], 0, 0);
         $this->Cell($col3Width, 4, 'Steuernr.: ' . $this->company['tax_id'], 0, 1);
         
         $this->SetX(10);
-        $this->Cell($col1Width, 4, utf8_decode($this->company['address_street']), 0, 0);
+        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['address_street']), 0, 0);
         $this->Cell($col2Width, 4, 'BIC: ' . $this->company['bic'], 0, 0);
         $this->Cell($col3Width, 4, 'E-Mail: ' . $this->company['email'], 0, 1);
         
         $this->SetX(10);
-        $this->Cell($col1Width, 4, utf8_decode($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 0);
+        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 0);
         $this->Cell($col2Width, 4, '', 0, 0);
         $this->Cell($col3Width, 4, 'Tel: ' . $this->company['phone'], 0, 1);
     }
@@ -85,9 +90,9 @@ class InvoicePDF extends FPDF {
             ? $this->customer['company_name'] 
             : $this->customer['first_name'] . ' ' . $this->customer['last_name'];
         
-        $this->Cell(0, 5, utf8_decode($customerName), 0, 1);
-        $this->Cell(0, 5, utf8_decode($this->customer['address_street']), 0, 1);
-        $this->Cell(0, 5, utf8_decode($this->customer['address_zip'] . ' ' . $this->customer['address_city']), 0, 1);
+        $this->Cell(0, 5, $this->convertEncoding($customerName), 0, 1);
+        $this->Cell(0, 5, $this->convertEncoding($this->customer['address_street']), 0, 1);
+        $this->Cell(0, 5, $this->convertEncoding($this->customer['address_zip'] . ' ' . $this->customer['address_city']), 0, 1);
         
         $this->Ln(10);
         
@@ -104,7 +109,7 @@ class InvoicePDF extends FPDF {
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['invoice_date'])), 0, 1);
         
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(40, 5, utf8_decode('Fälligkeitsdatum:'), 0, 0);
+        $this->Cell(40, 5, $this->convertEncoding('Fälligkeitsdatum:'), 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
         
         if (!empty($this->customer['customer_number'])) {
@@ -134,7 +139,7 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', '', 9);
         foreach ($this->items as $item) {
             $this->Cell(10, 6, $item['position'], 1, 0, 'C');
-            $this->Cell(90, 6, utf8_decode($item['description']), 1, 0, 'L');
+            $this->Cell(90, 6, $this->convertEncoding($item['description']), 1, 0, 'L');
             $this->Cell(20, 6, number_format($item['quantity'], 2, ',', '.'), 1, 0, 'C');
             $this->Cell(30, 6, number_format($item['unit_price'], 2, ',', '.') . ' ' . CURRENCY_SYMBOL, 1, 0, 'R');
             $this->Cell(20, 6, number_format($item['tax_rate'], 0) . '%', 1, 0, 'C');
@@ -168,14 +173,14 @@ class InvoicePDF extends FPDF {
         if (!empty($this->invoice['payment_terms'])) {
             $this->Ln(10);
             $this->SetFont('Arial', '', 9);
-            $this->MultiCell(0, 5, utf8_decode($this->invoice['payment_terms']));
+            $this->MultiCell(0, 5, $this->convertEncoding($this->invoice['payment_terms']));
         }
         
         // Notizen
         if (!empty($this->invoice['notes'])) {
             $this->Ln(5);
             $this->SetFont('Arial', 'I', 9);
-            $this->MultiCell(0, 5, utf8_decode('Hinweis: ' . $this->invoice['notes']));
+            $this->MultiCell(0, 5, $this->convertEncoding('Hinweis: ' . $this->invoice['notes']));
         }
     }
 }
