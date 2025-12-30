@@ -24,6 +24,7 @@ define('TEMP_DIR', BASE_PATH . '/temp');
 // PDF-Einstellungen
 define('PDF_FONT', 'DejaVu Sans');
 define('PDF_FONT_SIZE', 10);
+define('PDF_BACKGROUND', BASE_PATH . '/public/assets/invoice_background.png');
 
 // Währung
 define('CURRENCY', 'EUR');

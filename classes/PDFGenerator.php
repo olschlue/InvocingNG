@@ -27,6 +27,12 @@ class InvoicePDF extends FPDF {
     
     // Kopfzeile
     function Header() {
+        // Hintergrundbild vollflächig einfügen (falls vorhanden)
+        if (defined('PDF_BACKGROUND') && file_exists(PDF_BACKGROUND)) {
+            // A4 Format: 210mm x 297mm
+            $this->Image(PDF_BACKGROUND, 0, 0, 210, 297);
+        }
+        
         // Logo (falls vorhanden)
         if (!empty($this->company['logo_path']) && file_exists($this->company['logo_path'])) {
             $this->Image($this->company['logo_path'], 10, 6, 30);

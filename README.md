@@ -92,6 +92,19 @@ SET company_name = 'Ihre Firma GmbH',
 WHERE id = 1;
 ```
 
+### 7. PDF-Hintergrundbild (Optional)
+
+Um ein Hintergrundbild für Ihre PDF-Rechnungen zu verwenden:
+
+1. Erstellen Sie ein PNG-Bild in A4-Größe (empfohlen: 2480 x 3508 Pixel bei 300 DPI)
+2. Speichern Sie es als `public/assets/invoice_background.png`
+3. Das Bild wird automatisch auf allen PDF-Seiten als Hintergrund eingefügt
+
+Details siehe `public/assets/README.md`
+    bic = 'COBADEFFXXX'
+WHERE id = 1;
+```
+
 ## Verwendung
 
 ### Applikation öffnen
