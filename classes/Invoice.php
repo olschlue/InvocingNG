@@ -1,0 +1,230 @@
+<?php
+/**
+ * Rechnungs-Klasse für InvoicingNG
+ * Verwaltet alle Rechnungs-Operationen
+ */
+
+class Invoice {
+    private $db;
+    
+    public function __construct() {
+        $this->db = Database::getInstance()->getConnection();
+    }
+    
+    /**
+     * Alle Rechnungen abrufen
+     */
+    public function getAll($status = null) {
+        $sql = "SELECT i.*, c.company_name, c.first_name, c.last_name 
+                FROM invoices i
+                LEFT JOIN customers c ON i.customer_id = c.id";
+        
+        if ($status) {
+            $sql .= " WHERE i.status = ?";
+            $stmt = $this->db->prepare($sql . " ORDER BY i.invoice_date DESC");
+            $stmt->execute([$status]);
+        } else {
+            $stmt = $this->db->query($sql . " ORDER BY i.invoice_date DESC");
+        }
+        
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Rechnung nach ID abrufen
+     */
+    public function getById($id) {
+        $stmt = $this->db->prepare("
+            SELECT i.*, c.* 
+            FROM invoices i
+            LEFT JOIN customers c ON i.customer_id = c.id
+            WHERE i.id = ?
+        ");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+    
+    /**
+     * Rechnungspositionen abrufen
+     */
+    public function getItems($invoiceId) {
+        $stmt = $this->db->prepare("
+            SELECT * FROM invoice_items 
+            WHERE invoice_id = ? 
+            ORDER BY position
+        ");
+        $stmt->execute([$invoiceId]);
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Neue Rechnung erstellen
+     */
+    public function create($data) {
+        $sql = "INSERT INTO invoices (
+                    invoice_number, customer_id, invoice_date, due_date, 
+                    status, tax_rate, notes, payment_terms
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $this->db->prepare($sql);
+        $result = $stmt->execute([
+            $data['invoice_number'],
+            $data['customer_id'],
+            $data['invoice_date'],
+            $data['due_date'],
+            $data['status'] ?? 'draft',
+            $data['tax_rate'] ?? 19.00,
+            $data['notes'] ?? null,
+            $data['payment_terms'] ?? null
+        ]);
+        
+        return $result ? $this->db->lastInsertId() : false;
+    }
+    
+    /**
+     * Rechnung aktualisieren
+     */
+    public function update($id, $data) {
+        $sql = "UPDATE invoices SET 
+                    invoice_number = ?, customer_id = ?, invoice_date = ?, 
+                    due_date = ?, status = ?, tax_rate = ?, notes = ?, 
+                    payment_terms = ?
+                WHERE id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            $data['invoice_number'],
+            $data['customer_id'],
+            $data['invoice_date'],
+            $data['due_date'],
+            $data['status'] ?? 'draft',
+            $data['tax_rate'] ?? 19.00,
+            $data['notes'] ?? null,
+            $data['payment_terms'] ?? null,
+            $id
+        ]);
+    }
+    
+    /**
+     * Rechnung löschen
+     */
+    public function delete($id) {
+        // Prüfen ob Zahlungen vorhanden sind
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM payments WHERE invoice_id = ?");
+        $stmt->execute([$id]);
+        if ($stmt->fetchColumn() > 0) {
+            return ['success' => false, 'message' => 'Rechnung kann nicht gelöscht werden, da Zahlungen vorhanden sind.'];
+        }
+        
+        // Rechnungspositionen werden durch CASCADE automatisch gelöscht
+        $stmt = $this->db->prepare("DELETE FROM invoices WHERE id = ?");
+        $result = $stmt->execute([$id]);
+        return ['success' => $result, 'message' => $result ? 'Rechnung erfolgreich gelöscht.' : 'Fehler beim Löschen.'];
+    }
+    
+    /**
+     * Rechnungsposition hinzufügen
+     */
+    public function addItem($invoiceId, $data) {
+        // Position ermitteln
+        $stmt = $this->db->prepare("SELECT MAX(position) as max_pos FROM invoice_items WHERE invoice_id = ?");
+        $stmt->execute([$invoiceId]);
+        $result = $stmt->fetch();
+        $position = ($result['max_pos'] ?? 0) + 1;
+        
+        // Total berechnen
+        $total = $data['quantity'] * $data['unit_price'];
+        
+        $sql = "INSERT INTO invoice_items (
+                    invoice_id, position, description, quantity, 
+                    unit_price, tax_rate, total
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            $invoiceId,
+            $position,
+            $data['description'],
+            $data['quantity'],
+            $data['unit_price'],
+            $data['tax_rate'] ?? 19.00,
+            $total
+        ]);
+    }
+    
+    /**
+     * Rechnungsposition aktualisieren
+     */
+    public function updateItem($itemId, $data) {
+        $total = $data['quantity'] * $data['unit_price'];
+        
+        $sql = "UPDATE invoice_items SET 
+                    description = ?, quantity = ?, unit_price = ?, 
+                    tax_rate = ?, total = ?
+                WHERE id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            $data['description'],
+            $data['quantity'],
+            $data['unit_price'],
+            $data['tax_rate'] ?? 19.00,
+            $total,
+            $itemId
+        ]);
+    }
+    
+    /**
+     * Rechnungsposition löschen
+     */
+    public function deleteItem($itemId) {
+        $stmt = $this->db->prepare("DELETE FROM invoice_items WHERE id = ?");
+        return $stmt->execute([$itemId]);
+    }
+    
+    /**
+     * Nächste Rechnungsnummer generieren
+     */
+    public function generateInvoiceNumber() {
+        $year = date('Y');
+        $stmt = $this->db->prepare("
+            SELECT invoice_number 
+            FROM invoices 
+            WHERE invoice_number LIKE ? 
+            ORDER BY id DESC 
+            LIMIT 1
+        ");
+        $stmt->execute([$year . '%']);
+        $lastInvoice = $stmt->fetch();
+        
+        if ($lastInvoice) {
+            $lastNumber = (int) substr($lastInvoice['invoice_number'], -5);
+            return $year . '-' . str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+        }
+        
+        return $year . '-00001';
+    }
+    
+    /**
+     * Rechnungsstatus aktualisieren
+     */
+    public function updateStatus($id, $status) {
+        $stmt = $this->db->prepare("UPDATE invoices SET status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
+    
+    /**
+     * Überfällige Rechnungen abrufen
+     */
+    public function getOverdue() {
+        $stmt = $this->db->query("
+            SELECT i.*, c.company_name, c.first_name, c.last_name 
+            FROM invoices i
+            LEFT JOIN customers c ON i.customer_id = c.id
+            WHERE i.due_date < CURDATE() 
+            AND i.status NOT IN ('paid', 'cancelled')
+            ORDER BY i.due_date ASC
+        ");
+        return $stmt->fetchAll();
+    }
+}
