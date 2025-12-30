@@ -5,7 +5,7 @@
  * 
  * ANLEITUNG:
  * 1. Passe die Verbindungsdaten für die alte Datenbank an (Zeilen 16-19)
- * 2. Führe das Skript aus: php database/migrate_from_old_db.php
+ * 2. Rufe das Skript im Browser auf: /database/migrate_from_old_db.php
  */
 
 // Fehlerausgabe aktivieren
@@ -21,7 +21,150 @@ define('OLD_DB_PASS', 'ee97mnee');
 // Neue Datenbank-Konfiguration
 require_once __DIR__ . '/../config/config.php';
 
-echo "=== Datenmigration zu InvoicingNG ===\n\n";
+// HTML Header
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenmigration - InvoicingNG</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #17a2b8;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Datenmigration zu InvoicingNG</h1>
+        
+<?php
+// Prüfen ob Migration gestartet werden soll
+if (!isset($_POST['confirm_migration'])) {
+    // Zeige Bestätigungsformular
+    ?>
+        <div class="warning">
+            <strong>⚠️ WARNUNG:</strong> Diese Migration wird alle bestehenden Daten in der neuen Datenbank <strong>unwiderruflich löschen</strong>!
+        </div>
+        
+        <div class="info">
+            <h3>📋 Was wird migriert:</h3>
+            <ul>
+                <li><strong>Kunden</strong> aus der Tabelle <code>addressbook</code></li>
+                <li><strong>Rechnungen</strong> aus der Tabelle <code>invoice</code></li>
+                <li><strong>Rechnungspositionen</strong> aus der Tabelle <code>invoicepos</code></li>
+                <li><strong>Zahlungen</strong> aus der Tabelle <code>payment</code></li>
+            </ul>
+            
+            <h3>🗄️ Verbindungsdetails:</h3>
+            <ul>
+                <li><strong>Alte Datenbank:</strong> <?php echo OLD_DB_HOST . ' / ' . OLD_DB_NAME; ?></li>
+                <li><strong>Neue Datenbank:</strong> <?php echo DB_HOST . ' / ' . DB_NAME; ?></li>
+            </ul>
+        </div>
+        
+        <form method="POST">
+            <p><strong>Sind Sie sicher, dass Sie fortfahren möchten?</strong></p>
+            <button type="submit" name="confirm_migration" value="yes" class="btn btn-danger">✓ Ja, Migration starten</button>
+            <a href="/" class="btn btn-secondary">✗ Abbrechen</a>
+        </form>
+    <?php
+} else {
+    // Migration durchführen
+    ?>
+        <div class="info">
+            <strong>⏳ Migration läuft...</strong> Bitte warten Sie, dies kann einige Minuten dauern.
+        </div>
+        
+        <div class="output"><?php
+    
+    ob_start();
+    
+    echo "=== Datenmigration zu InvoicingNG ===\n\n";
 
 try {
     // Verbindung zur alten Datenbank
@@ -46,16 +189,6 @@ try {
     
     // ===== ALTE DATEN LÖSCHEN =====
     echo "=== ALTE DATEN LÖSCHEN ===\n";
-    echo "WARNUNG: Alle bestehenden Daten in der neuen Datenbank werden gelöscht!\n";
-    echo "Möchten Sie fortfahren? (ja/nein): ";
-    $handle = fopen("php://stdin", "r");
-    $line = trim(fgets($handle));
-    fclose($handle);
-    
-    if (strtolower($line) !== 'ja' && strtolower($line) !== 'yes' && strtolower($line) !== 'y') {
-        echo "Migration abgebrochen.\n";
-        exit(0);
-    }
     
     echo "Lösche bestehende Daten...\n";
     
@@ -337,7 +470,40 @@ try {
     echo "Zahlungen:  $migratedPayments\n";
     echo "\nBitte überprüfe die migrierten Daten in der neuen Datenbank.\n";
     
+    $output = ob_get_clean();
+    echo htmlspecialchars($output);
+    
+    ?>
+        </div>
+        
+        <div class="success">
+            <strong>✅ Migration erfolgreich abgeschlossen!</strong><br>
+            <ul>
+                <li>Kunden: <?php echo $migratedCustomers; ?></li>
+                <li>Rechnungen: <?php echo $migratedInvoices; ?></li>
+                <li>Zahlungen: <?php echo $migratedPayments; ?></li>
+            </ul>
+        </div>
+        
+        <a href="/" class="btn">← Zurück zum Dashboard</a>
+    <?php
+    
 } catch (PDOException $e) {
-    echo "✗ FEHLER: " . $e->getMessage() . "\n";
-    exit(1);
+    $output = ob_get_clean();
+    echo htmlspecialchars($output);
+    
+    ?>
+        </div>
+        
+        <div class="error">
+            <strong>❌ FEHLER:</strong> <?php echo htmlspecialchars($e->getMessage()); ?>
+        </div>
+        
+        <a href="/database/migrate_from_old_db.php" class="btn btn-secondary">← Zurück</a>
+    <?php
 }
+}
+?>
+    </div>
+</body>
+</html>
