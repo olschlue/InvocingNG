@@ -44,6 +44,40 @@ try {
     );
     echo "✓ Verbindung zur neuen Datenbank hergestellt\n\n";
     
+    // ===== ALTE DATEN LÖSCHEN =====
+    echo "=== ALTE DATEN LÖSCHEN ===\n";
+    echo "WARNUNG: Alle bestehenden Daten in der neuen Datenbank werden gelöscht!\n";
+    echo "Möchten Sie fortfahren? (ja/nein): ";
+    $handle = fopen("php://stdin", "r");
+    $line = trim(fgets($handle));
+    fclose($handle);
+    
+    if (strtolower($line) !== 'ja' && strtolower($line) !== 'yes' && strtolower($line) !== 'y') {
+        echo "Migration abgebrochen.\n";
+        exit(0);
+    }
+    
+    echo "Lösche bestehende Daten...\n";
+    
+    // Foreign Key Checks temporär deaktivieren
+    $newDb->exec("SET FOREIGN_KEY_CHECKS = 0");
+    
+    // Tabellen in korrekter Reihenfolge leeren (wegen Foreign Keys)
+    $tables = ['payments', 'invoice_items', 'invoices', 'customers'];
+    foreach ($tables as $table) {
+        try {
+            $newDb->exec("TRUNCATE TABLE $table");
+            echo "✓ Tabelle '$table' geleert\n";
+        } catch (PDOException $e) {
+            echo "✗ Fehler beim Leeren von '$table': " . $e->getMessage() . "\n";
+        }
+    }
+    
+    // Foreign Key Checks wieder aktivieren
+    $newDb->exec("SET FOREIGN_KEY_CHECKS = 1");
+    
+    echo "✓ Alle Daten gelöscht\n\n";
+    
     // ===== KUNDEN MIGRIEREN =====
     echo "=== KUNDEN MIGRIEREN (addressbook) ===\n";
     
