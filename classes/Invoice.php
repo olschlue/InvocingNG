@@ -21,10 +21,10 @@ class Invoice {
         
         if ($status) {
             $sql .= " WHERE i.status = ?";
-            $stmt = $this->db->prepare($sql . " ORDER BY i.invoice_date DESC");
+            $stmt = $this->db->prepare($sql . " ORDER BY i.id DESC");
             $stmt->execute([$status]);
         } else {
-            $stmt = $this->db->query($sql . " ORDER BY i.invoice_date DESC");
+            $stmt = $this->db->query($sql . " ORDER BY i.id DESC");
         }
         
         return $stmt->fetchAll();

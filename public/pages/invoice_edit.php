@@ -8,7 +8,16 @@ $message = '';
 
 // Formular verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['save_invoice'])) {
+    // Prüfen ob Rechnung bezahlt ist (bei bestehenden Rechnungen)
+    if ($action === 'edit' && $invoiceId) {
+        $currentInvoice = $invoiceObj->getById($invoiceId);
+        if ($currentInvoice && $currentInvoice['status'] === 'paid') {
+            $message = '<div class="alert alert-error">Bezahlte Rechnungen können nicht bearbeitet werden.</div>';
+            $_SERVER['REQUEST_METHOD'] = 'GET'; // Verarbeitung stoppen
+        }
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_invoice'])) {
         $data = [
             'invoice_number' => $_POST['invoice_number'],
             'customer_id' => $_POST['customer_id'],
@@ -37,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Rechnung.</div>';
             }
         }
-    } elseif (isset($_POST['add_item'])) {
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_item'])) {
         $itemData = [
             'description' => $_POST['item_description'],
             'quantity' => $_POST['item_quantity'],
@@ -55,8 +64,13 @@ if ($action === 'edit' && $invoiceId) {
     if (!$invoice) {
         die('Rechnung nicht gefunden');
     }
+    
+    // Prüfen ob Rechnung bezahlt ist
+    $isPaid = ($invoice['status'] === 'paid');
+    
     $items = $invoiceObj->getItems($invoiceId);
 } elseif ($action === 'new') {
+    $isPaid = false;
     $invoice = [
         'invoice_number' => $invoiceObj->generateInvoiceNumber(),
         'customer_id' => '',
@@ -77,18 +91,24 @@ $customers = $customerObj->getAll();
 <div class="card">
     <h2><?php echo $action === 'new' ? 'Neue Rechnung' : 'Rechnung bearbeiten'; ?></h2>
     
+    <?php if (isset($isPaid) && $isPaid): ?>
+        <div class="alert" style="background-color: #fff3cd; border-color: #ffc107; color: #856404; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+            <strong>Hinweis:</strong> Diese Rechnung wurde als bezahlt markiert und kann nicht mehr bearbeitet werden.
+        </div>
+    <?php endif; ?>
+    
     <?php echo $message; ?>
     
     <form method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Rechnungsnummer *</label>
-                <input type="text" name="invoice_number" value="<?php echo htmlspecialchars($invoice['invoice_number']); ?>" required>
+                <input type="text" name="invoice_number" value="<?php echo htmlspecialchars($invoice['invoice_number']); ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
                 <label>Kunde *</label>
-                <select name="customer_id" required>
+                <select name="customer_id" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
                     <option value="">-- Kunde auswählen --</option>
                     <?php foreach ($customers as $customer): ?>
                         <option value="<?php echo $customer['id']; ?>" <?php echo ($invoice['customer_id'] == $customer['id']) ? 'selected' : ''; ?>>
@@ -102,24 +122,24 @@ $customers = $customerObj->getAll();
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Rechnungsdatum *</label>
-                <input type="date" name="invoice_date" value="<?php echo $invoice['invoice_date']; ?>" required>
+                <input type="date" name="invoice_date" value="<?php echo $invoice['invoice_date']; ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
                 <label>Leistungsdatum</label>
-                <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>">
+                <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
                 <label>Fälligkeitsdatum *</label>
-                <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required>
+                <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Status</label>
-                <select name="status">
+                <select name="status" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
                     <option value="draft" <?php echo ($invoice['status'] == 'draft') ? 'selected' : ''; ?>>Entwurf</option>
                     <option value="sent" <?php echo ($invoice['status'] == 'sent') ? 'selected' : ''; ?>>Versendet</option>
                     <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?>>Bezahlt</option>
@@ -130,22 +150,24 @@ $customers = $customerObj->getAll();
             
             <div class="form-group">
                 <label>Steuersatz (%)</label>
-                <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>">
+                <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div class="form-group">
             <label>Zahlungsbedingungen</label>
-            <textarea name="payment_terms"><?php echo htmlspecialchars($invoice['payment_terms']); ?></textarea>
+            <textarea name="payment_terms" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['payment_terms']); ?></textarea>
         </div>
         
         <div class="form-group">
             <label>Notizen</label>
-            <textarea name="notes"><?php echo htmlspecialchars($invoice['notes']); ?></textarea>
+            <textarea name="notes" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['notes']); ?></textarea>
         </div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-            <button type="submit" name="save_invoice" class="btn btn-success">Speichern</button>
+            <?php if (!isset($isPaid) || !$isPaid): ?>
+                <button type="submit" name="save_invoice" class="btn btn-success">Speichern</button>
+            <?php endif; ?>
             <a href="?page=invoices" class="btn">Abbrechen</a>
             <?php if ($action === 'edit'): ?>
                 <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF Vorschau</a>
