@@ -216,6 +216,38 @@ class Invoice {
     }
     
     /**
+     * Summen für eine Rechnung neu berechnen
+     */
+    public function calculateTotals($invoiceId) {
+        // Alle Positionen abrufen
+        $items = $this->getItems($invoiceId);
+        
+        $subtotal = 0;
+        $taxAmount = 0;
+        
+        // Rechnung abrufen für Steuersatz
+        $invoice = $this->getById($invoiceId);
+        $taxRate = $invoice['tax_rate'];
+        
+        // Summen berechnen
+        foreach ($items as $item) {
+            $subtotal += $item['total'];
+        }
+        
+        $taxAmount = $subtotal * ($taxRate / 100);
+        $totalAmount = $subtotal + $taxAmount;
+        
+        // In Datenbank aktualisieren
+        $stmt = $this->db->prepare("
+            UPDATE invoices 
+            SET subtotal = ?, tax_amount = ?, total_amount = ?
+            WHERE id = ?
+        ");
+        
+        return $stmt->execute([$subtotal, $taxAmount, $totalAmount, $invoiceId]);
+    }
+    
+    /**
      * Überfällige Rechnungen abrufen
      */
     public function getOverdue() {
