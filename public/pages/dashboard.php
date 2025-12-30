@@ -91,7 +91,9 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
                         <td><?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                         <td><span class="status-badge status-<?php echo $invoice['status']; ?>"><?php echo ucfirst($invoice['status']); ?></span></td>
                         <td class="action-links">
-                            <?php if ($invoice['status'] !== 'paid'): ?>
+                            <?php if ($invoice['status'] === 'paid'): ?>
+                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Anzeigen</a>
+                            <?php else: ?>
                                 <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Bearbeiten</a>
                             <?php endif; ?>
                             <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
