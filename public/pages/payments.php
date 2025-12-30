@@ -31,7 +31,7 @@ $payments = $paymentObj->getAll();
                         <td><?php echo date('d.m.Y', strtotime($payment['payment_date'])); ?></td>
                         <td><?php echo htmlspecialchars($payment['invoice_number']); ?></td>
                         <td><?php echo htmlspecialchars($payment['company_name'] ?? $payment['first_name'] . ' ' . $payment['last_name']); ?></td>
-                        <td><?php echo number_format($payment['amount'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></td>
+                        <td><?php echo number_format($payment['amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                         <td><?php echo ucfirst(str_replace('_', ' ', $payment['payment_method'])); ?></td>
                         <td><?php echo htmlspecialchars($payment['reference'] ?? '-'); ?></td>
                         <td class="action-links">

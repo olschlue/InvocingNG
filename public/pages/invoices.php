@@ -51,7 +51,7 @@ $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->get
                         <td><?php echo htmlspecialchars($invoice['company_name'] ?? $invoice['first_name'] . ' ' . $invoice['last_name']); ?></td>
                         <td><?php echo date('d.m.Y', strtotime($invoice['invoice_date'])); ?></td>
                         <td><?php echo date('d.m.Y', strtotime($invoice['due_date'])); ?></td>
-                        <td><?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></td>
+                        <td><?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                         <td><span class="status-badge status-<?php echo $invoice['status']; ?>"><?php echo ucfirst($invoice['status']); ?></span></td>
                         <td class="action-links">
                             <?php if ($invoice['status'] !== 'paid'): ?>

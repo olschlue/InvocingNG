@@ -226,18 +226,18 @@ $customers = $customerObj->getAll();
                             <td><?php echo $item['position']; ?></td>
                             <td><?php echo htmlspecialchars($item['description']); ?></td>
                             <td><?php echo number_format($item['quantity'], 2, ',', '.'); ?></td>
-                            <td><?php echo number_format($item['unit_price'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></td>
+                            <td><?php echo number_format($item['unit_price'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                             <td><?php echo number_format($item['tax_rate'], 0); ?>%</td>
-                            <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></td>
+                            <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
             
             <div style="margin-top: 20px; text-align: right;">
-                <strong>Netto: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></strong><br>
-                <strong>MwSt: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></strong><br>
-                <strong style="font-size: 18px;">Gesamt: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo CURRENCY_SYMBOL; ?></strong>
+                <strong>Netto: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <strong>MwSt: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <strong style="font-size: 18px;">Gesamt: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong>
             </div>
         <?php endif; ?>
         

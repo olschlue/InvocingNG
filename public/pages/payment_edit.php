@@ -69,7 +69,7 @@ $allInvoices = $invoiceObj->getAll();
                 <option value="">-- Rechnung auswählen --</option>
                 <?php foreach ($allInvoices as $invoice): ?>
                     <option value="<?php echo $invoice['id']; ?>" <?php echo ($payment['invoice_id'] == $invoice['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($invoice['invoice_number'] . ' - ' . ($invoice['company_name'] ?: $invoice['first_name'] . ' ' . $invoice['last_name']) . ' (' . number_format($invoice['total_amount'], 2, ',', '.') . ' ' . CURRENCY_SYMBOL . ')'); ?>
+                        <?php echo htmlspecialchars($invoice['invoice_number'] . ' - ' . ($invoice['company_name'] ?: $invoice['first_name'] . ' ' . $invoice['last_name']) . ' (' . number_format($invoice['total_amount'], 2, ',', '.') . ' ' . APP_CURRENCY_SYMBOL . ')'); ?>
                     </option>
                 <?php endforeach; ?>
             </select>

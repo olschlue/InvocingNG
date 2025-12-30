@@ -28,7 +28,7 @@ define('PDF_BACKGROUND', BASE_PATH . '/public/assets/invoice_background.png');
 
 // Währung
 define('CURRENCY', 'EUR');
-define('CURRENCY_SYMBOL', 'EUR');
+define('APP_CURRENCY_SYMBOL', 'EUR');
 
 // Rechnungsnummer
 define('INVOICE_NUMBER_PREFIX', 'RE-');
