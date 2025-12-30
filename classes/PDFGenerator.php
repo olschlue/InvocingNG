@@ -136,44 +136,44 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', 'B', 9);
         $this->SetFillColor(230, 230, 230);
         $this->Cell(10, 7, 'Pos', 1, 0, 'C', true);
-        $this->Cell(90, 7, 'Beschreibung', 1, 0, 'L', true);
+        $this->Cell(85, 7, 'Beschreibung', 1, 0, 'L', true);
         $this->Cell(20, 7, 'Menge', 1, 0, 'C', true);
-        $this->Cell(30, 7, 'Einzelpreis', 1, 0, 'R', true);
-        $this->Cell(20, 7, 'MwSt.', 1, 0, 'C', true);
+        $this->Cell(28, 7, 'Einzelpreis', 1, 0, 'R', true);
+        $this->Cell(17, 7, 'MwSt.', 1, 0, 'C', true);
         $this->Cell(30, 7, 'Gesamt', 1, 1, 'R', true);
         
         // Positionen
         $this->SetFont('Arial', '', 9);
         foreach ($this->items as $item) {
             $this->Cell(10, 6, $item['position'], 1, 0, 'C');
-            $this->Cell(90, 6, $this->convertEncoding($item['description']), 1, 0, 'L');
+            $this->Cell(85, 6, $this->convertEncoding($item['description']), 1, 0, 'L');
             $this->Cell(20, 6, number_format($item['quantity'], 2, ',', '.'), 1, 0, 'C');
-            $this->Cell(30, 6, number_format($item['unit_price'], 2, ',', '.') . ' ' . $this->euro, 1, 0, 'R');
-            $this->Cell(20, 6, number_format($item['tax_rate'], 0) . '%', 1, 0, 'C');
+            $this->Cell(28, 6, number_format($item['unit_price'], 2, ',', '.') . ' ' . $this->euro, 1, 0, 'R');
+            $this->Cell(17, 6, number_format($item['tax_rate'], 0) . '%', 1, 0, 'C');
             $this->Cell(30, 6, number_format($item['total'], 2, ',', '.') . ' ' . $this->euro, 1, 1, 'R');
         }
         
         // Summen
         $this->Ln(2);
         $this->SetFont('Arial', '', 9);
-        $this->Cell(140, 6, '', 0, 0);
-        $this->Cell(30, 6, 'Nettobetrag:', 0, 0, 'R');
+        $this->Cell(133, 6, '', 0, 0);
+        $this->Cell(27, 6, 'Nettobetrag:', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(30, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         $this->SetFont('Arial', '', 9);
-        $this->Cell(140, 6, '', 0, 0);
-        $this->Cell(30, 6, 'MwSt. (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
+        $this->Cell(133, 6, '', 0, 0);
+        $this->Cell(27, 6, 'MwSt. (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(30, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         $this->SetDrawColor(0, 0, 0);
-        $this->Line(140, $this->GetY(), 200, $this->GetY());
+        $this->Line(133, $this->GetY(), 190, $this->GetY());
         $this->Ln(1);
         
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(140, 7, '', 0, 0);
-        $this->Cell(30, 7, 'Gesamtbetrag:', 0, 0, 'R');
+        $this->Cell(133, 7, '', 0, 0);
+        $this->Cell(27, 7, 'Gesamtbetrag:', 0, 0, 'R');
         $this->Cell(30, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         // Zahlungshinweise
