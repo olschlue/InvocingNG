@@ -138,15 +138,15 @@ $customers = $customerObj->getAll();
 ?>
 
 <div class="card">
-    <h2><?php echo $action === 'new' ? 'Neue Rechnung' : 'Rechnung bearbeiten'; ?></h2>
+    <h2><?php echo $action === 'new' ? __('new_invoice') : __('edit_invoice'); ?></h2>
     
     <?php if (isset($isPaid) && $isPaid): ?>
         <div class="alert" style="background-color: #fff3cd; border-color: #ffc107; color: #856404; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-            <strong>Hinweis:</strong> Diese Rechnung wurde als bezahlt markiert und kann nicht mehr bearbeitet werden.
+            <strong><?php echo __('error'); ?>:</strong> <?php echo __('invoice_paid_locked'); ?>
         </div>
     <?php elseif (isset($isLocked) && $isLocked && !$isPaid): ?>
         <div class="alert" style="background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-            <strong>Hinweis:</strong> Diese Rechnung wurde versendet und kann nicht mehr bearbeitet werden. Nur der Status kann noch geändert werden.
+            <strong><?php echo __('error'); ?>:</strong> <?php echo __('invoice_locked'); ?>
         </div>
     <?php endif; ?>
     
@@ -155,14 +155,14 @@ $customers = $customerObj->getAll();
     <form method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>Rechnungsnummer *</label>
+                <label><?php echo __('invoice_number'); ?> *</label>
                 <input type="text" name="invoice_number" value="<?php echo htmlspecialchars($invoice['invoice_number']); ?>" required readonly style="background-color: #f5f5f5;">
             </div>
             
             <div class="form-group">
-                <label>Kunde *</label>
+                <label><?php echo __('customer'); ?> *</label>
                 <select name="customer_id" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
-                    <option value="">-- Kunde auswählen --</option>
+                    <option value="">-- <?php echo __('select_customer'); ?> --</option>
                     <?php foreach ($customers as $customer): ?>
                         <option value="<?php echo $customer['id']; ?>" <?php echo ($invoice['customer_id'] == $customer['id']) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($customer['company_name'] ?: $customer['first_name'] . ' ' . $customer['last_name']); ?>
@@ -174,74 +174,74 @@ $customers = $customerObj->getAll();
         
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>Rechnungsdatum *</label>
+                <label><?php echo __('invoice_date'); ?> *</label>
                 <input type="date" name="invoice_date" value="<?php echo $invoice['invoice_date']; ?>" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
-                <label>Leistungsdatum</label>
+                <label><?php echo __('service_date'); ?></label>
                 <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
-                <label>Fälligkeitsdatum *</label>
+                <label><?php echo __('due_date'); ?> *</label>
                 <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>Status</label>
+                <label><?php echo __('status'); ?></label>
                 <select name="status">
-                    <option value="draft" <?php echo ($invoice['status'] == 'draft') ? 'selected' : ''; ?>>Entwurf</option>
-                    <option value="sent" <?php echo ($invoice['status'] == 'sent') ? 'selected' : ''; ?>>Versendet</option>
-                    <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?> disabled>Bezahlt (nur durch Zahlungserfassung)</option>
-                    <option value="overdue" <?php echo ($invoice['status'] == 'overdue') ? 'selected' : ''; ?>>Überfällig</option>
-                    <option value="cancelled" <?php echo ($invoice['status'] == 'cancelled') ? 'selected' : ''; ?>>Storniert</option>
+                    <option value="draft" <?php echo ($invoice['status'] == 'draft') ? 'selected' : ''; ?>><?php echo __('status_draft'); ?></option>
+                    <option value="sent" <?php echo ($invoice['status'] == 'sent') ? 'selected' : ''; ?>><?php echo __('status_sent'); ?></option>
+                    <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?> disabled><?php echo __('status_paid'); ?> (<?php echo __('payment_only'); ?>)</option>
+                    <option value="overdue" <?php echo ($invoice['status'] == 'overdue') ? 'selected' : ''; ?>><?php echo __('status_overdue'); ?></option>
+                    <option value="cancelled" <?php echo ($invoice['status'] == 'cancelled') ? 'selected' : ''; ?>><?php echo __('status_cancelled'); ?></option>
                 </select>
             </div>
             
             <div class="form-group">
-                <label>Steuersatz (%)</label>
+                <label><?php echo __('tax_rate'); ?> (%)</label>
                 <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div class="form-group">
-            <label>Zahlungsbedingungen</label>
+            <label><?php echo __('payment_terms'); ?></label>
             <textarea name="payment_terms" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['payment_terms']); ?></textarea>
         </div>
         
         <div class="form-group">
-            <label>Notizen</label>
+            <label><?php echo __('notes'); ?></label>
             <textarea name="notes" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['notes']); ?></textarea>
         </div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-            <button type="submit" name="save_invoice" class="btn btn-success">Speichern</button>
-            <a href="?page=invoices" class="btn">Abbrechen</a>
+            <button type="submit" name="save_invoice" class="btn btn-success"><?php echo __('save'); ?></button>
+            <a href="?page=invoices" class="btn"><?php echo __('cancel'); ?></a>
             <?php if ($action === 'edit'): ?>
-                <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF Vorschau</a>
+                <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF <?php echo __('preview'); ?></a>
                 <?php if ($invoice['status'] !== 'paid'): ?>
-                    <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #27ae60;">Zahlung erfassen</a>
+                    <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #27ae60;"><?php echo __('record_payment'); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
     </form>
     
     <?php if ($action === 'edit'): ?>
-        <h3>Rechnungspositionen</h3>
+        <h3><?php echo __('invoice_items'); ?></h3>
         
         <?php if (!empty($items)): ?>
             <table>
                 <thead>
                     <tr>
-                        <th>Pos</th>
-                        <th>Beschreibung</th>
-                        <th>Menge</th>
-                        <th>Einzelpreis</th>
-                        <th>MwSt %</th>
-                        <th>Gesamt</th>
+                        <th><?php echo __('position'); ?></th>
+                        <th><?php echo __('description'); ?></th>
+                        <th><?php echo __('quantity'); ?></th>
+                        <th><?php echo __('unit_price'); ?></th>
+                        <th><?php echo __('tax_rate'); ?> %</th>
+                        <th><?php echo __('total'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -259,34 +259,34 @@ $customers = $customerObj->getAll();
             </table>
             
             <div style="margin-top: 20px; text-align: right;">
-                <strong>Netto: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
-                <strong>MwSt: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
-                <strong style="font-size: 18px;">Gesamt: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong>
+                <strong><?php echo __('subtotal'); ?>: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <strong><?php echo __('tax_amount'); ?>: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <strong style="font-size: 18px;"><?php echo __('total_amount'); ?>: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong>
             </div>
         <?php endif; ?>
         
         <?php if (!isset($isLocked) || !$isLocked): ?>
-        <h4 style="margin-top: 30px;">Position hinzufügen</h4>
+        <h4 style="margin-top: 30px;"><?php echo __('add_item'); ?></h4>
         <form method="POST">
             <div style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; gap: 10px; align-items: end;">
                 <div class="form-group">
-                    <label>Beschreibung</label>
+                    <label><?php echo __('description'); ?></label>
                     <input type="text" name="item_description" required>
                 </div>
                 <div class="form-group">
-                    <label>Menge</label>
+                    <label><?php echo __('quantity'); ?></label>
                     <input type="number" step="0.01" name="item_quantity" value="1" required>
                 </div>
                 <div class="form-group">
-                    <label>Einzelpreis</label>
+                    <label><?php echo __('unit_price'); ?></label>
                     <input type="number" step="0.01" name="item_unit_price" required>
                 </div>
                 <div class="form-group">
-                    <label>MwSt %</label>
+                    <label><?php echo __('tax_rate'); ?> %</label>
                     <input type="number" step="0.01" name="item_tax_rate" value="19" required>
                 </div>
             </div>
-            <button type="submit" name="add_item" class="btn btn-success">Position hinzufügen</button>
+            <button type="submit" name="add_item" class="btn btn-success"><?php echo __('add_item'); ?></button>
         </form>
         <?php endif; ?>
     <?php endif; ?>

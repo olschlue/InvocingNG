@@ -6,21 +6,21 @@ $customers = $customerObj->getAll();
 ?>
 
 <div class="card">
-    <h2>Kundenverwaltung</h2>
-    <a href="?page=customer_edit&action=new" class="btn btn-success">Neuer Kunde</a>
+    <h2><?php echo __('customer_management'); ?></h2>
+    <a href="?page=customer_edit&action=new" class="btn btn-success"><?php echo __('new_customer'); ?></a>
     
     <?php if (empty($customers)): ?>
-        <p style="margin-top: 20px;">Noch keine Kunden vorhanden.</p>
+        <p style="margin-top: 20px;"><?php echo __('no_customers_found'); ?></p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Kundennr.</th>
-                    <th>Firma / Name</th>
-                    <th>E-Mail</th>
-                    <th>Telefon</th>
-                    <th>Stadt</th>
-                    <th>Aktionen</th>
+                    <th><?php echo __('customer_number'); ?></th>
+                    <th><?php echo __('company_name'); ?> / <?php echo __('last_name'); ?></th>
+                    <th><?php echo __('email'); ?></th>
+                    <th><?php echo __('phone'); ?></th>
+                    <th><?php echo __('city'); ?></th>
+                    <th><?php echo __('actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@ $customers = $customerObj->getAll();
                         <td><?php echo htmlspecialchars($customer['phone'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($customer['address_city'] ?? '-'); ?></td>
                         <td class="action-links">
-                            <a href="?page=customer_edit&id=<?php echo $customer['id']; ?>" class="btn btn-small">Bearbeiten</a>
+                            <a href="?page=customer_edit&id=<?php echo $customer['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

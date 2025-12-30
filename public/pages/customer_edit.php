@@ -66,80 +66,80 @@ if ($action === 'edit' && $customerId) {
 ?>
 
 <div class="card">
-    <h2><?php echo $action === 'new' ? 'Neuer Kunde' : 'Kunde bearbeiten'; ?></h2>
+    <h2><?php echo $action === 'new' ? __('new_customer') : __('edit_customer'); ?></h2>
     
     <?php echo $message; ?>
     
     <form method="POST">
         <div class="form-group">
-            <label>Kundennummer *</label>
+            <label><?php echo __('customer_number'); ?> *</label>
             <input type="text" name="customer_number" value="<?php echo htmlspecialchars($customer['customer_number']); ?>" required>
         </div>
         
         <div class="form-group">
-            <label>Firmenname</label>
+            <label><?php echo __('company_name'); ?></label>
             <input type="text" name="company_name" value="<?php echo htmlspecialchars($customer['company_name']); ?>">
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>Vorname</label>
+                <label><?php echo __('first_name'); ?></label>
                 <input type="text" name="first_name" value="<?php echo htmlspecialchars($customer['first_name']); ?>">
             </div>
             
             <div class="form-group">
-                <label>Nachname</label>
+                <label><?php echo __('last_name'); ?></label>
                 <input type="text" name="last_name" value="<?php echo htmlspecialchars($customer['last_name']); ?>">
             </div>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>E-Mail</label>
+                <label><?php echo __('email'); ?></label>
                 <input type="email" name="email" value="<?php echo htmlspecialchars($customer['email']); ?>">
             </div>
             
             <div class="form-group">
-                <label>Telefon</label>
+                <label><?php echo __('phone'); ?></label>
                 <input type="text" name="phone" value="<?php echo htmlspecialchars($customer['phone']); ?>">
             </div>
         </div>
         
         <div class="form-group">
-            <label>Straße</label>
+            <label><?php echo __('street'); ?></label>
             <input type="text" name="address_street" value="<?php echo htmlspecialchars($customer['address_street']); ?>">
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
             <div class="form-group">
-                <label>PLZ</label>
+                <label><?php echo __('zip'); ?></label>
                 <input type="text" name="address_zip" value="<?php echo htmlspecialchars($customer['address_zip']); ?>">
             </div>
             
             <div class="form-group">
-                <label>Stadt</label>
+                <label><?php echo __('city'); ?></label>
                 <input type="text" name="address_city" value="<?php echo htmlspecialchars($customer['address_city']); ?>">
             </div>
         </div>
         
         <div class="form-group">
-            <label>Land</label>
+            <label><?php echo __('country'); ?></label>
             <input type="text" name="address_country" value="<?php echo htmlspecialchars($customer['address_country']); ?>">
         </div>
         
         <div class="form-group">
-            <label>Steuernummer</label>
+            <label><?php echo __('tax_id'); ?></label>
             <input type="text" name="tax_id" value="<?php echo htmlspecialchars($customer['tax_id']); ?>">
         </div>
         
         <div class="form-group">
-            <label>Notizen</label>
+            <label><?php echo __('notes'); ?></label>
             <textarea name="notes"><?php echo htmlspecialchars($customer['notes']); ?></textarea>
         </div>
         
         <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn btn-success">Speichern</button>
-            <a href="?page=customers" class="btn">Abbrechen</a>
+            <button type="submit" class="btn btn-success"><?php echo __('save'); ?></button>
+            <a href="?page=customers" class="btn"><?php echo __('cancel'); ?></a>
         </div>
     </form>
 </div>

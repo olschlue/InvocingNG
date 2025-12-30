@@ -1,11 +1,11 @@
 <?php
 /**
  * Datenmigration von alter Datenbank zu InvoicingNG
+ * Migriert Daten aus der alten addressbook/invoice Datenbank
  * 
  * ANLEITUNG:
- * 1. Passe die Verbindungsdaten für die alte Datenbank an
- * 2. Passe die Feldnamen und Tabellennamen an deine alte DB-Struktur an
- * 3. Führe das Skript aus: php migrate_from_old_db.php
+ * 1. Passe die Verbindungsdaten für die alte Datenbank an (Zeilen 16-19)
+ * 2. Führe das Skript aus: php database/migrate_from_old_db.php
  */
 
 // Fehlerausgabe aktivieren
@@ -13,10 +13,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Alte Datenbank-Konfiguration (ANPASSEN!)
-define('OLD_DB_HOST', 'localhost');
-define('OLD_DB_NAME', 'alte_datenbank');
-define('OLD_DB_USER', 'root');
-define('OLD_DB_PASS', '');
+define('OLD_DB_HOST', 'db5004652185.hosting-data.io');
+define('OLD_DB_NAME', 'dbs3895544');
+define('OLD_DB_USER', 'dbu1361608');
+define('OLD_DB_PASS', 'ee97mnee');
 
 // Neue Datenbank-Konfiguration
 require_once __DIR__ . '/../config/config.php';
@@ -44,40 +44,29 @@ try {
     );
     echo "✓ Verbindung zur neuen Datenbank hergestellt\n\n";
     
-    // Mapping für alte zu neue Feldnamen (ANPASSEN!)
-    $customerFieldMapping = [
-        // 'alter_feldname' => 'neuer_feldname'
-        'id' => 'id',
-        'kundennummer' => 'customer_number',
-        'firma' => 'company_name',
-        'vorname' => 'first_name',
-        'nachname' => 'last_name',
-        'email' => 'email',
-        'telefon' => 'phone',
-        'strasse' => 'address_street',
-        'stadt' => 'address_city',
-        'plz' => 'address_zip',
-        'land' => 'address_country',
-        'steuernummer' => 'tax_id',
-        'notizen' => 'notes'
-    ];
-    
     // ===== KUNDEN MIGRIEREN =====
-    echo "=== KUNDEN MIGRIEREN ===\n";
+    echo "=== KUNDEN MIGRIEREN (addressbook) ===\n";
     
-    // Alte Kunden auslesen (TABELLENNAME ANPASSEN!)
-    $oldCustomers = $oldDb->query("SELECT * FROM alte_kunden_tabelle")->fetchAll(PDO::FETCH_ASSOC);
+    // Alte Kunden auslesen
+    $oldCustomers = $oldDb->query("
+        SELECT * FROM addressbook 
+        WHERE CANCELED = 0 OR CANCELED IS NULL
+        ORDER BY MYID ASC
+    ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldCustomers) . " Kunden\n";
     
-    $customerIdMap = []; // Alte ID => Neue ID
+    $customerIdMap = []; // Alte MYID => Neue ID
     $migratedCustomers = 0;
     
     foreach ($oldCustomers as $oldCustomer) {
         try {
-            // Kundennummer generieren falls nicht vorhanden
-            $customerNumber = !empty($oldCustomer[$customerFieldMapping['kundennummer']]) 
-                ? $oldCustomer[$customerFieldMapping['kundennummer']]
-                : 'K' . str_pad($oldCustomer['id'], 5, '0', STR_PAD_LEFT);
+            // Kundennummer generieren
+            $customerNumber = 'K' . str_pad($oldCustomer['MYID'], 5, '0', STR_PAD_LEFT);
+            
+            // Vollständigen Namen zusammensetzen falls vorhanden
+            $firstName = trim($oldCustomer['FIRSTNAME'] ?? '');
+            $lastName = trim($oldCustomer['LASTNAME'] ?? '');
+            $companyName = trim($oldCustomer['COMPANY'] ?? '');
             
             // Kunde in neue DB einfügen
             $stmt = $newDb->prepare("
@@ -90,59 +79,78 @@ try {
             
             $stmt->execute([
                 $customerNumber,
-                $oldCustomer['firma'] ?? null,
-                $oldCustomer['vorname'] ?? null,
-                $oldCustomer['nachname'] ?? null,
-                $oldCustomer['email'] ?? null,
-                $oldCustomer['telefon'] ?? null,
-                $oldCustomer['strasse'] ?? null,
-                $oldCustomer['stadt'] ?? null,
-                $oldCustomer['plz'] ?? null,
-                $oldCustomer['land'] ?? 'Deutschland',
-                $oldCustomer['steuernummer'] ?? null,
-                $oldCustomer['notizen'] ?? null
+                $companyName ?: null,
+                $firstName ?: null,
+                $lastName ?: null,
+                trim($oldCustomer['EMAIL'] ?? '') ?: null,
+                trim($oldCustomer['PHONEWORK'] ?? $oldCustomer['PHONEOFFI'] ?? '') ?: null,
+                trim($oldCustomer['ADDRESS'] ?? '') ?: null,
+                trim($oldCustomer['CITY'] ?? '') ?: null,
+                trim($oldCustomer['POSTALCODE'] ?? '') ?: null,
+                trim($oldCustomer['COUNTRY'] ?? 'Deutschland') ?: 'Deutschland',
+                trim($oldCustomer['TAXNR'] ?? '') ?: null,
+                trim($oldCustomer['NOTE'] ?? '') ?: null
             ]);
             
-            $customerIdMap[$oldCustomer['id']] = $newDb->lastInsertId();
+            $customerIdMap[$oldCustomer['MYID']] = $newDb->lastInsertId();
             $migratedCustomers++;
             
         } catch (PDOException $e) {
-            echo "✗ Fehler bei Kunde ID " . $oldCustomer['id'] . ": " . $e->getMessage() . "\n";
+            echo "✗ Fehler bei Kunde MYID " . $oldCustomer['MYID'] . ": " . $e->getMessage() . "\n";
         }
     }
     
     echo "✓ $migratedCustomers Kunden migriert\n\n";
     
     // ===== RECHNUNGEN MIGRIEREN =====
-    echo "=== RECHNUNGEN MIGRIEREN ===\n";
+    echo "=== RECHNUNGEN MIGRIEREN (invoice) ===\n";
     
-    // Alte Rechnungen auslesen (TABELLENNAME UND FELDER ANPASSEN!)
-    $oldInvoices = $oldDb->query("SELECT * FROM alte_rechnungen_tabelle ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    // Alte Rechnungen auslesen
+    $oldInvoices = $oldDb->query("
+        SELECT * FROM invoice 
+        WHERE CANCELED = 0 OR CANCELED IS NULL
+        ORDER BY INVOICEID ASC
+    ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldInvoices) . " Rechnungen\n";
     
-    $invoiceIdMap = []; // Alte ID => Neue ID
+    $invoiceIdMap = []; // Alte INVOICEID => Neue ID
     $migratedInvoices = 0;
+    $skippedInvoices = 0;
     
     foreach ($oldInvoices as $oldInvoice) {
         try {
             // Kunden-ID mappen
-            $newCustomerId = $customerIdMap[$oldInvoice['kunden_id']] ?? null;
+            $newCustomerId = $customerIdMap[$oldInvoice['MYID']] ?? null;
             
             if (!$newCustomerId) {
-                echo "✗ Kunde nicht gefunden für Rechnung ID " . $oldInvoice['id'] . "\n";
+                echo "✗ Kunde nicht gefunden für Rechnung INVOICEID " . $oldInvoice['INVOICEID'] . " (MYID: " . $oldInvoice['MYID'] . ")\n";
+                $skippedInvoices++;
                 continue;
             }
             
-            // Status mappen (ANPASSEN!)
-            $statusMap = [
-                'entwurf' => 'draft',
-                'versendet' => 'sent',
-                'bezahlt' => 'paid',
-                'überfällig' => 'overdue',
-                'storniert' => 'cancelled'
-            ];
+            // Status ermitteln
+            if (!empty($oldInvoice['CANCELED']) && $oldInvoice['CANCELED'] > 0) {
+                $status = 'cancelled';
+            } elseif (!empty($oldInvoice['PAID']) && $oldInvoice['PAID'] > 0) {
+                $status = 'paid';
+            } elseif (!empty($oldInvoice['INVOICE_MAILED']) || !empty($oldInvoice['INVOICE_PRINTED'])) {
+                $status = 'sent';
+            } else {
+                $status = 'draft';
+            }
             
-            $status = $statusMap[$oldInvoice['status']] ?? 'draft';
+            // Rechnungsnummer generieren
+            $invoiceNumber = date('Y', strtotime($oldInvoice['INVOICE_DATE'])) . '-' . $oldInvoice['INVOICEID'];
+            
+            // Fälligkeitsdatum berechnen (falls nicht vorhanden, +14 Tage)
+            $dueDate = !empty($oldInvoice['METHOD_OF_PAY_DATE']) && $oldInvoice['METHOD_OF_PAY_DATE'] != '0000-00-00'
+                ? $oldInvoice['METHOD_OF_PAY_DATE']
+                : date('Y-m-d', strtotime($oldInvoice['INVOICE_DATE'] . ' +14 days'));
+            
+            // Leistungsdatum (ACHIEVED_DATE)
+            $serviceDate = !empty($oldInvoice['ACHIEVED_DATE']) && $oldInvoice['ACHIEVED_DATE'] != '0000-00-00'
+                ? $oldInvoice['ACHIEVED_DATE']
+                : null;
             
             // Rechnung einfügen
             $stmt = $newDb->prepare("
@@ -153,29 +161,41 @@ try {
             ");
             
             $stmt->execute([
-                $oldInvoice['rechnungsnummer'] ?? 'RE-' . $oldInvoice['id'],
+                $invoiceNumber,
                 $newCustomerId,
-                $oldInvoice['rechnungsdatum'] ?? date('Y-m-d'),
-                $oldInvoice['leistungsdatum'] ?? null,
-                $oldInvoice['faelligkeitsdatum'] ?? date('Y-m-d', strtotime('+14 days')),
+                $oldInvoice['INVOICE_DATE'],
+                $serviceDate,
+                $dueDate,
                 $status,
-                $oldInvoice['steuersatz'] ?? 19.00,
-                $oldInvoice['notizen'] ?? null,
-                $oldInvoice['zahlungsbedingungen'] ?? null
+                19.00, // Standard-Steuersatz
+                trim($oldInvoice['NOTE'] ?? '') ?: null,
+                trim($oldInvoice['MESSAGE_DESC'] ?? '') ?: 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen.'
             ]);
             
             $newInvoiceId = $newDb->lastInsertId();
-            $invoiceIdMap[$oldInvoice['id']] = $newInvoiceId;
+            $invoiceIdMap[$oldInvoice['INVOICEID']] = $newInvoiceId;
             $migratedInvoices++;
             
             // ===== RECHNUNGSPOSITIONEN MIGRIEREN =====
-            // Positionen für diese Rechnung auslesen (ANPASSEN!)
-            $oldItems = $oldDb->prepare("SELECT * FROM alte_positionen_tabelle WHERE rechnungs_id = ? ORDER BY position ASC");
-            $oldItems->execute([$oldInvoice['id']]);
+            $oldItems = $oldDb->prepare("
+                SELECT * FROM invoicepos 
+                WHERE INVOICEID = ? 
+                ORDER BY INVOICEPOSID ASC
+            ");
+            $oldItems->execute([$oldInvoice['INVOICEID']]);
             
             $position = 1;
             foreach ($oldItems->fetchAll(PDO::FETCH_ASSOC) as $oldItem) {
-                $total = ($oldItem['menge'] ?? 1) * ($oldItem['einzelpreis'] ?? 0);
+                // Steuersatz aus TAX ermitteln (TAX ist ID in tax-Tabelle)
+                $taxRate = 19.00; // Standard
+                if (!empty($oldItem['TAX_MULTI'])) {
+                    // TAX_MULTI ist z.B. 1.19 für 19% MwSt
+                    $taxRate = ($oldItem['TAX_MULTI'] - 1) * 100;
+                }
+                
+                $quantity = floatval($oldItem['POS_QUANTITY'] ?? 1);
+                $unitPrice = floatval($oldItem['POS_PRICE'] ?? 0);
+                $total = $quantity * $unitPrice;
                 
                 $itemStmt = $newDb->prepare("
                     INSERT INTO invoice_items (
@@ -187,49 +207,64 @@ try {
                 $itemStmt->execute([
                     $newInvoiceId,
                     $position++,
-                    $oldItem['beschreibung'] ?? '',
-                    $oldItem['menge'] ?? 1,
-                    $oldItem['einzelpreis'] ?? 0,
-                    $oldItem['steuersatz'] ?? 19.00,
+                    trim($oldItem['POS_DESC'] ?? ''),
+                    $quantity,
+                    $unitPrice,
+                    $taxRate,
                     $total
                 ]);
             }
             
         } catch (PDOException $e) {
-            echo "✗ Fehler bei Rechnung ID " . $oldInvoice['id'] . ": " . $e->getMessage() . "\n";
+            echo "✗ Fehler bei Rechnung INVOICEID " . $oldInvoice['INVOICEID'] . ": " . $e->getMessage() . "\n";
+            $skippedInvoices++;
         }
     }
     
-    echo "✓ $migratedInvoices Rechnungen migriert\n\n";
+    echo "✓ $migratedInvoices Rechnungen migriert";
+    if ($skippedInvoices > 0) {
+        echo " ($skippedInvoices übersprungen)";
+    }
+    echo "\n\n";
     
     // ===== ZAHLUNGEN MIGRIEREN =====
-    echo "=== ZAHLUNGEN MIGRIEREN ===\n";
+    echo "=== ZAHLUNGEN MIGRIEREN (payment) ===\n";
     
-    // Alte Zahlungen auslesen (TABELLENNAME UND FELDER ANPASSEN!)
-    $oldPayments = $oldDb->query("SELECT * FROM alte_zahlungen_tabelle ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    // Alte Zahlungen auslesen
+    $oldPayments = $oldDb->query("
+        SELECT * FROM payment 
+        WHERE (CANCELED = 0 OR CANCELED IS NULL) AND SUM_PAID > 0
+        ORDER BY PAYMENTID ASC
+    ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldPayments) . " Zahlungen\n";
     
     $migratedPayments = 0;
+    $skippedPayments = 0;
     
     foreach ($oldPayments as $oldPayment) {
         try {
             // Rechnungs-ID mappen
-            $newInvoiceId = $invoiceIdMap[$oldPayment['rechnungs_id']] ?? null;
+            $newInvoiceId = $invoiceIdMap[$oldPayment['INVOICEID']] ?? null;
             
             if (!$newInvoiceId) {
-                echo "✗ Rechnung nicht gefunden für Zahlung ID " . $oldPayment['id'] . "\n";
+                echo "✗ Rechnung nicht gefunden für Zahlung PAYMENTID " . $oldPayment['PAYMENTID'] . " (INVOICEID: " . $oldPayment['INVOICEID'] . ")\n";
+                $skippedPayments++;
                 continue;
             }
             
-            // Zahlungsmethode mappen (ANPASSEN!)
-            $methodMap = [
-                'barzahlung' => 'cash',
-                'überweisung' => 'bank_transfer',
-                'kreditkarte' => 'credit_card',
-                'paypal' => 'paypal'
-            ];
+            // Zahlungsmethode ermitteln
+            $methodOfPay = strtolower(trim($oldPayment['METHOD_OF_PAY'] ?? ''));
+            $method = 'bank_transfer'; // Standard
             
-            $method = $methodMap[$oldPayment['zahlungsart']] ?? 'bank_transfer';
+            if (strpos($methodOfPay, 'bar') !== false || strpos($methodOfPay, 'cash') !== false) {
+                $method = 'cash';
+            } elseif (strpos($methodOfPay, 'karte') !== false || strpos($methodOfPay, 'card') !== false) {
+                $method = 'credit_card';
+            } elseif (strpos($methodOfPay, 'paypal') !== false) {
+                $method = 'paypal';
+            } elseif (strpos($methodOfPay, 'überweisung') !== false || strpos($methodOfPay, 'transfer') !== false) {
+                $method = 'bank_transfer';
+            }
             
             $stmt = $newDb->prepare("
                 INSERT INTO payments (
@@ -240,21 +275,26 @@ try {
             
             $stmt->execute([
                 $newInvoiceId,
-                $oldPayment['zahlungsdatum'] ?? date('Y-m-d'),
-                $oldPayment['betrag'] ?? 0,
+                $oldPayment['PAYMENT_DATE'] != '0000-00-00' ? $oldPayment['PAYMENT_DATE'] : date('Y-m-d'),
+                floatval($oldPayment['SUM_PAID'] ?? 0),
                 $method,
-                $oldPayment['referenz'] ?? null,
-                $oldPayment['notizen'] ?? null
+                trim($oldPayment['METHOD_OF_PAY'] ?? '') ?: null,
+                trim($oldPayment['NOTE'] ?? '') ?: null
             ]);
             
             $migratedPayments++;
             
         } catch (PDOException $e) {
-            echo "✗ Fehler bei Zahlung ID " . $oldPayment['id'] . ": " . $e->getMessage() . "\n";
+            echo "✗ Fehler bei Zahlung PAYMENTID " . $oldPayment['PAYMENTID'] . ": " . $e->getMessage() . "\n";
+            $skippedPayments++;
         }
     }
     
-    echo "✓ $migratedPayments Zahlungen migriert\n\n";
+    echo "✓ $migratedPayments Zahlungen migriert";
+    if ($skippedPayments > 0) {
+        echo " ($skippedPayments übersprungen)";
+    }
+    echo "\n\n";
     
     // ===== ZUSAMMENFASSUNG =====
     echo "=== MIGRATION ABGESCHLOSSEN ===\n";

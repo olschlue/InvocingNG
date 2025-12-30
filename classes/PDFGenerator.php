@@ -65,29 +65,33 @@ class InvoicePDF extends FPDF {
         // Rechnungsdaten
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(45, 5, 'Rechnungsnummer:', 0, 0);
+        $this->Cell(45, 5, $this->convertEncoding(__('pdf_invoice_number')) . ':', 0, 0);
         $this->SetFont('Arial', 'B', 9);
         $invoiceNumberDisplay = (defined('INVOICE_NUMBER_PREFIX') ? INVOICE_NUMBER_PREFIX : '') . $this->invoice['invoice_number'];
         $this->Cell(0, 5, $invoiceNumberDisplay, 0, 1);
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(45, 5, 'Rechnungsdatum:', 0, 0);
+        $this->Cell(45, 5, $this->convertEncoding(__('pdf_invoice_date')) . ':', 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['invoice_date'])), 0, 1);
         
-        if (!empty($this->invoice['service_date'])) {
+        // Leistungsdatum anzeigen (falls konfiguriert)
+        if (defined('PDF_SHOW_SERVICE_DATE') && PDF_SHOW_SERVICE_DATE && !empty($this->invoice['service_date'])) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(45, 5, 'Leistungsdatum:', 0, 0);
+            $this->Cell(45, 5, $this->convertEncoding(__('pdf_service_date')) . ':', 0, 0);
             $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['service_date'])), 0, 1);
         }
         
-        $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(45, 5, $this->convertEncoding('Fälligkeitsdatum:'), 0, 0);
-        $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
+        // Fälligkeitsdatum anzeigen (falls konfiguriert)
+        if (defined('PDF_SHOW_DUE_DATE') && PDF_SHOW_DUE_DATE) {
+            $this->Cell(100, 5, '', 0, 0);
+            $this->Cell(45, 5, $this->convertEncoding(__('pdf_due_date')) . ':', 0, 0);
+            $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
+        }
         
         if (!empty($this->customer['customer_number'])) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(45, 5, 'Kundennummer:', 0, 0);
+            $this->Cell(45, 5, $this->convertEncoding(__('pdf_customer_number')) . ':', 0, 0);
             $this->Cell(0, 5, $this->customer['customer_number'], 0, 1);
         }
         
@@ -95,18 +99,18 @@ class InvoicePDF extends FPDF {
         
         // Überschrift
         $this->SetFont('Arial', 'B', 14);
-        $this->Cell(0, 8, 'Rechnung', 0, 1);
+        $this->Cell(0, 8, $this->convertEncoding(__('pdf_invoice')), 0, 1);
         $this->Ln(5);
         
         // Tabellenkopf
         $this->SetFont('Arial', 'B', 9);
         $this->SetFillColor(230, 230, 230);
-        $this->Cell(10, 7, 'Pos', 0, 0, 'C', true);
-        $this->Cell(70, 7, 'Beschreibung', 0, 0, 'L', true);
-        $this->Cell(18, 7, 'Menge', 0, 0, 'C', true);
-        $this->Cell(28, 7, 'Einzelpreis', 0, 0, 'R', true);
-        $this->Cell(16, 7, 'USt.', 0, 0, 'C', true);
-        $this->Cell(28, 7, 'Gesamt', 0, 1, 'R', true);
+        $this->Cell(10, 7, $this->convertEncoding(__('position')), 0, 0, 'C', true);
+        $this->Cell(70, 7, $this->convertEncoding(__('description')), 0, 0, 'L', true);
+        $this->Cell(18, 7, $this->convertEncoding(__('quantity')), 0, 0, 'C', true);
+        $this->Cell(28, 7, $this->convertEncoding(__('unit_price')), 0, 0, 'R', true);
+        $this->Cell(16, 7, $this->convertEncoding(__('tax_rate')), 0, 0, 'C', true);
+        $this->Cell(28, 7, $this->convertEncoding(__('total')), 0, 1, 'R', true);
         
         // Untere Linie unter Header
         $this->SetDrawColor(200, 200, 200);
@@ -129,13 +133,13 @@ class InvoicePDF extends FPDF {
         $this->Ln(2);
         $this->SetFont('Arial', '', 9);
         $this->Cell(116, 6, '', 0, 0);
-        $this->Cell(28, 6, 'Nettobetrag:', 0, 0, 'R');
+        $this->Cell(28, 6, $this->convertEncoding(__('subtotal')) . ':', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(26, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' EUR', 0, 1, 'R');
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(116, 6, '', 0, 0);
-        $this->Cell(28, 6, 'USt. (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
+        $this->Cell(28, 6, $this->convertEncoding(__('tax_amount')) . ' (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(26, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' EUR', 0, 1, 'R');
         
@@ -145,7 +149,7 @@ class InvoicePDF extends FPDF {
         
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(116, 7, '', 0, 0);
-        $this->Cell(28, 7, 'Gesamtbetrag:', 0, 0, 'R');
+        $this->Cell(28, 7, $this->convertEncoding(__('total_amount')) . ':', 0, 0, 'R');
         $this->Cell(26, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' EUR', 0, 1, 'R');
         
         // Zahlungshinweise

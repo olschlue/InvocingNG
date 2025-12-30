@@ -100,15 +100,15 @@ foreach ($allInvoices as $inv) {
 ?>
 
 <div class="card">
-    <h2><?php echo $action === 'new' ? 'Neue Zahlung' : 'Zahlung bearbeiten'; ?></h2>
+    <h2><?php echo $action === 'new' ? __('new_payment') : __('edit_payment'); ?></h2>
     
     <?php echo $message; ?>
     
     <form method="POST">
         <div class="form-group">
-            <label>Rechnung *</label>
+            <label><?php echo __('invoice'); ?> *</label>
             <select name="invoice_id" id="invoice_select" required>
-                <option value="">-- Rechnung auswählen --</option>
+                <option value="">-- <?php echo __('select_invoice'); ?> --</option>
                 <?php foreach ($allInvoices as $invoice): ?>
                     <option value="<?php echo $invoice['id']; ?>" <?php echo ($payment['invoice_id'] == $invoice['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($invoice['invoice_number'] . ' - ' . ($invoice['company_name'] ?: $invoice['first_name'] . ' ' . $invoice['last_name']) . ' (' . number_format($invoice['total_amount'], 2, ',', '.') . ' ' . APP_CURRENCY_SYMBOL . ')'); ?>
@@ -119,13 +119,42 @@ foreach ($allInvoices as $inv) {
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label>Zahlungsdatum *</label>
+                <label><?php echo __('payment_date'); ?> *</label>
                 <input type="date" name="payment_date" value="<?php echo $payment['payment_date']; ?>" required>
             </div>
             
             <div class="form-group">
-                <label>Betrag *</label>
-                <input type="number" step="0.01"id="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
+                <label><?php echo __('amount'); ?> *</label>
+                <input type="number" step="0.01" name="amount" value="<?php echo $payment['amount']; ?>" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label><?php echo __('payment_method'); ?> *</label>
+            <select name="payment_method" required>
+                <option value="cash" <?php echo ($payment['payment_method'] == 'cash') ? 'selected' : ''; ?>><?php echo __('cash'); ?></option>
+                <option value="bank_transfer" <?php echo ($payment['payment_method'] == 'bank_transfer') ? 'selected' : ''; ?>><?php echo __('bank_transfer'); ?></option>
+                <option value="credit_card" <?php echo ($payment['payment_method'] == 'credit_card') ? 'selected' : ''; ?>><?php echo __('credit_card'); ?></option>
+                <option value="paypal" <?php echo ($payment['payment_method'] == 'paypal') ? 'selected' : ''; ?>><?php echo __('paypal'); ?></option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label><?php echo __('reference'); ?></label>
+            <input type="text" name="reference" id="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
+        </div>
+        
+        <div class="form-group">
+            <label><?php echo __('notes'); ?></label>
+            <textarea name="notes"><?php echo htmlspecialchars($payment['notes']); ?></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-success"><?php echo __('save'); ?></button>
+            <a href="?page=payments" class="btn"><?php echo __('cancel'); ?></a>
+        </div>
+    </form>
+</div>id="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
         </div>
         
         <div class="form-group">

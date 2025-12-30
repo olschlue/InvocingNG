@@ -7,22 +7,22 @@ $payments = $paymentObj->getAll();
 ?>
 
 <div class="card">
-    <h2>Zahlungsverwaltung</h2>
-    <a href="?page=payment_edit&action=new" class="btn btn-success">Neue Zahlung</a>
+    <h2><?php echo __('payment_management'); ?></h2>
+    <a href="?page=payment_edit&action=new" class="btn btn-success"><?php echo __('new_payment'); ?></a>
     
     <?php if (empty($payments)): ?>
-        <p style="margin-top: 20px;">Noch keine Zahlungen vorhanden.</p>
+        <p style="margin-top: 20px;"><?php echo __('no_payments_found'); ?></p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Datum</th>
-                    <th>Rechnungsnr.</th>
-                    <th>Kunde</th>
-                    <th>Betrag</th>
-                    <th>Zahlungsmethode</th>
-                    <th>Referenz</th>
-                    <th>Aktionen</th>
+                    <th><?php echo __('date'); ?></th>
+                    <th><?php echo __('invoice_number'); ?></th>
+                    <th><?php echo __('customer'); ?></th>
+                    <th><?php echo __('amount'); ?></th>
+                    <th><?php echo __('payment_method'); ?></th>
+                    <th><?php echo __('reference'); ?></th>
+                    <th><?php echo __('actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@ $payments = $paymentObj->getAll();
                         <td><?php echo ucfirst(str_replace('_', ' ', $payment['payment_method'])); ?></td>
                         <td><?php echo htmlspecialchars($payment['reference'] ?? '-'); ?></td>
                         <td class="action-links">
-                            <a href="?page=payment_edit&id=<?php echo $payment['id']; ?>" class="btn btn-small">Bearbeiten</a>
+                            <a href="?page=payment_edit&id=<?php echo $payment['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

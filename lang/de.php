@@ -1,0 +1,137 @@
+<?php
+/**
+ * Deutsche Übersetzungen
+ */
+
+$lang = [
+    // Allgemein
+    'app_name' => 'InvoicingNG',
+    'dashboard' => 'Dashboard',
+    'customers' => 'Kunden',
+    'invoices' => 'Rechnungen',
+    'payments' => 'Zahlungen',
+    'settings' => 'Einstellungen',
+    'logout' => 'Abmelden',
+    'preview' => 'Vorschau',
+    'select_customer' => 'Kunde auswählen',
+    'payment_only' => 'nur durch Zahlungserfassung',
+    'invoice_paid_locked' => 'Diese Rechnung wurde als bezahlt markiert und kann nicht mehr bearbeitet werden.',
+    
+    // Dashboard
+    'total_customers' => 'Kunden gesamt',
+    'total_invoices' => 'Rechnungen gesamt',
+    'paid_invoices' => 'Bezahlte Rechnungen',
+    'overdue_invoices' => 'Überfällige Rechnungen',
+    'total_revenue' => 'Gesamtumsatz',
+    'open_amount' => 'Offener Betrag',
+    'recent_invoices' => 'Aktuelle Rechnungen',
+    'recent_payments' => 'Aktuelle Zahlungen',
+    'no_invoices_yet' => 'Noch keine Rechnungen vorhanden.',
+    'no_payments_yet' => 'Noch keine Zahlungen vorhanden.',
+    
+    // Kunden
+    'customer_management' => 'Kundenverwaltung',
+    'new_customer' => 'Neuer Kunde',
+    'edit_customer' => 'Kunde bearbeiten',
+    'customer_number' => 'Kundennummer',
+    'company_name' => 'Firmenname',
+    'first_name' => 'Vorname',
+    'last_name' => 'Nachname',
+    'email' => 'E-Mail',
+    'phone' => 'Telefon',
+    'address' => 'Adresse',
+    'street' => 'Straße',
+    'city' => 'Stadt',
+    'zip' => 'PLZ',
+    'country' => 'Land',
+    'tax_id' => 'Steuernummer',
+    'notes' => 'Notizen',
+    'save' => 'Speichern',
+    'cancel' => 'Abbrechen',
+    'actions' => 'Aktionen',
+    'edit' => 'Bearbeiten',
+    'view' => 'Anzeigen',
+    'delete' => 'Löschen',
+    'no_customers_found' => 'Keine Kunden gefunden.',
+    
+    // Rechnungen
+    'invoice_management' => 'Rechnungsverwaltung',
+    'new_invoice' => 'Neue Rechnung',
+    'edit_invoice' => 'Rechnung bearbeiten',
+    'invoice_number' => 'Rechnungsnummer',
+    'invoice_date' => 'Rechnungsdatum',
+    'service_date' => 'Leistungsdatum',
+    'due_date' => 'Fälligkeitsdatum',
+    'invoice' => 'Rechnung',
+    'customer' => 'Kunde',
+    'date' => 'Datum',
+    'due_on' => 'Fällig am',
+    'amount' => 'Betrag',
+    'status' => 'Status',
+    'all' => 'Alle',
+    'draft' => 'Entwurf',
+    'sent' => 'Versendet',
+    'paid' => 'Bezahlt',
+    'overdue' => 'Überfällig',
+    'cancelled' => 'Storniert',
+    'copy' => 'Kopieren',
+    'no_invoices_found' => 'Keine Rechnungen gefunden.',
+    'copy_invoice_confirm' => 'Möchten Sie diese Rechnung wirklich kopieren?',
+    'record_payment' => 'Zahlung erfassen',
+    
+    // Rechnungspositionen
+    'invoice_items' => 'Rechnungspositionen',
+    'add_item' => 'Position hinzufügen',
+    'position' => 'Pos',
+    'description' => 'Beschreibung',
+    'quantity' => 'Menge',
+    'unit_price' => 'Einzelpreis',
+    'tax_rate' => 'MwSt.',
+    'total' => 'Gesamt',
+    'subtotal' => 'Nettobetrag',
+    'tax_amount' => 'MwSt.',
+    'total_amount' => 'Gesamtbetrag',
+    'payment_terms' => 'Zahlungsbedingungen',
+    
+    // Zahlungen
+    'payment_management' => 'Zahlungsverwaltung',
+    'new_payment' => 'Neue Zahlung',
+    'edit_payment' => 'Zahlung bearbeiten',
+    'payment_date' => 'Zahlungsdatum',
+    'payment_method' => 'Zahlungsmethode',
+    'reference' => 'Referenz',
+    'cash' => 'Bargeld',
+    'bank_transfer' => 'Überweisung',
+    'credit_card' => 'Kreditkarte',
+    'paypal' => 'PayPal',
+    'select_invoice' => 'Rechnung auswählen',
+    'no_payments_found' => 'Keine Zahlungen gefunden.',
+    
+    // Status-Badges
+    'status_draft' => 'Entwurf',
+    'status_sent' => 'Versendet',
+    'status_paid' => 'Bezahlt',
+    'status_overdue' => 'Überfällig',
+    'status_cancelled' => 'Storniert',
+    
+    // PDF
+    'pdf_invoice' => 'Rechnung',
+    'pdf_customer_number' => 'Kundennummer',
+    'pdf_invoice_number' => 'Rechnungsnummer',
+    'pdf_invoice_date' => 'Rechnungsdatum',
+    'pdf_service_date' => 'Leistungsdatum',
+    'pdf_due_date' => 'Fälligkeitsdatum',
+    
+    // Meldungen
+    'invoice_locked' => 'Diese Rechnung wurde versendet und kann nur noch im Status geändert werden.',
+    'invoice_saved' => 'Rechnung gespeichert.',
+    'customer_saved' => 'Kunde gespeichert.',
+    'payment_saved' => 'Zahlung gespeichert.',
+    
+    // Fehler
+    'error' => 'Fehler',
+    'error_required_fields' => 'Bitte füllen Sie alle Pflichtfelder aus.',
+    'error_customer_not_found' => 'Kunde nicht gefunden.',
+    'error_invoice_not_found' => 'Rechnung nicht gefunden.',
+    'error_payment_not_found' => 'Zahlung nicht gefunden.',
+];

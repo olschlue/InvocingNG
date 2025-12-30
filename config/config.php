@@ -33,6 +33,13 @@ define('APP_CURRENCY_SYMBOL', '€');
 // Rechnungsnummer
 define('INVOICE_NUMBER_PREFIX', 'RE-');
 
+// PDF-Anzeige Optionen
+define('PDF_SHOW_SERVICE_DATE', true);  // Leistungsdatum auf PDF anzeigen
+define('PDF_SHOW_DUE_DATE', true);      // Fälligkeitsdatum auf PDF anzeigen
+
+// Sprache
+define('APP_LANGUAGE', 'de'); // 'de' oder 'en'
+
 // Datumsformat
 define('DATE_FORMAT', 'd.m.Y');
 
@@ -52,3 +59,22 @@ spl_autoload_register(function ($class) {
         require_once $file;
     }
 });
+
+// Sprachdatei laden
+$langFile = BASE_PATH . '/lang/' . APP_LANGUAGE . '.php';
+if (file_exists($langFile)) {
+    require_once $langFile;
+} else {
+    // Fallback auf Deutsch
+    require_once BASE_PATH . '/lang/de.php';
+}
+
+/**
+ * Hilfsfunktion für Übersetzungen
+ * @param string $key Der Übersetzungsschlüssel
+ * @return string Die übersetzte Zeichenkette
+ */
+function __($key) {
+    global $lang;
+    return $lang[$key] ?? $key;
+}

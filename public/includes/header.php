@@ -271,10 +271,10 @@
     <nav>
         <div class="container">
             <ul>
-                <li><a href="index.php" <?php echo (!isset($_GET['page']) || $_GET['page'] == 'dashboard') ? 'class="active"' : ''; ?>>Dashboard</a></li>
-                <li><a href="?page=customers" <?php echo (isset($_GET['page']) && $_GET['page'] == 'customers') ? 'class="active"' : ''; ?>>Kunden</a></li>
-                <li><a href="?page=invoices" <?php echo (isset($_GET['page']) && $_GET['page'] == 'invoices') ? 'class="active"' : ''; ?>>Rechnungen</a></li>
-                <li><a href="?page=payments" <?php echo (isset($_GET['page']) && $_GET['page'] == 'payments') ? 'class="active"' : ''; ?>>Zahlungen</a></li>
+                <li><a href="index.php" <?php echo (!isset($_GET['page']) || $_GET['page'] == 'dashboard') ? 'class="active"' : ''; ?>><?php echo __('dashboard'); ?></a></li>
+                <li><a href="?page=customers" <?php echo (isset($_GET['page']) && $_GET['page'] == 'customers') ? 'class="active"' : ''; ?>><?php echo __('customers'); ?></a></li>
+                <li><a href="?page=invoices" <?php echo (isset($_GET['page']) && $_GET['page'] == 'invoices') ? 'class="active"' : ''; ?>><?php echo __('invoices'); ?></a></li>
+                <li><a href="?page=payments" <?php echo (isset($_GET['page']) && $_GET['page'] == 'payments') ? 'class="active"' : ''; ?>><?php echo __('payments'); ?></a></li>
             </ul>
         </div>
     </nav>

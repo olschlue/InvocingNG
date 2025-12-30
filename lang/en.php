@@ -1,0 +1,137 @@
+<?php
+/**
+ * English Translations
+ */
+
+$lang = [
+    // General
+    'app_name' => 'InvoicingNG',
+    'dashboard' => 'Dashboard',
+    'customers' => 'Customers',
+    'invoices' => 'Invoices',
+    'payments' => 'Payments',
+    'settings' => 'Settings',
+    'logout' => 'Logout',
+    'preview' => 'Preview',
+    'select_customer' => 'Select customer',
+    'payment_only' => 'payment creation only',
+    'invoice_paid_locked' => 'This invoice has been marked as paid and cannot be edited anymore.',
+    
+    // Dashboard
+    'total_customers' => 'Total Customers',
+    'total_invoices' => 'Total Invoices',
+    'paid_invoices' => 'Paid Invoices',
+    'overdue_invoices' => 'Overdue Invoices',
+    'total_revenue' => 'Total Revenue',
+    'open_amount' => 'Outstanding Amount',
+    'recent_invoices' => 'Recent Invoices',
+    'recent_payments' => 'Recent Payments',
+    'no_invoices_yet' => 'No invoices yet.',
+    'no_payments_yet' => 'No payments yet.',
+    
+    // Customers
+    'customer_management' => 'Customer Management',
+    'new_customer' => 'New Customer',
+    'edit_customer' => 'Edit Customer',
+    'customer_number' => 'Customer Number',
+    'company_name' => 'Company Name',
+    'first_name' => 'First Name',
+    'last_name' => 'Last Name',
+    'email' => 'Email',
+    'phone' => 'Phone',
+    'address' => 'Address',
+    'street' => 'Street',
+    'city' => 'City',
+    'zip' => 'ZIP Code',
+    'country' => 'Country',
+    'tax_id' => 'Tax ID',
+    'notes' => 'Notes',
+    'save' => 'Save',
+    'cancel' => 'Cancel',
+    'actions' => 'Actions',
+    'edit' => 'Edit',
+    'view' => 'View',
+    'delete' => 'Delete',
+    'no_customers_found' => 'No customers found.',
+    
+    // Invoices
+    'invoice_management' => 'Invoice Management',
+    'new_invoice' => 'New Invoice',
+    'edit_invoice' => 'Edit Invoice',
+    'invoice_number' => 'Invoice Number',
+    'invoice_date' => 'Invoice Date',
+    'service_date' => 'Service Date',
+    'due_date' => 'Due Date',
+    'invoice' => 'Invoice',
+    'customer' => 'Customer',
+    'date' => 'Date',
+    'due_on' => 'Due on',
+    'amount' => 'Amount',
+    'status' => 'Status',
+    'all' => 'All',
+    'draft' => 'Draft',
+    'sent' => 'Sent',
+    'paid' => 'Paid',
+    'overdue' => 'Overdue',
+    'cancelled' => 'Cancelled',
+    'copy' => 'Copy',
+    'no_invoices_found' => 'No invoices found.',
+    'copy_invoice_confirm' => 'Do you really want to copy this invoice?',
+    'record_payment' => 'Record Payment',
+    
+    // Invoice Items
+    'invoice_items' => 'Invoice Items',
+    'add_item' => 'Add Item',
+    'position' => 'Pos',
+    'description' => 'Description',
+    'quantity' => 'Quantity',
+    'unit_price' => 'Unit Price',
+    'tax_rate' => 'VAT',
+    'total' => 'Total',
+    'subtotal' => 'Subtotal',
+    'tax_amount' => 'VAT',
+    'total_amount' => 'Total Amount',
+    'payment_terms' => 'Payment Terms',
+    
+    // Payments
+    'payment_management' => 'Payment Management',
+    'new_payment' => 'New Payment',
+    'edit_payment' => 'Edit Payment',
+    'payment_date' => 'Payment Date',
+    'payment_method' => 'Payment Method',
+    'reference' => 'Reference',
+    'cash' => 'Cash',
+    'bank_transfer' => 'Bank Transfer',
+    'credit_card' => 'Credit Card',
+    'paypal' => 'PayPal',
+    'select_invoice' => 'Select Invoice',
+    'no_payments_found' => 'No payments found.',
+    
+    // Status Badges
+    'status_draft' => 'Draft',
+    'status_sent' => 'Sent',
+    'status_paid' => 'Paid',
+    'status_overdue' => 'Overdue',
+    'status_cancelled' => 'Cancelled',
+    
+    // PDF
+    'pdf_invoice' => 'Invoice',
+    'pdf_customer_number' => 'Customer Number',
+    'pdf_invoice_number' => 'Invoice Number',
+    'pdf_invoice_date' => 'Invoice Date',
+    'pdf_service_date' => 'Service Date',
+    'pdf_due_date' => 'Due Date',
+    
+    // Messages
+    'invoice_locked' => 'This invoice has been sent and can only be changed in status.',
+    'invoice_saved' => 'Invoice saved.',
+    'customer_saved' => 'Customer saved.',
+    'payment_saved' => 'Payment saved.',
+    
+    // Errors
+    'error' => 'Error',
+    'error_required_fields' => 'Please fill in all required fields.',
+    'error_customer_not_found' => 'Customer not found.',
+    'error_invoice_not_found' => 'Invoice not found.',
+    'error_payment_not_found' => 'Payment not found.',
+];

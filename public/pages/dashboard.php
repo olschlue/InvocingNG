@@ -26,59 +26,59 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
 
 <div class="stats-grid">
     <div class="stat-card">
-        <h3>Kunden gesamt</h3>
+        <h3><?php echo __('total_customers'); ?></h3>
         <div class="value"><?php echo $totalCustomers; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Rechnungen gesamt</h3>
+        <h3><?php echo __('total_invoices'); ?></h3>
         <div class="value"><?php echo $totalInvoices; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Bezahlte Rechnungen</h3>
+        <h3><?php echo __('paid_invoices'); ?></h3>
         <div class="value" style="color: #27ae60;"><?php echo $paidInvoices; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Überfällige Rechnungen</h3>
+        <h3><?php echo __('overdue_invoices'); ?></h3>
         <div class="value" style="color: #e74c3c;"><?php echo $overdueInvoices; ?></div>
     </div>
 </div>
 
 <div class="stats-grid">
     <div class="stat-card">
-        <h3>Gesamtumsatz (<?php echo date('Y'); ?>)</h3>
+        <h3><?php echo __('total_revenue'); ?> (<?php echo date('Y'); ?>)</h3>
         <div class="value"><?php echo number_format($totalRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Offene Beträge</h3>
+        <h3><?php echo __('open_amount'); ?></h3>
         <div class="value" style="color: #e67e22;"><?php echo number_format($openAmount, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Erhaltene Zahlungen</h3>
+        <h3><?php echo __('recent_payments'); ?></h3>
         <div class="value" style="color: #27ae60;"><?php echo $paymentStats['total_payments'] ?? 0; ?></div>
     </div>
     <div class="stat-card">
-        <h3>Zahlungssumme (<?php echo date('Y'); ?>)</h3>
+        <h3><?php echo __('total_amount'); ?> (<?php echo date('Y'); ?>)</h3>
         <div class="value"><?php echo number_format($paymentStats['total_amount'] ?? 0, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
 </div>
 
 <div class="card">
-    <h2>Aktuelle Rechnungen</h2>
-    <a href="?page=invoice_edit&action=new" class="btn btn-success">Neue Rechnung</a>
+    <h2><?php echo __('recent_invoices'); ?></h2>
+    <a href="?page=invoice_edit&action=new" class="btn btn-success"><?php echo __('new_invoice'); ?></a>
     
     <?php if (empty($recentInvoices)): ?>
-        <p style="margin-top: 20px;">Noch keine Rechnungen vorhanden.</p>
+        <p style="margin-top: 20px;"><?php echo __('no_invoices_yet'); ?></p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Rechnungsnr.</th>
-                    <th>Kunde</th>
-                    <th>Datum</th>
-                    <th>Fällig am</th>
-                    <th>Betrag</th>
-                    <th>Status</th>
-                    <th>Aktionen</th>
+                    <th><?php echo __('invoice_number'); ?></th>
+                    <th><?php echo __('customer'); ?></th>
+                    <th><?php echo __('date'); ?></th>
+                    <th><?php echo __('due_on'); ?></th>
+                    <th><?php echo __('amount'); ?></th>
+                    <th><?php echo __('status'); ?></th>
+                    <th><?php echo __('actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -89,15 +89,15 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
                         <td><?php echo date('d.m.Y', strtotime($invoice['invoice_date'])); ?></td>
                         <td><?php echo date('d.m.Y', strtotime($invoice['due_date'])); ?></td>
                         <td><?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
-                        <td><span class="status-badge status-<?php echo $invoice['status']; ?>"><?php echo ucfirst($invoice['status']); ?></span></td>
+                        <td><span class="status-badge status-<?php echo $invoice['status']; ?>"><?php echo __('status_' . $invoice['status']); ?></span></td>
                         <td class="action-links">
                             <?php if ($invoice['status'] === 'paid'): ?>
-                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Anzeigen</a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small"><?php echo __('view'); ?></a>
                             <?php else: ?>
-                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Bearbeiten</a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
                             <?php endif; ?>
                             <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
-                            <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('Möchten Sie diese Rechnung wirklich kopieren?');">Kopieren</a>
+                            <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('<?php echo __('copy_invoice_confirm'); ?>')"><?php echo __('copy'); ?></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
