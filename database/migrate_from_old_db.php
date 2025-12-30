@@ -217,7 +217,6 @@ try {
     // Alte Kunden auslesen
     $oldCustomers = $oldDb->query("
         SELECT * FROM addressbook 
-        WHERE CANCELED = 0 OR CANCELED IS NULL
         ORDER BY MYID ASC
     ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldCustomers) . " Kunden\n";
@@ -275,7 +274,6 @@ try {
     // Alte Rechnungen auslesen
     $oldInvoices = $oldDb->query("
         SELECT * FROM invoice 
-        WHERE CANCELED = 0 OR CANCELED IS NULL
         ORDER BY INVOICEID ASC
     ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldInvoices) . " Rechnungen\n";
@@ -400,7 +398,7 @@ try {
     // Alte Zahlungen auslesen
     $oldPayments = $oldDb->query("
         SELECT * FROM payment 
-        WHERE (CANCELED = 0 OR CANCELED IS NULL) AND SUM_PAID > 0
+        WHERE SUM_PAID > 0
         ORDER BY PAYMENTID ASC
     ")->fetchAll(PDO::FETCH_ASSOC);
     echo "Gefunden: " . count($oldPayments) . " Zahlungen\n";
