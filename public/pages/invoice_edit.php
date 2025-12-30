@@ -32,35 +32,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $message = '<div class="alert alert-error">Fehler beim Aktualisieren des Status.</div>';
                 }
-                $_SERVER['REQUEST_METHOD'] = 'GET'; // Verarbeitung stoppen
+                // Verarbeitung beenden - nicht weiter zum normalen Update
+            } else {
+                // Normale Bearbeitung für nicht gesperrte Rechnungen
+                $data = [
+                    'invoice_number' => $_POST['invoice_number'],
+                    'customer_id' => $_POST['customer_id'],
+                    'invoice_date' => $_POST['invoice_date'],
+                    'service_date' => $_POST['service_date'],
+                    'due_date' => $_POST['due_date'],
+                    'status' => $_POST['status'],
+                    'tax_rate' => $_POST['tax_rate'],
+                    'notes' => $_POST['notes'],
+                    'payment_terms' => $_POST['payment_terms']
+                ];
+                
+                $result = $invoiceObj->update($invoiceId, $data);
+                if ($result) {
+                    $message = '<div class="alert alert-success">Rechnung erfolgreich aktualisiert.</div>';
+                } else {
+                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Rechnung.</div>';
+                }
             }
-        }
-        $data = [
-            'invoice_number' => $_POST['invoice_number'],
-            'customer_id' => $_POST['customer_id'],
-            'invoice_date' => $_POST['invoice_date'],
-            'service_date' => $_POST['service_date'],
-            'due_date' => $_POST['due_date'],
-            'status' => $_POST['status'],
-            'tax_rate' => $_POST['tax_rate'],
-            'notes' => $_POST['notes'],
-            'payment_terms' => $_POST['payment_terms']
-        ];
-        
-        if ($action === 'new') {
+        } else {
+            // Neue Rechnung erstellen
+            $data = [
+                'invoice_number' => $_POST['invoice_number'],
+                'customer_id' => $_POST['customer_id'],
+                'invoice_date' => $_POST['invoice_date'],
+                'service_date' => $_POST['service_date'],
+                'due_date' => $_POST['due_date'],
+                'status' => $_POST['status'],
+                'tax_rate' => $_POST['tax_rate'],
+                'notes' => $_POST['notes'],
+                'payment_terms' => $_POST['payment_terms']
+            ];
+            
             $result = $invoiceObj->create($data);
             if ($result) {
                 header('Location: ?page=invoice_edit&id=' . $result);
                 exit;
             } else {
                 $message = '<div class="alert alert-error">Fehler beim Erstellen der Rechnung.</div>';
-            }
-        } else {
-            $result = $invoiceObj->update($invoiceId, $data);
-            if ($result) {
-                $message = '<div class="alert alert-success">Rechnung erfolgreich aktualisiert.</div>';
-            } else {
-                $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Rechnung.</div>';
             }
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_item'])) {
