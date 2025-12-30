@@ -27,7 +27,7 @@ define('PDF_FONT_SIZE', 10);
 
 // Währung
 define('CURRENCY', 'EUR');
-define('CURRENCY_SYMBOL', 'EUR');
+define('CURRENCY_SYMBOL', '&euro;');
 
 // Datumsformat
 define('DATE_FORMAT', 'd.m.Y');
