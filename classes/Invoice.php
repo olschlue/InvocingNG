@@ -200,11 +200,13 @@ class Invoice {
         $lastInvoice = $stmt->fetch();
         
         if ($lastInvoice) {
-            $lastNumber = (int) substr($lastInvoice['invoice_number'], -5);
-            return $year . '-' . str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+            // Extrahiere die Nummer am Ende (ohne führende Nullen)
+            preg_match('/(\d+)$/', $lastInvoice['invoice_number'], $matches);
+            $lastNumber = isset($matches[1]) ? (int)$matches[1] : 0;
+            return $year . '-' . ($lastNumber + 1);
         }
         
-        return $year . '-00001';
+        return $year . '-1';
     }
     
     /**

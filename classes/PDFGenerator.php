@@ -67,7 +67,8 @@ class InvoicePDF extends FPDF {
         $this->Cell(100, 5, '', 0, 0);
         $this->Cell(40, 5, 'Rechnungsnummer:', 0, 0);
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(0, 5, $this->invoice['invoice_number'], 0, 1);
+        $invoiceNumberDisplay = (defined('INVOICE_NUMBER_PREFIX') ? INVOICE_NUMBER_PREFIX : '') . $this->invoice['invoice_number'];
+        $this->Cell(0, 5, $invoiceNumberDisplay, 0, 1);
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
