@@ -2,12 +2,20 @@
 $paymentObj = new Payment();
 $invoiceObj = new Invoice();
 
+// Erfolgsmeldung anzeigen
+$message = '';
+if (isset($_GET['success']) && $_GET['success'] == 1) {
+    $message = '<div class="alert alert-success">' . __('payment_saved') . '</div>';
+}
+
 // Alle Zahlungen abrufen
 $payments = $paymentObj->getAll();
 ?>
 
 <div class="card">
     <h2><?php echo __('payment_management'); ?></h2>
+    
+    <?php echo $message; ?>
     <a href="?page=payment_edit&action=new" class="btn btn-success"><?php echo __('new_payment'); ?></a>
     
     <?php if (empty($payments)): ?>

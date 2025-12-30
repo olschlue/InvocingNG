@@ -13,25 +13,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'payment_date' => $_POST['payment_date'],
         'amount' => $_POST['amount'],
         'payment_method' => $_POST['payment_method'],
-        'reference' => $_POST['reference'],
-        'notes' => $_POST['notes']
+        'reference' => $_POST['reference'] ?? '',
+        'notes' => $_POST['notes'] ?? ''
     ];
     
     if ($action === 'new') {
-        $result = $paymentObj->create($data);
-        if ($result) {
-            header('Location: ?page=payments');
-            exit;
-        } else {
-            $message = '<div class="alert alert-error">Fehler beim Erstellen der Zahlung.</div>';
+        try {
+            $result = $paymentObj->create($data);
+            if ($result) {
+                // Erfolgreicher Redirect
+                header('Location: ?page=payments&success=1');
+                exit;
+            } else {
+                $message = '<div class="alert alert-error">' . __('error') . ': ' . __('error_payment_create') . '</div>';
+            }
+        } catch (Exception $e) {
+            $message = '<div class="alert alert-error">' . __('error') . ': ' . $e->getMessage() . '</div>';
         }
     } else {
-        $result = $paymentObj->update($paymentId, $data);
-        if ($result) {
-            $message = '<div class="alert alert-success">Zahlung erfolgreich aktualisiert.</div>';
-            $payment = $paymentObj->getById($paymentId);
-        } else {
-            $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Zahlung.</div>';
+        try {
+            $result = $paymentObj->update($paymentId, $data);
+            if ($result) {
+                $message = '<div class="alert alert-success">' . __('payment_saved') . '</div>';
+                $payment = $paymentObj->getById($paymentId);
+            } else {
+                $message = '<div class="alert alert-error">' . __('error') . ': ' . __('error_payment_update') . '</div>';
+            }
+        } catch (Exception $e) {
+            $message = '<div class="alert alert-error">' . __('error') . ': ' . $e->getMessage() . '</div>';
         }
     }
 }

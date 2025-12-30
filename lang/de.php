@@ -134,4 +134,6 @@ $lang = [
     'error_customer_not_found' => 'Kunde nicht gefunden.',
     'error_invoice_not_found' => 'Rechnung nicht gefunden.',
     'error_payment_not_found' => 'Zahlung nicht gefunden.',
+    'error_payment_create' => 'Fehler beim Erstellen der Zahlung.',
+    'error_payment_update' => 'Fehler beim Aktualisieren der Zahlung.',
 ];
