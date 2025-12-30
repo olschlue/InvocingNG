@@ -76,6 +76,23 @@ if ($action === 'edit' && $paymentId) {
 
 // Alle offenen Rechnungen laden
 $allInvoices = $invoiceObj->getAll();
+
+// Rechnungsdaten für JavaScript vorbereiten
+$invoiceData = [];
+foreach ($allInvoices as $inv) {
+    $totalPaid = $paymentObj->getTotalPaidForInvoice($inv['id']);
+    $customerName = !empty($inv['company_name']) 
+        ? $inv['company_name'] 
+        : $inv['first_name'] . ' ' . $inv['last_name'];
+    
+    $invoiceData[$inv['id']] = [
+        'total_amount' => $inv['total_amount'],
+        'total_paid' => $totalPaid,
+        'remaining' => $inv['total_amount'] - $totalPaid,
+        'invoice_number' => $inv['invoice_number'],
+        'customer_name' => $customerName
+    ];
+}
 ?>
 
 <div class="card">
@@ -86,7 +103,7 @@ $allInvoices = $invoiceObj->getAll();
     <form method="POST">
         <div class="form-group">
             <label>Rechnung *</label>
-            <select name="invoice_id" required>
+            <select name="invoice_id" id="invoice_select" required>
                 <option value="">-- Rechnung auswählen --</option>
                 <?php foreach ($allInvoices as $invoice): ?>
                     <option value="<?php echo $invoice['id']; ?>" <?php echo ($payment['invoice_id'] == $invoice['id']) ? 'selected' : ''; ?>>
@@ -104,20 +121,46 @@ $allInvoices = $invoiceObj->getAll();
             
             <div class="form-group">
                 <label>Betrag *</label>
-                <input type="number" step="0.01" name="amount" value="<?php echo $payment['amount']; ?>" required>
-            </div>
+                <input type="number" step="0.01"id="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
         </div>
         
         <div class="form-group">
-            <label>Zahlungsmethode</label>
-            <select name="payment_method">
-                <option value="bank_transfer" <?php echo ($payment['payment_method'] == 'bank_transfer') ? 'selected' : ''; ?>>Banküberweisung</option>
-                <option value="cash" <?php echo ($payment['payment_method'] == 'cash') ? 'selected' : ''; ?>>Barzahlung</option>
-                <option value="credit_card" <?php echo ($payment['payment_method'] == 'credit_card') ? 'selected' : ''; ?>>Kreditkarte</option>
-                <option value="paypal" <?php echo ($payment['payment_method'] == 'paypal') ? 'selected' : ''; ?>>PayPal</option>
-                <option value="other" <?php echo ($payment['payment_method'] == 'other') ? 'selected' : ''; ?>>Sonstiges</option>
-            </select>
+            <label>Notizen</label>
+            <textarea name="notes"><?php echo htmlspecialchars($payment['notes']); ?></textarea>
         </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-success">Speichern</button>
+            <a href="?page=payments" class="btn">Abbrechen</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Rechnungsdaten als JSON
+const invoiceData = <?php echo json_encode($invoiceData); ?>;
+
+// Event Listener für Rechnungsauswahl
+document.getElementById('invoice_select').addEventListener('change', function() {
+    const invoiceId = this.value;
+    const amountField = document.querySelector('input[name="amount"]');
+    const referenceField = document.getElementById('reference');
+    
+    if (invoiceId && invoiceData[invoiceId]) {
+        const data = invoiceData[invoiceId];
+        
+        // Betrag vorbelegen mit verbleibendem Betrag
+        amountField.value = data.remaining.toFixed(2);
+        
+        // Referenz vorbelegen
+        referenceField.value = 'Rechnung ' + data.invoice_number + ' - ' + data.customer_name;
+    } else {
+        // Felder leeren wenn keine Rechnung ausgewählt
+        amountField.value = '';
+        referenceField.value = '';
+    }
+});
+</script   </div>
         
         <div class="form-group">
             <label>Referenz / Verwendungszweck</label>
