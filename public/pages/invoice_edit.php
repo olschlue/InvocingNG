@@ -22,9 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'edit' && $invoiceId) {
             $currentInvoice = $invoiceObj->getById($invoiceId);
             if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
-                // Nur Status-Änderung erlauben
+                // Nur Status-Änderung erlauben - alle anderen Felder von aktueller Rechnung übernehmen
                 $data = [
-                    'status' => $_POST['status']
+                    'invoice_number' => $currentInvoice['invoice_number'],
+                    'customer_id' => $currentInvoice['customer_id'],
+                    'invoice_date' => $currentInvoice['invoice_date'],
+                    'service_date' => $currentInvoice['service_date'],
+                    'due_date' => $currentInvoice['due_date'],
+                    'status' => $_POST['status'],
+                    'tax_rate' => $currentInvoice['tax_rate'],
+                    'notes' => $currentInvoice['notes'],
+                    'payment_terms' => $currentInvoice['payment_terms']
                 ];
                 $result = $invoiceObj->update($invoiceId, $data);
                 if ($result) {
