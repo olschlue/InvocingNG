@@ -293,16 +293,9 @@ try {
                 continue;
             }
             
-            // Status ermitteln
-            if (!empty($oldInvoice['CANCELED']) && $oldInvoice['CANCELED'] > 0) {
-                $status = 'cancelled';
-            } elseif (!empty($oldInvoice['PAID']) && $oldInvoice['PAID'] > 0) {
-                $status = 'paid';
-            } elseif (!empty($oldInvoice['INVOICE_MAILED']) || !empty($oldInvoice['INVOICE_PRINTED'])) {
-                $status = 'sent';
-            } else {
-                $status = 'draft';
-            }
+            // Status: Alle Rechnungen werden als 'sent' migriert
+            // Nach Zahlungsmigration werden bezahlte Rechnungen auf 'paid' gesetzt
+            $status = 'sent';
             
             // Rechnungsnummer generieren
             $invoiceNumber = date('Y', strtotime($oldInvoice['INVOICE_DATE'])) . '-' . $oldInvoice['INVOICEID'];
@@ -461,7 +454,22 @@ try {
     }
     echo "\n\n";
     
-    // ===== ZUSAMMENFASSUNG =====
+    // ===== RECHNUNGSSTATUS AKTUALISIEREN =====
+    echo "=== RECHNUNGSSTATUS AKTUALISIEREN ===\n";
+    
+    // Setze alle Rechnungen mit Zahlungen auf 'paid'
+    $updateStmt = $newDb->exec("
+        UPDATE invoices 
+        SET status = 'paid' 
+        WHERE id IN (
+            SELECT DISTINCT invoice_id 
+            FROM payments
+        )
+    ");
+    
+    echo "✓ $updateStmt Rechnungen auf Status 'paid' gesetzt\n\n";
+    
+    // ===== ZUSAMMENFASSUNG ==="
     echo "=== MIGRATION ABGESCHLOSSEN ===\n";
     echo "Kunden:     $migratedCustomers\n";
     echo "Rechnungen: $migratedInvoices\n";
