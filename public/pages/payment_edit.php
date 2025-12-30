@@ -45,8 +45,9 @@ if ($action === 'edit' && $paymentId) {
 } elseif ($action === 'new') {
     $invoiceIdFromUrl = $_GET['invoice_id'] ?? '';
     $prefilledAmount = '';
+    $prefilledReference = '';
     
-    // Wenn eine Rechnung aus der URL übergeben wurde, lade deren Betrag
+    // Wenn eine Rechnung aus der URL übergeben wurde, lade deren Betrag und Daten
     if ($invoiceIdFromUrl) {
         $invoice = $invoiceObj->getById($invoiceIdFromUrl);
         if ($invoice) {
@@ -54,6 +55,12 @@ if ($action === 'edit' && $paymentId) {
             $totalPaid = $paymentObj->getTotalPaidForInvoice($invoiceIdFromUrl);
             // Verbleibender Betrag
             $prefilledAmount = $invoice['total_amount'] - $totalPaid;
+            
+            // Zweck vorbelegen mit Rechnungsnummer und Kunde
+            $customerName = !empty($invoice['company_name']) 
+                ? $invoice['company_name'] 
+                : $invoice['first_name'] . ' ' . $invoice['last_name'];
+            $prefilledReference = 'Rechnung ' . $invoice['invoice_number'] . ' - ' . $customerName;
         }
     }
     
@@ -62,7 +69,7 @@ if ($action === 'edit' && $paymentId) {
         'payment_date' => date('Y-m-d'),
         'amount' => $prefilledAmount,
         'payment_method' => 'bank_transfer',
-        'reference' => '',
+        'reference' => $prefilledReference,
         'notes' => ''
     ];
 }
