@@ -344,12 +344,8 @@ try {
             
             $position = 1;
             foreach ($oldItems->fetchAll(PDO::FETCH_ASSOC) as $oldItem) {
-                // Steuersatz aus TAX ermitteln (TAX ist ID in tax-Tabelle)
-                $taxRate = 19.00; // Standard
-                if (!empty($oldItem['TAX_MULTI'])) {
-                    // TAX_MULTI ist z.B. 1.19 für 19% MwSt
-                    $taxRate = ($oldItem['TAX_MULTI'] - 1) * 100;
-                }
+                // Steuersatz ist immer 19%
+                $taxRate = 19.00;
                 
                 $quantity = floatval($oldItem['POS_QUANTITY'] ?? 1);
                 $unitPrice = floatval($oldItem['POS_PRICE'] ?? 0);
