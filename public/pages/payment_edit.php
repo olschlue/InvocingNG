@@ -74,8 +74,12 @@ if ($action === 'edit' && $paymentId) {
     ];
 }
 
-// Alle offenen Rechnungen laden
+// Alle offenen Rechnungen laden (nur sent und overdue, nicht draft und paid)
 $allInvoices = $invoiceObj->getAll();
+// Filtere nur Rechnungen die für Zahlungen relevant sind
+$allInvoices = array_filter($allInvoices, function($inv) {
+    return in_array($inv['status'], ['sent', 'overdue']);
+});
 
 // Rechnungsdaten für JavaScript vorbereiten
 $invoiceData = [];
