@@ -56,6 +56,7 @@ $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->get
                         <td class="action-links">
                             <?php if ($invoice['status'] !== 'paid'): ?>
                                 <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Bearbeiten</a>
+                                <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoice['id']; ?>" class="btn btn-small" style="background-color: #27ae60;">Zahlung erfassen</a>
                             <?php endif; ?>
                             <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
                             <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('Möchten Sie diese Rechnung wirklich kopieren?');">Kopieren</a>

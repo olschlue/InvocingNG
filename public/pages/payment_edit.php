@@ -43,10 +43,24 @@ if ($action === 'edit' && $paymentId) {
         die('Zahlung nicht gefunden');
     }
 } elseif ($action === 'new') {
+    $invoiceIdFromUrl = $_GET['invoice_id'] ?? '';
+    $prefilledAmount = '';
+    
+    // Wenn eine Rechnung aus der URL übergeben wurde, lade deren Betrag
+    if ($invoiceIdFromUrl) {
+        $invoice = $invoiceObj->getById($invoiceIdFromUrl);
+        if ($invoice) {
+            // Berechne bereits bezahlten Betrag
+            $totalPaid = $paymentObj->getTotalPaidForInvoice($invoiceIdFromUrl);
+            // Verbleibender Betrag
+            $prefilledAmount = $invoice['total_amount'] - $totalPaid;
+        }
+    }
+    
     $payment = [
-        'invoice_id' => $_GET['invoice_id'] ?? '',
+        'invoice_id' => $invoiceIdFromUrl,
         'payment_date' => date('Y-m-d'),
-        'amount' => '',
+        'amount' => $prefilledAmount,
         'payment_method' => 'bank_transfer',
         'reference' => '',
         'notes' => ''

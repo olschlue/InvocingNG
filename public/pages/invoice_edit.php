@@ -187,7 +187,7 @@ $customers = $customerObj->getAll();
                 <select name="status">
                     <option value="draft" <?php echo ($invoice['status'] == 'draft') ? 'selected' : ''; ?>>Entwurf</option>
                     <option value="sent" <?php echo ($invoice['status'] == 'sent') ? 'selected' : ''; ?>>Versendet</option>
-                    <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?>>Bezahlt</option>
+                    <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?> disabled>Bezahlt (nur durch Zahlungserfassung)</option>
                     <option value="overdue" <?php echo ($invoice['status'] == 'overdue') ? 'selected' : ''; ?>>Überfällig</option>
                     <option value="cancelled" <?php echo ($invoice['status'] == 'cancelled') ? 'selected' : ''; ?>>Storniert</option>
                 </select>
@@ -214,6 +214,9 @@ $customers = $customerObj->getAll();
             <a href="?page=invoices" class="btn">Abbrechen</a>
             <?php if ($action === 'edit'): ?>
                 <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF Vorschau</a>
+                <?php if ($invoice['status'] !== 'paid'): ?>
+                    <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #27ae60;">Zahlung erfassen</a>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </form>
