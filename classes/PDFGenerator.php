@@ -65,29 +65,29 @@ class InvoicePDF extends FPDF {
         // Rechnungsdaten
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(40, 5, 'Rechnungsnummer:', 0, 0);
+        $this->Cell(45, 5, 'Rechnungsnummer:', 0, 0);
         $this->SetFont('Arial', 'B', 9);
         $invoiceNumberDisplay = (defined('INVOICE_NUMBER_PREFIX') ? INVOICE_NUMBER_PREFIX : '') . $this->invoice['invoice_number'];
         $this->Cell(0, 5, $invoiceNumberDisplay, 0, 1);
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(40, 5, 'Rechnungsdatum:', 0, 0);
+        $this->Cell(45, 5, 'Rechnungsdatum:', 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['invoice_date'])), 0, 1);
         
         if (!empty($this->invoice['service_date'])) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(40, 5, 'Leistungsdatum:', 0, 0);
+            $this->Cell(45, 5, 'Leistungsdatum:', 0, 0);
             $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['service_date'])), 0, 1);
         }
         
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(40, 5, $this->convertEncoding('Fälligkeitsdatum:'), 0, 0);
+        $this->Cell(45, 5, $this->convertEncoding('Fälligkeitsdatum:'), 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
         
         if (!empty($this->customer['customer_number'])) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(40, 5, 'Kundennummer:', 0, 0);
+            $this->Cell(45, 5, 'Kundennummer:', 0, 0);
             $this->Cell(0, 5, $this->customer['customer_number'], 0, 1);
         }
         
