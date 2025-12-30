@@ -62,15 +62,16 @@ class Invoice {
      */
     public function create($data) {
         $sql = "INSERT INTO invoices (
-                    invoice_number, customer_id, invoice_date, due_date, 
+                    invoice_number, customer_id, invoice_date, service_date, due_date, 
                     status, tax_rate, notes, payment_terms
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         $result = $stmt->execute([
             $data['invoice_number'],
             $data['customer_id'],
             $data['invoice_date'],
+            $data['service_date'] ?? null,
             $data['due_date'],
             $data['status'] ?? 'draft',
             $data['tax_rate'] ?? 19.00,
@@ -87,7 +88,7 @@ class Invoice {
     public function update($id, $data) {
         $sql = "UPDATE invoices SET 
                     invoice_number = ?, customer_id = ?, invoice_date = ?, 
-                    due_date = ?, status = ?, tax_rate = ?, notes = ?, 
+                    service_date = ?, due_date = ?, status = ?, tax_rate = ?, notes = ?, 
                     payment_terms = ?
                 WHERE id = ?";
         
@@ -96,6 +97,7 @@ class Invoice {
             $data['invoice_number'],
             $data['customer_id'],
             $data['invoice_date'],
+            $data['service_date'] ?? null,
             $data['due_date'],
             $data['status'] ?? 'draft',
             $data['tax_rate'] ?? 19.00,
@@ -226,5 +228,57 @@ class Invoice {
             ORDER BY i.due_date ASC
         ");
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Rechnung kopieren (duplizieren)
+     */
+    public function duplicate($id) {
+        // Original-Rechnung abrufen
+        $original = $this->getById($id);
+        if (!$original) {
+            return false;
+        }
+        
+        // Original-Positionen abrufen
+        $originalItems = $this->getItems($id);
+        
+        // Neue Rechnungsnummer generieren
+        $newInvoiceNumber = $this->generateInvoiceNumber();
+        
+        // Neue Rechnung erstellen
+        $newData = [
+            'invoice_number' => $newInvoiceNumber,
+            'customer_id' => $original['customer_id'],
+            'invoice_date' => date('Y-m-d'),
+            'service_date' => date('Y-m-d'),
+            'due_date' => date('Y-m-d', strtotime('+14 days')),
+            'status' => 'draft',
+            'tax_rate' => $original['tax_rate'],
+            'notes' => $original['notes'],
+            'payment_terms' => $original['payment_terms']
+        ];
+        
+        $newInvoiceId = $this->create($newData);
+        
+        if ($newInvoiceId) {
+            // Positionen kopieren
+            foreach ($originalItems as $item) {
+                $itemData = [
+                    'description' => $item['description'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'tax_rate' => $item['tax_rate']
+                ];
+                $this->addItem($newInvoiceId, $itemData);
+            }
+            
+            // Summen neu berechnen
+            $this->calculateTotals($newInvoiceId);
+            
+            return $newInvoiceId;
+        }
+        
+        return false;
     }
 }

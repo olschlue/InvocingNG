@@ -1,6 +1,15 @@
 <?php
 $invoiceObj = new Invoice();
 
+// Rechnung kopieren
+if (isset($_GET['action']) && $_GET['action'] === 'copy' && isset($_GET['id'])) {
+    $newInvoiceId = $invoiceObj->duplicate($_GET['id']);
+    if ($newInvoiceId) {
+        header('Location: ?page=invoice_edit&id=' . $newInvoiceId);
+        exit;
+    }
+}
+
 // Filter anwenden
 $filter = $_GET['filter'] ?? 'all';
 $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->getAll($filter !== 'all' ? $filter : null);
@@ -47,6 +56,7 @@ $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->get
                         <td class="action-links">
                             <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small">Bearbeiten</a>
                             <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
+                            <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('Möchten Sie diese Rechnung wirklich kopieren?');">Kopieren</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

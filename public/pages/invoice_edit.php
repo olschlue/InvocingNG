@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'invoice_number' => $_POST['invoice_number'],
             'customer_id' => $_POST['customer_id'],
             'invoice_date' => $_POST['invoice_date'],
+            'service_date' => $_POST['service_date'],
             'due_date' => $_POST['due_date'],
             'status' => $_POST['status'],
             'tax_rate' => $_POST['tax_rate'],
@@ -60,6 +61,7 @@ if ($action === 'edit' && $invoiceId) {
         'invoice_number' => $invoiceObj->generateInvoiceNumber(),
         'customer_id' => '',
         'invoice_date' => date('Y-m-d'),
+        'service_date' => date('Y-m-d'),
         'due_date' => date('Y-m-d', strtotime('+14 days')),
         'status' => 'draft',
         'tax_rate' => 19.00,
@@ -104,10 +106,17 @@ $customers = $customerObj->getAll();
             </div>
             
             <div class="form-group">
+                <label>Leistungsdatum</label>
+                <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>">
+            </div>
+            
+            <div class="form-group">
                 <label>Fälligkeitsdatum *</label>
                 <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required>
             </div>
-            
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Status</label>
                 <select name="status">
@@ -118,11 +127,11 @@ $customers = $customerObj->getAll();
                     <option value="cancelled" <?php echo ($invoice['status'] == 'cancelled') ? 'selected' : ''; ?>>Storniert</option>
                 </select>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label>Steuersatz (%)</label>
-            <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>">
+            
+            <div class="form-group">
+                <label>Steuersatz (%)</label>
+                <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>">
+            </div>
         </div>
         
         <div class="form-group">

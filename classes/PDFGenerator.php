@@ -33,60 +33,20 @@ class InvoicePDF extends FPDF {
             $this->Image(PDF_BACKGROUND, 0, 0, 210, 297);
         }
         
-        // Logo (falls vorhanden)
-        if (!empty($this->company['logo_path']) && file_exists($this->company['logo_path'])) {
-            $this->Image($this->company['logo_path'], 10, 6, 30);
-        }
-        
-        // Firmeninfo rechts
-        $this->SetFont('Arial', 'B', 10);
-        $this->SetXY(120, 10);
-        $this->Cell(80, 5, $this->convertEncoding($this->company['company_name']), 0, 1, 'R');
-        
-        $this->SetFont('Arial', '', 8);
-        $this->SetX(120);
-        $this->Cell(80, 4, $this->convertEncoding($this->company['address_street']), 0, 1, 'R');
-        $this->SetX(120);
-        $this->Cell(80, 4, $this->convertEncoding($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 1, 'R');
-        $this->SetX(120);
-        $this->Cell(80, 4, 'Tel: ' . $this->company['phone'], 0, 1, 'R');
-        $this->SetX(120);
-        $this->Cell(80, 4, 'E-Mail: ' . $this->company['email'], 0, 1, 'R');
-        
         $this->Ln(10);
     }
     
     // Fußzeile
     function Footer() {
-        $this->SetY(-30);
-        $this->SetFont('Arial', '', 7);
-        $this->SetDrawColor(200, 200, 200);
-        $this->Line(10, $this->GetY(), 200, $this->GetY());
-        $this->Ln(2);
-        
-        // Bankverbindung und weitere Infos
-        $this->SetX(10);
-        $col1Width = 63;
-        $col2Width = 63;
-        $col3Width = 64;
-        
-        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['company_name']), 0, 0);
-        $this->Cell($col2Width, 4, 'IBAN: ' . $this->company['iban'], 0, 0);
-        $this->Cell($col3Width, 4, 'Steuernr.: ' . $this->company['tax_id'], 0, 1);
-        
-        $this->SetX(10);
-        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['address_street']), 0, 0);
-        $this->Cell($col2Width, 4, 'BIC: ' . $this->company['bic'], 0, 0);
-        $this->Cell($col3Width, 4, 'E-Mail: ' . $this->company['email'], 0, 1);
-        
-        $this->SetX(10);
-        $this->Cell($col1Width, 4, $this->convertEncoding($this->company['address_zip'] . ' ' . $this->company['address_city']), 0, 0);
-        $this->Cell($col2Width, 4, '', 0, 0);
-        $this->Cell($col3Width, 4, 'Tel: ' . $this->company['phone'], 0, 1);
+        // Kein Footer
     }
     
     // Rechnung erstellen
     public function createInvoice() {
+        // Ränder auf 25mm links und rechts setzen
+        $this->SetLeftMargin(25);
+        $this->SetRightMargin(25);
+        
         $this->AddPage();
         
         // Kundenadresse
@@ -115,6 +75,12 @@ class InvoicePDF extends FPDF {
         $this->Cell(40, 5, 'Rechnungsdatum:', 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['invoice_date'])), 0, 1);
         
+        if (!empty($this->invoice['service_date'])) {
+            $this->Cell(100, 5, '', 0, 0);
+            $this->Cell(40, 5, 'Leistungsdatum:', 0, 0);
+            $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['service_date'])), 0, 1);
+        }
+        
         $this->Cell(100, 5, '', 0, 0);
         $this->Cell(40, 5, $this->convertEncoding('Fälligkeitsdatum:'), 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
@@ -136,45 +102,45 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', 'B', 9);
         $this->SetFillColor(230, 230, 230);
         $this->Cell(10, 7, 'Pos', 1, 0, 'C', true);
-        $this->Cell(85, 7, 'Beschreibung', 1, 0, 'L', true);
-        $this->Cell(20, 7, 'Menge', 1, 0, 'C', true);
+        $this->Cell(70, 7, 'Beschreibung', 1, 0, 'L', true);
+        $this->Cell(18, 7, 'Menge', 1, 0, 'C', true);
         $this->Cell(28, 7, 'Einzelpreis', 1, 0, 'R', true);
         $this->Cell(17, 7, 'MwSt.', 1, 0, 'C', true);
-        $this->Cell(30, 7, 'Gesamt', 1, 1, 'R', true);
+        $this->Cell(27, 7, 'Gesamt', 1, 1, 'R', true);
         
         // Positionen
         $this->SetFont('Arial', '', 9);
         foreach ($this->items as $item) {
             $this->Cell(10, 6, $item['position'], 1, 0, 'C');
-            $this->Cell(85, 6, $this->convertEncoding($item['description']), 1, 0, 'L');
-            $this->Cell(20, 6, number_format($item['quantity'], 2, ',', '.'), 1, 0, 'C');
+            $this->Cell(70, 6, $this->convertEncoding($item['description']), 1, 0, 'L');
+            $this->Cell(18, 6, number_format($item['quantity'], 2, ',', '.'), 1, 0, 'C');
             $this->Cell(28, 6, number_format($item['unit_price'], 2, ',', '.') . ' ' . $this->euro, 1, 0, 'R');
             $this->Cell(17, 6, number_format($item['tax_rate'], 0) . '%', 1, 0, 'C');
-            $this->Cell(30, 6, number_format($item['total'], 2, ',', '.') . ' ' . $this->euro, 1, 1, 'R');
+            $this->Cell(27, 6, number_format($item['total'], 2, ',', '.') . ' ' . $this->euro, 1, 1, 'R');
         }
         
         // Summen
         $this->Ln(2);
         $this->SetFont('Arial', '', 9);
-        $this->Cell(133, 6, '', 0, 0);
+        $this->Cell(116, 6, '', 0, 0);
         $this->Cell(27, 6, 'Nettobetrag:', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(30, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
+        $this->Cell(27, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         $this->SetFont('Arial', '', 9);
-        $this->Cell(133, 6, '', 0, 0);
+        $this->Cell(116, 6, '', 0, 0);
         $this->Cell(27, 6, 'MwSt. (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(30, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
+        $this->Cell(27, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         $this->SetDrawColor(0, 0, 0);
-        $this->Line(133, $this->GetY(), 190, $this->GetY());
+        $this->Line(116, $this->GetY(), 170, $this->GetY());
         $this->Ln(1);
         
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(133, 7, '', 0, 0);
+        $this->Cell(116, 7, '', 0, 0);
         $this->Cell(27, 7, 'Gesamtbetrag:', 0, 0, 'R');
-        $this->Cell(30, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
+        $this->Cell(27, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' ' . $this->euro, 0, 1, 'R');
         
         // Zahlungshinweise
         if (!empty($this->invoice['payment_terms'])) {

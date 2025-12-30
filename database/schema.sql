@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS invoices (
     invoice_number VARCHAR(50) UNIQUE NOT NULL,
     customer_id INT NOT NULL,
     invoice_date DATE NOT NULL,
+    service_date DATE,
     due_date DATE NOT NULL,
     status ENUM('draft', 'sent', 'paid', 'overdue', 'cancelled') DEFAULT 'draft',
     subtotal DECIMAL(10, 2) DEFAULT 0.00,
