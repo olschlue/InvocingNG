@@ -255,7 +255,7 @@ try {
                 trim($oldCustomer['POSTALCODE'] ?? '') ?: null,
                 trim($oldCustomer['COUNTRY'] ?? 'Deutschland') ?: 'Deutschland',
                 trim($oldCustomer['TAXNR'] ?? '') ?: null,
-                trim($oldCustomer['NOTE'] ?? '') ?: null
+                null // Notizen werden nicht übernommen
             ]);
             
             $customerIdMap[$oldCustomer['MYID']] = $newDb->lastInsertId();
@@ -333,7 +333,7 @@ try {
                 $dueDate,
                 $status,
                 19.00, // Standard-Steuersatz
-                trim($oldInvoice['NOTE'] ?? '') ?: null,
+                null, // Notizen werden nicht übernommen
                 trim($oldInvoice['MESSAGE_DESC'] ?? '') ?: 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen.'
             ]);
             
@@ -444,7 +444,7 @@ try {
                 floatval($oldPayment['SUM_PAID'] ?? 0),
                 $method,
                 trim($oldPayment['METHOD_OF_PAY'] ?? '') ?: null,
-                trim($oldPayment['NOTE'] ?? '') ?: null
+                null // Notizen werden nicht übernommen
             ]);
             
             $migratedPayments++;
