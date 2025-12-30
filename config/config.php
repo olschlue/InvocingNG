@@ -4,10 +4,10 @@
  */
 
 // Datenbank-Konfiguration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'invoicing_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'db5019296438.hosting-data.io');
+define('DB_NAME', 'dbs15122806');
+define('DB_USER', 'dbu3932847');
+define('DB_PASS', 'EE97mnee##ee');
 define('DB_CHARSET', 'utf8mb4');
 
 // Applikations-Einstellungen
