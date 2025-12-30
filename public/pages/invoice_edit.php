@@ -18,6 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_invoice'])) {
+        // Prüfen ob Rechnung versendet ist - dann nur Status ändern
+        if ($action === 'edit' && $invoiceId) {
+            $currentInvoice = $invoiceObj->getById($invoiceId);
+            if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
+                // Nur Status-Änderung erlauben
+                $data = [
+                    'status' => $_POST['status']
+                ];
+                $result = $invoiceObj->update($invoiceId, $data);
+                if ($result) {
+                    $message = '<div class="alert alert-success">Status erfolgreich aktualisiert.</div>';
+                } else {
+                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren des Status.</div>';
+                }
+                $_SERVER['REQUEST_METHOD'] = 'GET'; // Verarbeitung stoppen
+            }
+        }
         $data = [
             'invoice_number' => $_POST['invoice_number'],
             'customer_id' => $_POST['customer_id'],
@@ -47,14 +64,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_item'])) {
-        $itemData = [
-            'description' => $_POST['item_description'],
-            'quantity' => $_POST['item_quantity'],
-            'unit_price' => $_POST['item_unit_price'],
-            'tax_rate' => $_POST['item_tax_rate']
-        ];
-        $invoiceObj->addItem($invoiceId, $itemData);
-        $message = '<div class="alert alert-success">Position hinzugefügt.</div>';
+        // Prüfen ob Rechnung gesperrt ist
+        if ($action === 'edit' && $invoiceId) {
+            $currentInvoice = $invoiceObj->getById($invoiceId);
+            if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
+                $message = '<div class="alert alert-error">Positionen können nicht mehr hinzugefügt werden, da die Rechnung bereits versendet wurde.</div>';
+            } else {
+                $itemData = [
+                    'description' => $_POST['item_description'],
+                    'quantity' => $_POST['item_quantity'],
+                    'unit_price' => $_POST['item_unit_price'],
+                    'tax_rate' => $_POST['item_tax_rate']
+                ];
+                $invoiceObj->addItem($invoiceId, $itemData);
+                $message = '<div class="alert alert-success">Position hinzugefügt.</div>';
+            }
+        }
     }
 }
 
@@ -67,10 +92,13 @@ if ($action === 'edit' && $invoiceId) {
     
     // Prüfen ob Rechnung bezahlt ist
     $isPaid = ($invoice['status'] === 'paid');
+    // Prüfen ob Rechnung versendet, bezahlt oder überfällig ist
+    $isLocked = in_array($invoice['status'], ['sent', 'paid', 'overdue']);
     
     $items = $invoiceObj->getItems($invoiceId);
 } elseif ($action === 'new') {
     $isPaid = false;
+    $isLocked = false;
     $invoice = [
         'invoice_number' => $invoiceObj->generateInvoiceNumber(),
         'customer_id' => '',
@@ -95,6 +123,10 @@ $customers = $customerObj->getAll();
         <div class="alert" style="background-color: #fff3cd; border-color: #ffc107; color: #856404; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
             <strong>Hinweis:</strong> Diese Rechnung wurde als bezahlt markiert und kann nicht mehr bearbeitet werden.
         </div>
+    <?php elseif (isset($isLocked) && $isLocked && !$isPaid): ?>
+        <div class="alert" style="background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+            <strong>Hinweis:</strong> Diese Rechnung wurde versendet und kann nicht mehr bearbeitet werden. Nur der Status kann noch geändert werden.
+        </div>
     <?php endif; ?>
     
     <?php echo $message; ?>
@@ -108,7 +140,7 @@ $customers = $customerObj->getAll();
             
             <div class="form-group">
                 <label>Kunde *</label>
-                <select name="customer_id" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <select name="customer_id" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
                     <option value="">-- Kunde auswählen --</option>
                     <?php foreach ($customers as $customer): ?>
                         <option value="<?php echo $customer['id']; ?>" <?php echo ($invoice['customer_id'] == $customer['id']) ? 'selected' : ''; ?>>
@@ -122,24 +154,24 @@ $customers = $customerObj->getAll();
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Rechnungsdatum *</label>
-                <input type="date" name="invoice_date" value="<?php echo $invoice['invoice_date']; ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <input type="date" name="invoice_date" value="<?php echo $invoice['invoice_date']; ?>" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
                 <label>Leistungsdatum</label>
-                <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <input type="date" name="service_date" value="<?php echo $invoice['service_date'] ?? ''; ?>" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
             
             <div class="form-group">
                 <label>Fälligkeitsdatum *</label>
-                <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <input type="date" name="due_date" value="<?php echo $invoice['due_date']; ?>" required <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Status</label>
-                <select name="status" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <select name="status">
                     <option value="draft" <?php echo ($invoice['status'] == 'draft') ? 'selected' : ''; ?>>Entwurf</option>
                     <option value="sent" <?php echo ($invoice['status'] == 'sent') ? 'selected' : ''; ?>>Versendet</option>
                     <option value="paid" <?php echo ($invoice['status'] == 'paid') ? 'selected' : ''; ?>>Bezahlt</option>
@@ -150,24 +182,22 @@ $customers = $customerObj->getAll();
             
             <div class="form-group">
                 <label>Steuersatz (%)</label>
-                <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
         </div>
         
         <div class="form-group">
             <label>Zahlungsbedingungen</label>
-            <textarea name="payment_terms" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['payment_terms']); ?></textarea>
+            <textarea name="payment_terms" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['payment_terms']); ?></textarea>
         </div>
         
         <div class="form-group">
             <label>Notizen</label>
-            <textarea name="notes" <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['notes']); ?></textarea>
+            <textarea name="notes" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>><?php echo htmlspecialchars($invoice['notes']); ?></textarea>
         </div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-            <?php if (!isset($isPaid) || !$isPaid): ?>
-                <button type="submit" name="save_invoice" class="btn btn-success">Speichern</button>
-            <?php endif; ?>
+            <button type="submit" name="save_invoice" class="btn btn-success">Speichern</button>
             <a href="?page=invoices" class="btn">Abbrechen</a>
             <?php if ($action === 'edit'): ?>
                 <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF Vorschau</a>
@@ -211,6 +241,7 @@ $customers = $customerObj->getAll();
             </div>
         <?php endif; ?>
         
+        <?php if (!isset($isLocked) || !$isLocked): ?>
         <h4 style="margin-top: 30px;">Position hinzufügen</h4>
         <form method="POST">
             <div style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; gap: 10px; align-items: end;">
@@ -233,5 +264,6 @@ $customers = $customerObj->getAll();
             </div>
             <button type="submit" name="add_item" class="btn btn-success">Position hinzufügen</button>
         </form>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
