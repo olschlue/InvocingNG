@@ -103,7 +103,7 @@ $customers = $customerObj->getAll();
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
                 <label>Rechnungsnummer *</label>
-                <input type="text" name="invoice_number" value="<?php echo htmlspecialchars($invoice['invoice_number']); ?>" required <?php echo (isset($isPaid) && $isPaid) ? 'disabled' : ''; ?>>
+                <input type="text" name="invoice_number" value="<?php echo htmlspecialchars($invoice['invoice_number']); ?>" required readonly style="background-color: #f5f5f5;">
             </div>
             
             <div class="form-group">
