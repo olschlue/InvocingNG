@@ -4,10 +4,16 @@ require_once '../config/config.php';
 // Seite ermitteln
 $page = $_GET['page'] ?? 'dashboard';
 
-// Header einbinden
-include 'includes/header.php';
+// PDF-Seite hat keinen Header/Footer
+if ($page === 'invoice_pdf') {
+    include 'pages/invoice_pdf.php';
+    exit;
+}
 
-// Entsprechende Seite laden
+// Output-Buffering starten, um Redirects vor der Ausgabe zu ermöglichen
+ob_start();
+
+// Entsprechende Seite laden (kann Redirects enthalten)
 switch ($page) {
     case 'customers':
         include 'pages/customers.php';
@@ -21,9 +27,6 @@ switch ($page) {
     case 'invoice_edit':
         include 'pages/invoice_edit.php';
         break;
-    case 'invoice_pdf':
-        include 'pages/invoice_pdf.php';
-        break;
     case 'payments':
         include 'pages/payments.php';
         break;
@@ -35,6 +38,15 @@ switch ($page) {
         include 'pages/dashboard.php';
         break;
 }
+
+// Seiten-Inhalt zwischenspeichern
+$content = ob_get_clean();
+
+// Jetzt Header einbinden
+include 'includes/header.php';
+
+// Inhalt ausgeben
+echo $content;
 
 // Footer einbinden
 include 'includes/footer.php';
