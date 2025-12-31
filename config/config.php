@@ -11,7 +11,7 @@ define('DB_PASS', 'EE97mnee##ee');
 define('DB_CHARSET', 'utf8mb4');
 
 // Applikations-Einstellungen
-define('APP_NAME', 'Schlüter & Friends');
+define('APP_NAME', 'Rechnungen');
 define('APP_VERSION', '1.0.0');
 define('BASE_PATH', dirname(__DIR__));
 define('BASE_URL', 'http://localhost');
