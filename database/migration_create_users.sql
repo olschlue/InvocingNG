@@ -1,3 +1,4 @@
+
 -- Migration: Benutzer-Tabelle erstellen
 -- Datum: 2025-12-31
 -- Beschreibung: Erstellt die users-Tabelle für Authentifizierung
@@ -14,5 +15,4 @@ CREATE TABLE IF NOT EXISTS users (
 -- Ersten Admin-Benutzer anlegen
 -- Passwort: ee97mnee
 INSERT INTO users (username, password_hash) 
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
--- Hinweis: Dieser Hash muss nach der Migration mit dem korrekten Hash ersetzt werden
+VALUES ('admin', '$2y$10$wPQYPMN3WpVoliNeEhKCselzfTbLHD5tX9EbH/THNlG5BLUdiQrs6');
