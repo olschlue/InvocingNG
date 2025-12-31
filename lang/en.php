@@ -28,6 +28,7 @@ $lang = [
     'recent_payments' => 'Recent Payments',
     'no_invoices_yet' => 'No invoices yet.',
     'no_payments_yet' => 'No payments yet.',
+    'revenue_development' => 'Revenue Development',
     
     // Users & Authentication
     'login' => 'Login',

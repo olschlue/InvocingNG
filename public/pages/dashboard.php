@@ -16,8 +16,18 @@ $previousYear = $currentYear - 1;
 $totalRevenue = 0;
 $previousYearRevenue = 0;
 $openAmount = 0;
+
+// Umsatz pro Jahr für Chart sammeln
+$revenueByYear = [];
 foreach ($allInvoices as $inv) {
     $invoiceYear = date('Y', strtotime($inv['invoice_date']));
+    
+    // Umsatz pro Jahr aggregieren
+    if (!isset($revenueByYear[$invoiceYear])) {
+        $revenueByYear[$invoiceYear] = 0;
+    }
+    $revenueByYear[$invoiceYear] += $inv['total_amount'];
+    
     // Nur Rechnungen des aktuellen Jahres für Gesamtumsatz
     if ($invoiceYear == $currentYear) {
         $totalRevenue += $inv['total_amount'];
@@ -31,6 +41,11 @@ foreach ($allInvoices as $inv) {
         $openAmount += $inv['total_amount'];
     }
 }
+
+// Jahre sortieren
+ksort($revenueByYear);
+$chartYears = array_keys($revenueByYear);
+$chartRevenues = array_values($revenueByYear);
 
 $paymentStats = $paymentObj->getStatistics();
 $recentInvoices = array_slice($allInvoices, 0, 5);
@@ -57,6 +72,10 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
 
 <div class="stats-grid">
     <div class="stat-card">
+        <h3><?php echo __('total_revenue'); ?> (<?php echo $previousYear; ?>)</h3>
+        <div class="value"><?php echo number_format($previousYearRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
+    </div>    
+    <div class="stat-card">
         <h3><?php echo __('total_revenue'); ?> (<?php echo date('Y'); ?>)</h3>
         <div class="value"><?php echo number_format($totalRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
@@ -67,11 +86,12 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
     <div class="stat-card">
         <h3><?php echo __('recent_payments'); ?></h3>
         <div class="value" style="color: #27ae60;"><?php echo $paymentStats['total_payments'] ?? 0; ?></div>
-    </div>
-    <div class="stat-card">
-        <h3><?php echo __('total_revenue'); ?> (<?php echo $previousYear; ?>)</h3>
-        <div class="value"><?php echo number_format($previousYearRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
-    </div>
+    </div>    
+</div>
+
+<div class="card">
+    <h2><?php echo __('revenue_development'); ?></h2>
+    <canvas id="revenueChart" style="max-height: 400px;"></canvas>
 </div>
 
 <div class="card">
@@ -128,3 +148,61 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         <a href="?page=invoices&filter=overdue">Jetzt anzeigen</a>
     </div>
 <?php endif; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('revenueChart').getContext('2d');
+const revenueChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($chartYears); ?>,
+        datasets: [{
+            label: '<?php echo __('total_revenue'); ?> (<?php echo APP_CURRENCY_SYMBOL; ?>)',
+            data: <?php echo json_encode($chartRevenues); ?>,
+            backgroundColor: 'rgba(52, 152, 219, 0.6)',
+            borderColor: 'rgba(52, 152, 219, 1)',
+            borderWidth: 2,
+            borderRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += new Intl.NumberFormat('de-DE', { 
+                            minimumFractionDigits: 2, 
+                            maximumFractionDigits: 2 
+                        }).format(context.parsed.y) + ' <?php echo APP_CURRENCY_SYMBOL; ?>';
+                        return label;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return new Intl.NumberFormat('de-DE', { 
+                            minimumFractionDigits: 0, 
+                            maximumFractionDigits: 0 
+                        }).format(value) + ' <?php echo APP_CURRENCY_SYMBOL; ?>';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+

@@ -28,6 +28,7 @@ $lang = [
     'recent_payments' => 'Aktuelle Zahlungen',
     'no_invoices_yet' => 'Noch keine Rechnungen vorhanden.',
     'no_payments_yet' => 'Noch keine Zahlungen vorhanden.',
+    'revenue_development' => 'Umsatzentwicklung',
     
     // Benutzer & Authentifizierung
     'login' => 'Anmelden',
