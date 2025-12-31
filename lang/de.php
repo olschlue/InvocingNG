@@ -123,10 +123,10 @@ $lang = [
     'description' => 'Beschreibung',
     'quantity' => 'Menge',
     'unit_price' => 'Einzelpreis',
-    'tax_rate' => 'MwSt.',
+    'tax_rate' => 'USt.',
     'total' => 'Gesamt',
     'subtotal' => 'Nettobetrag',
-    'tax_amount' => 'MwSt.',
+    'tax_amount' => 'USt.-Betrag',
     'total_amount' => 'Gesamtbetrag',
     'payment_terms' => 'Zahlungsbedingungen',
     
