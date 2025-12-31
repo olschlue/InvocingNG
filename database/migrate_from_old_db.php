@@ -256,7 +256,7 @@ try {
                 trim($oldCustomer['POSTALCODE'] ?? '') ?: null,
                 trim($oldCustomer['COUNTRY'] ?? 'Deutschland') ?: 'Deutschland',
                 trim($oldCustomer['TAXNR'] ?? '') ?: null,
-                null // Notizen werden nicht übernommen
+                "-" // Notizen werden nicht übernommen
             ]);
             
             $newCustomerId = $newDb->lastInsertId();
