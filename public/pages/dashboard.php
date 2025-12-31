@@ -70,12 +70,15 @@ ksort($paymentsByYear);
 $allYears = array_unique(array_merge(array_keys($revenueByYear), array_keys($paymentsByYear)));
 sort($allYears);
 
-// Werte für Chart vorbereiten
+// Nur die letzten 4 Jahre berücksichtigen
+$lastFourYears = array_slice($allYears, -4, 4, true);
+
+// Werte für Chart vorbereiten (nur letzte 4 Jahre)
 $chartYears = [];
 $chartRevenues = [];
 $chartPayments = [];
 
-foreach ($allYears as $year) {
+foreach ($lastFourYears as $year) {
     $chartYears[] = $year;
     $chartRevenues[] = $revenueByYear[$year] ?? 0;
     $chartPayments[] = $paymentsByYear[$year] ?? 0;
