@@ -28,14 +28,14 @@ define('PDF_BACKGROUND', BASE_PATH . '/public/assets/invoice_background.png');
 
 // Design & Branding
 define('APP_LOGO', BASE_PATH . '/public/assets/logo.png');
-define('APP_PRIMARY_COLOR', '#2c3e50');      // Hauptfarbe (dunkelblau)
-define('APP_SECONDARY_COLOR', '#34495e');    // Sekundärfarbe (grau-blau)
-define('APP_ACCENT_COLOR', '#3498db');       // Akzentfarbe (hellblau)
+define('APP_PRIMARY_COLOR', '#ffa011ff');      // Hauptfarbe (dunkelblau)
+define('APP_SECONDARY_COLOR', '#ffa0119f');    // Sekundärfarbe (grau-blau)
+define('APP_ACCENT_COLOR', '#e2e2e2ff');       // Akzentfarbe (hellblau)
 define('APP_SUCCESS_COLOR', '#27ae60');      // Erfolgsfarbe (grün)
 define('APP_WARNING_COLOR', '#f39c12');      // Warnfarbe (orange)
 define('APP_DANGER_COLOR', '#e74c3c');       // Fehlerfarbe (rot)
-define('APP_INFO_COLOR', '#17a2b8');         // Infofarbe (cyan)
-define('APP_BACKGROUND_COLOR', '#f5f5f5');   // Hintergrundfarbe
+define('APP_INFO_COLOR', '#8f5e87ff');         // Infofarbe (cyan)
+define('APP_BACKGROUND_COLOR', '#ffffff');   // Hintergrundfarbe
 define('APP_TEXT_COLOR', '#333333');         // Textfarbe
 
 // Währung

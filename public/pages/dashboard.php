@@ -50,7 +50,7 @@ $chartRevenues = array_values($revenueByYear);
 $paymentStats = $paymentObj->getStatistics();
 $recentInvoices = array_slice($allInvoices, 0, 5);
 ?>
-
+<!--
 <div class="stats-grid">
     <div class="stat-card">
         <h3><?php echo __('total_customers'); ?></h3>
@@ -69,12 +69,12 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         <div class="value" style="color: #e74c3c;"><?php echo $overdueInvoices; ?></div>
     </div>
 </div>
-
+-->
 <div class="stats-grid">
-    <div class="stat-card">
+    <!-- <div class="stat-card">
         <h3><?php echo __('total_revenue'); ?> (<?php echo $previousYear; ?>)</h3>
         <div class="value"><?php echo number_format($previousYearRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
-    </div>    
+    </div> -->    
     <div class="stat-card">
         <h3><?php echo __('total_revenue'); ?> (<?php echo date('Y'); ?>)</h3>
         <div class="value"><?php echo number_format($totalRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
@@ -86,7 +86,11 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
     <div class="stat-card">
         <h3><?php echo __('recent_payments'); ?></h3>
         <div class="value" style="color: #27ae60;"><?php echo $paymentStats['total_payments'] ?? 0; ?></div>
-    </div>    
+    </div> 
+    <div class="stat-card">
+        <h3><?php echo __('overdue_invoices'); ?></h3>
+        <div class="value" style="color: #e74c3c;"><?php echo $overdueInvoices; ?></div>
+    </div>   
 </div>
 
 <div class="card">
