@@ -222,6 +222,7 @@ try {
     echo "Gefunden: " . count($oldCustomers) . " Kunden\n";
     
     $customerIdMap = []; // Alte MYID => Neue ID
+    $customerCompanyMap = []; // Neue ID => Firmenname
     $migratedCustomers = 0;
     
     foreach ($oldCustomers as $oldCustomer) {
@@ -258,7 +259,12 @@ try {
                 null // Notizen werden nicht übernommen
             ]);
             
-            $customerIdMap[$oldCustomer['MYID']] = $newDb->lastInsertId();
+            $newCustomerId = $newDb->lastInsertId();
+            $customerIdMap[$oldCustomer['MYID']] = $newCustomerId;
+            
+            // Firmenname für Steuersatz-Logik speichern
+            $customerCompanyMap[$newCustomerId] = $companyName;
+            
             $migratedCustomers++;
             
         } catch (PDOException $e) {
@@ -310,6 +316,10 @@ try {
                 ? $oldInvoice['ACHIEVED_DATE']
                 : null;
             
+            // Steuersatz basierend auf Kunde festlegen
+            $customerCompany = $customerCompanyMap[$newCustomerId] ?? '';
+            $taxRate = (stripos($customerCompany, 'Lambeth Advice') !== false) ? 0.00 : 19.00;
+            
             // Rechnung einfügen
             $stmt = $newDb->prepare("
                 INSERT INTO invoices (
@@ -325,7 +335,7 @@ try {
                 $serviceDate,
                 $dueDate,
                 $status,
-                19.00, // Standard-Steuersatz
+                $taxRate, // Steuersatz basierend auf Kunde
                 "", // Notizen werden nicht übernommen
                 trim($oldInvoice['MESSAGE_DESC'] ?? '') ?: 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen.'
             ]);
@@ -344,8 +354,8 @@ try {
             
             $position = 1;
             foreach ($oldItems->fetchAll(PDO::FETCH_ASSOC) as $oldItem) {
-                // Steuersatz ist immer 19%
-                $taxRate = 19.00;
+                // Steuersatz von Rechnung übernehmen
+                $itemTaxRate = $taxRate;
                 
                 $quantity = floatval($oldItem['POS_QUANTITY'] ?? 1);
                 $unitPrice = floatval($oldItem['POS_PRICE'] ?? 0);
@@ -364,7 +374,7 @@ try {
                     trim($oldItem['POS_DESC'] ?? ''),
                     $quantity,
                     $unitPrice,
-                    $taxRate,
+                    $itemTaxRate,
                     $total
                 ]);
             }
