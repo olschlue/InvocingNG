@@ -87,9 +87,17 @@ class Payment {
             ]);
             
             if ($result) {
-                // Rechnungsstatus aktualisieren
-                $this->updateInvoiceStatus($data['invoice_id']);
-                return $this->db->lastInsertId();
+                $paymentId = $this->db->lastInsertId();
+                
+                // Rechnungsstatus aktualisieren (Fehler hier sollten nicht die Zahlung verhindern)
+                try {
+                    $this->updateInvoiceStatus($data['invoice_id']);
+                } catch (Exception $e) {
+                    // Statusaktualisierung fehlgeschlagen, aber Zahlung ist gespeichert
+                    error_log('Fehler beim Aktualisieren des Rechnungsstatus: ' . $e->getMessage());
+                }
+                
+                return $paymentId;
             }
             
             return false;
@@ -102,28 +110,36 @@ class Payment {
      * Zahlung aktualisieren
      */
     public function update($id, $data) {
-        $sql = "UPDATE payments SET 
-                    invoice_id = ?, payment_date = ?, amount = ?, 
-                    payment_method = ?, reference = ?, notes = ?
-                WHERE id = ?";
-        
-        $stmt = $this->db->prepare($sql);
-        $result = $stmt->execute([
-            $data['invoice_id'],
-            $data['payment_date'],
-            $data['amount'],
-            $data['payment_method'] ?? 'bank_transfer',
-            $data['reference'] ?? null,
-            $data['notes'] ?? null,
-            $id
-        ]);
-        
-        if ($result) {
-            // Rechnungsstatus aktualisieren
-            $this->updateInvoiceStatus($data['invoice_id']);
+        try {
+            $sql = "UPDATE payments SET 
+                        invoice_id = ?, payment_date = ?, amount = ?, 
+                        payment_method = ?, reference = ?, notes = ?
+                    WHERE id = ?";
+            
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                $data['invoice_id'],
+                $data['payment_date'],
+                $data['amount'],
+                $data['payment_method'] ?? 'bank_transfer',
+                $data['reference'] ?? null,
+                $data['notes'] ?? null,
+                $id
+            ]);
+            
+            if ($result) {
+                // Rechnungsstatus aktualisieren (Fehler hier sollten nicht das Update verhindern)
+                try {
+                    $this->updateInvoiceStatus($data['invoice_id']);
+                } catch (Exception $e) {
+                    error_log('Fehler beim Aktualisieren des Rechnungsstatus: ' . $e->getMessage());
+                }
+            }
+            
+            return $result;
+        } catch (PDOException $e) {
+            throw new Exception('Fehler beim Aktualisieren der Zahlung: ' . $e->getMessage());
         }
-        
-        return $result;
     }
     
     /**
