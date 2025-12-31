@@ -68,7 +68,7 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         <h3><?php echo __('overdue_invoices'); ?></h3>
         <div class="value" style="color: #e74c3c;"><?php echo $overdueInvoices; ?></div>
     </div>
-</div>
+</div> 
 -->
 <div class="stats-grid">
     <!-- <div class="stat-card">
