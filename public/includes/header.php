@@ -50,7 +50,7 @@
         }
         
         nav a {
-            color: white;
+            color: <?php echo APP_TEXT_COLOR; ?>;
             text-decoration: none;
             padding: 8px 16px;
             border-radius: 4px;
@@ -59,6 +59,7 @@
         
         nav a:hover, nav a.active {
             background: <?php echo APP_PRIMARY_COLOR; ?>;
+            color: white;
         }
         
         .card {
@@ -112,6 +113,25 @@
         }
         
         .btn:hover {
+            background: <?php echo APP_PRIMARY_COLOR; ?>;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: <?php echo APP_PRIMARY_COLOR; ?>;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-secondary {
+            background: <?php echo APP_ACCENT_COLOR; ?>;
+            color: <?php echo APP_TEXT_COLOR; ?>;
+        }
+        
+        .btn-secondary:hover {
             background: <?php echo APP_PRIMARY_COLOR; ?>;
             color: white;
         }

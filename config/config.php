@@ -35,7 +35,7 @@ define('APP_SUCCESS_COLOR', '#27ae60');      // Erfolgsfarbe (grün)
 define('APP_WARNING_COLOR', '#f39c12');      // Warnfarbe (orange)
 define('APP_DANGER_COLOR', '#e74c3c');       // Fehlerfarbe (rot)
 define('APP_INFO_COLOR', '#8f5e87ff');         // Infofarbe (cyan)
-define('APP_BACKGROUND_COLOR', '#ffffff');   // Hintergrundfarbe
+define('APP_BACKGROUND_COLOR', '#f1f1f1ff');   // Hintergrundfarbe
 define('APP_TEXT_COLOR', '#333333');         // Textfarbe
 
 // Währung
