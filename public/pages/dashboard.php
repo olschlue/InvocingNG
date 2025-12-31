@@ -10,14 +10,21 @@ $totalInvoices = count($allInvoices);
 $overdueInvoices = count($invoiceObj->getOverdue());
 $paidInvoices = count($invoiceObj->getAll('paid'));
 
-// Umsatzberechnung für aktuelles Jahr
+// Umsatzberechnung für aktuelles Jahr und Vorjahr
 $currentYear = date('Y');
+$previousYear = $currentYear - 1;
 $totalRevenue = 0;
+$previousYearRevenue = 0;
 $openAmount = 0;
 foreach ($allInvoices as $inv) {
+    $invoiceYear = date('Y', strtotime($inv['invoice_date']));
     // Nur Rechnungen des aktuellen Jahres für Gesamtumsatz
-    if (date('Y', strtotime($inv['invoice_date'])) == $currentYear) {
+    if ($invoiceYear == $currentYear) {
         $totalRevenue += $inv['total_amount'];
+    }
+    // Vorjahres-Umsatz
+    if ($invoiceYear == $previousYear) {
+        $previousYearRevenue += $inv['total_amount'];
     }
     // Offene Beträge (alle Jahre)
     if ($inv['status'] != 'paid' && $inv['status'] != 'cancelled') {
@@ -62,8 +69,8 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         <div class="value" style="color: #27ae60;"><?php echo $paymentStats['total_payments'] ?? 0; ?></div>
     </div>
     <div class="stat-card">
-        <h3><?php echo __('total_amount'); ?> (<?php echo date('Y'); ?>)</h3>
-        <div class="value"><?php echo number_format($paymentStats['total_amount'] ?? 0, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
+        <h3><?php echo __('total_revenue'); ?> (<?php echo $previousYear; ?>)</h3>
+        <div class="value"><?php echo number_format($previousYearRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
 </div>
 
