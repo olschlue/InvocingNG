@@ -19,6 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($action === 'new') {
         try {
+            // Validierung
+            if (empty($data['invoice_id'])) {
+                throw new Exception('Bitte wählen Sie eine Rechnung aus.');
+            }
+            if (empty($data['payment_date'])) {
+                throw new Exception('Bitte geben Sie ein Zahlungsdatum an.');
+            }
+            if (empty($data['amount']) || $data['amount'] <= 0) {
+                throw new Exception('Bitte geben Sie einen gültigen Betrag an.');
+            }
+            
             $result = $paymentObj->create($data);
             if ($result) {
                 // Erfolgreicher Redirect

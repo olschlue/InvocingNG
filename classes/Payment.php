@@ -70,28 +70,32 @@ class Payment {
      * Neue Zahlung erstellen
      */
     public function create($data) {
-        $sql = "INSERT INTO payments (
-                    invoice_id, payment_date, amount, payment_method, 
-                    reference, notes
-                ) VALUES (?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->db->prepare($sql);
-        $result = $stmt->execute([
-            $data['invoice_id'],
-            $data['payment_date'],
-            $data['amount'],
-            $data['payment_method'] ?? 'bank_transfer',
-            $data['reference'] ?? null,
-            $data['notes'] ?? null
-        ]);
-        
-        if ($result) {
-            // Rechnungsstatus aktualisieren
-            $this->updateInvoiceStatus($data['invoice_id']);
-            return $this->db->lastInsertId();
+        try {
+            $sql = "INSERT INTO payments (
+                        invoice_id, payment_date, amount, payment_method, 
+                        reference, notes
+                    ) VALUES (?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                $data['invoice_id'],
+                $data['payment_date'],
+                $data['amount'],
+                $data['payment_method'] ?? 'bank_transfer',
+                $data['reference'] ?? null,
+                $data['notes'] ?? null
+            ]);
+            
+            if ($result) {
+                // Rechnungsstatus aktualisieren
+                $this->updateInvoiceStatus($data['invoice_id']);
+                return $this->db->lastInsertId();
+            }
+            
+            return false;
+        } catch (PDOException $e) {
+            throw new Exception('Fehler beim Speichern der Zahlung: ' . $e->getMessage());
         }
-        
-        return false;
     }
     
     /**
