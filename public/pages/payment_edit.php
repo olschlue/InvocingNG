@@ -167,19 +167,6 @@ foreach ($allInvoices as $inv) {
             <a href="?page=payments" class="btn"><?php echo __('cancel'); ?></a>
         </div>
     </form>
-</div>id="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
-        </div>
-        
-        <div class="form-group">
-            <label>Notizen</label>
-            <textarea name="notes"><?php echo htmlspecialchars($payment['notes']); ?></textarea>
-        </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn btn-success">Speichern</button>
-            <a href="?page=payments" class="btn">Abbrechen</a>
-        </div>
-    </form>
 </div>
 
 <script>
@@ -206,21 +193,4 @@ document.getElementById('invoice_select').addEventListener('change', function() 
         referenceField.value = '';
     }
 });
-</script   </div>
-        
-        <div class="form-group">
-            <label>Referenz / Verwendungszweck</label>
-            <input type="text" name="reference" value="<?php echo htmlspecialchars($payment['reference']); ?>">
-        </div>
-        
-        <div class="form-group">
-            <label>Notizen</label>
-            <textarea name="notes"><?php echo htmlspecialchars($payment['notes']); ?></textarea>
-        </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <button type="submit" class="btn btn-success">Speichern</button>
-            <a href="?page=payments" class="btn">Abbrechen</a>
-        </div>
-    </form>
-</div>
+</script>

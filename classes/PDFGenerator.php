@@ -139,12 +139,6 @@ class InvoicePDF extends FPDF {
             $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
         }
         
-        if (!empty($this->customer['customer_number'])) {
-            $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(45, 5, $this->convertEncoding(__('pdf_customer_number')) . ':', 0, 0);
-            $this->Cell(0, 5, $this->customer['customer_number'], 0, 1);
-        }
-        
         $this->Ln(10);
         
         // Überschrift
