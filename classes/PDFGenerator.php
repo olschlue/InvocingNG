@@ -230,11 +230,11 @@ class InvoicePDF extends FPDF {
         }
         
         // Notizen
-        if (!empty($this->invoice['notes'])) {
+        /*if (!empty($this->invoice['notes'])) {
             $this->Ln(5);
             $this->SetFont('Arial', 'I', 9);
             $this->MultiCell(0, 5, $this->convertEncoding('Hinweis: ' . $this->invoice['notes']));
-        }
+        }*/
     }
 }
 
