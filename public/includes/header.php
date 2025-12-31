@@ -14,8 +14,8 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            color: #333;
+            background: <?php echo APP_BACKGROUND_COLOR; ?>;
+            color: <?php echo APP_TEXT_COLOR; ?>;
             line-height: 1.6;
         }
         
@@ -26,7 +26,7 @@
         }
         
         header {
-            background: #2c3e50;
+            background: <?php echo APP_PRIMARY_COLOR; ?>;
             color: white;
             padding: 20px 0;
             margin-bottom: 5px;
@@ -38,7 +38,7 @@
         }
         
         nav {
-            background: #34495e;
+            background: <?php echo APP_SECONDARY_COLOR; ?>;
             padding: 10px 0;
             margin-bottom: 30px;
         }
@@ -58,7 +58,7 @@
         }
         
         nav a:hover, nav a.active {
-            background: #2c3e50;
+            background: <?php echo APP_PRIMARY_COLOR; ?>;
         }
         
         .card {
@@ -71,8 +71,8 @@
         
         .card h2 {
             margin-bottom: 20px;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
+            color: <?php echo APP_PRIMARY_COLOR; ?>;
+            border-bottom: 2px solid <?php echo APP_ACCENT_COLOR; ?>;
             padding-bottom: 10px;
         }
         
@@ -89,7 +89,7 @@
         }
         
         th {
-            background: #34495e;
+            background: <?php echo APP_SECONDARY_COLOR; ?>;
             color: white;
             font-weight: 600;
         }
@@ -101,8 +101,8 @@
         .btn {
             display: inline-block;
             padding: 10px 20px;
-            background: #3498db;
-            color: white;
+            background: <?php echo APP_ACCENT_COLOR; ?>;
+            color: <?php echo APP_TEXT_COLOR; ?>;
             text-decoration: none;
             border-radius: 4px;
             border: none;
@@ -112,11 +112,13 @@
         }
         
         .btn:hover {
-            background: #2980b9;
+            background: <?php echo APP_PRIMARY_COLOR; ?>;
+            color: white;
         }
         
         .btn-success {
-            background: #27ae60;
+            background: <?php echo APP_SUCCESS_COLOR; ?>;
+            color: white;
         }
         
         .btn-success:hover {
@@ -124,7 +126,8 @@
         }
         
         .btn-danger {
-            background: #e74c3c;
+            background: <?php echo APP_DANGER_COLOR; ?>;
+            color: white;
         }
         
         .btn-danger:hover {

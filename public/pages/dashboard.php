@@ -50,6 +50,12 @@ $chartRevenues = array_values($revenueByYear);
 $paymentStats = $paymentObj->getStatistics();
 $recentInvoices = array_slice($allInvoices, 0, 5);
 ?>
+<?php if ($overdueInvoices > 0): ?>
+    <div class="alert alert-error">
+        <strong>Achtung!</strong> Sie haben <?php echo $overdueInvoices; ?> überfällige Rechnung(en).
+        <a href="?page=invoices&filter=overdue">Jetzt anzeigen</a>
+    </div>
+<?php endif; ?>
 <!--
 <div class="stats-grid">
     <div class="stat-card">
@@ -146,12 +152,7 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
     <?php endif; ?>
 </div>
 
-<?php if ($overdueInvoices > 0): ?>
-    <div class="alert alert-error">
-        <strong>Achtung!</strong> Sie haben <?php echo $overdueInvoices; ?> überfällige Rechnung(en).
-        <a href="?page=invoices&filter=overdue">Jetzt anzeigen</a>
-    </div>
-<?php endif; ?>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
