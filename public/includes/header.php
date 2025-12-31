@@ -26,8 +26,8 @@
         }
         
         header {
-            background: <?php echo APP_PRIMARY_COLOR; ?>;
-            color: white;
+            background: <?php echo APP_BACKGROUND_COLOR; ?>;
+            color: <?php echo APP_TEXT_COLOR; ?>;
             padding: 20px 0;
             margin-bottom: 5px;
             /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
@@ -35,6 +35,7 @@
         
         header h1 {
             margin-bottom: 10px;
+            color: <?php echo APP_PRIMARY_COLOR; ?>;
         }
         
         nav {
