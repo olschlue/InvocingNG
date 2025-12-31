@@ -1,5 +1,20 @@
 <?php
+session_start();
+
+// Authentifizierung prüfen
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 require_once '../config/config.php';
+
+// Logout-Funktion
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
 
 // Seite ermitteln
 $page = $_GET['page'] ?? 'dashboard';
@@ -32,6 +47,15 @@ switch ($page) {
         break;
     case 'payment_edit':
         include 'pages/payment_edit.php';
+        break;
+    case 'users':
+        include 'pages/users.php';
+        break;
+    case 'user_edit':
+        include 'pages/user_edit.php';
+        break;
+    case 'change_password':
+        include 'pages/change_password.php';
         break;
     case 'dashboard':
     default:

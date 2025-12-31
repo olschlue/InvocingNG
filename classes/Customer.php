@@ -15,7 +15,7 @@ class Customer {
      * Alle Kunden abrufen
      */
     public function getAll() {
-        $stmt = $this->db->query("SELECT * FROM customers ORDER BY company_name, last_name");
+        $stmt = $this->db->query("SELECT * FROM customers ORDER BY customer_number ASC");
         return $stmt->fetchAll();
     }
     

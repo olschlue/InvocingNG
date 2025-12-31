@@ -275,6 +275,9 @@
                 <li><a href="?page=customers" <?php echo (isset($_GET['page']) && $_GET['page'] == 'customers') ? 'class="active"' : ''; ?>><?php echo __('customers'); ?></a></li>
                 <li><a href="?page=invoices" <?php echo (isset($_GET['page']) && $_GET['page'] == 'invoices') ? 'class="active"' : ''; ?>><?php echo __('invoices'); ?></a></li>
                 <li><a href="?page=payments" <?php echo (isset($_GET['page']) && $_GET['page'] == 'payments') ? 'class="active"' : ''; ?>><?php echo __('payments'); ?></a></li>
+                <li><a href="?page=users" <?php echo (isset($_GET['page']) && $_GET['page'] == 'users') ? 'class="active"' : ''; ?>><?php echo __('users'); ?></a></li>
+                <li style="margin-left: auto;"><a href="?page=change_password"><?php echo __('change_password'); ?></a></li>
+                <li><a href="?logout=1" onclick="return confirm('<?php echo __('confirm_logout'); ?>');"><?php echo __('logout'); ?></a></li>
             </ul>
         </div>
     </nav>
