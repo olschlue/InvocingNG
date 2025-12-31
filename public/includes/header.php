@@ -93,7 +93,7 @@
         
         th {
             background: <?php echo APP_SECONDARY_COLOR; ?>;
-            color: white;
+            color: #333;
             font-weight: 600;
         }
         
