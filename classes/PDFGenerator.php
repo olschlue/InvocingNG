@@ -24,6 +24,56 @@ class InvoicePDF extends FPDF {
         return mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
     }
     
+    // Berechnet die Anzahl der Zeilen für einen Text in einer MultiCell
+    private function NbLines($width, $text) {
+        $cw = &$this->CurrentFont['cw'];
+        if ($width == 0) {
+            $width = $this->w - $this->rMargin - $this->x;
+        }
+        $wmax = ($width - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        $s = str_replace("\r", '', $text);
+        $nb = strlen($s);
+        if ($nb > 0 && $s[$nb - 1] == "\n") {
+            $nb--;
+        }
+        $sep = -1;
+        $i = 0;
+        $j = 0;
+        $l = 0;
+        $nl = 1;
+        while ($i < $nb) {
+            $c = $s[$i];
+            if ($c == "\n") {
+                $i++;
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+                continue;
+            }
+            if ($c == ' ') {
+                $sep = $i;
+            }
+            $l += $cw[$c];
+            if ($l > $wmax) {
+                if ($sep == -1) {
+                    if ($i == $j) {
+                        $i++;
+                    }
+                } else {
+                    $i = $sep + 1;
+                }
+                $sep = -1;
+                $j = $i;
+                $l = 0;
+                $nl++;
+            } else {
+                $i++;
+            }
+        }
+        return $nl;
+    }
+    
     // Kopfzeile
     function Header() {
         // Hintergrundbild vollflächig einfügen (falls vorhanden)
@@ -121,12 +171,38 @@ class InvoicePDF extends FPDF {
         // Positionen
         $this->SetFont('Arial', '', 9);
         foreach ($this->items as $item) {
-            $this->Cell(10, 6, $item['position'], 0, 0, 'C');
-            $this->Cell(70, 6, $this->convertEncoding($item['description']), 0, 0, 'L');
-            $this->Cell(18, 6, number_format($item['quantity'], 2, ',', '.'), 0, 0, 'C');
-            $this->Cell(28, 6, number_format($item['unit_price'], 2, ',', '.') . ' EUR', 0, 0, 'R');
-            $this->Cell(16, 6, number_format($item['tax_rate'], 0) . '%', 0, 0, 'C');
-            $this->Cell(28, 6, number_format($item['total'], 2, ',', '.') . ' EUR', 0, 1, 'R');
+            // Höhe für diese Zeile berechnen (abhängig von Beschreibungslänge)
+            $descriptionWidth = 70; // Breite der Beschreibungsspalte
+            
+            // Anzahl der Zeilen für die Beschreibung berechnen
+            $nbLines = $this->NbLines($descriptionWidth, $this->convertEncoding($item['description']));
+            $lineHeight = 5;
+            $cellHeight = max(6, $nbLines * $lineHeight);
+            
+            // Y-Position vor der Zeile speichern
+            $x = $this->GetX();
+            $y = $this->GetY();
+            
+            // Position
+            $this->Cell(10, $cellHeight, $item['position'], 0, 0, 'C');
+            
+            // Beschreibung mit MultiCell (erlaubt Umbruch)
+            $this->MultiCell($descriptionWidth, $lineHeight, $this->convertEncoding($item['description']), 0, 'L');
+            
+            // Zurück zur Ausgangshöhe für die anderen Spalten
+            $this->SetXY($x + 10 + $descriptionWidth, $y);
+            
+            // Menge
+            $this->Cell(18, $cellHeight, number_format($item['quantity'], 2, ',', '.'), 0, 0, 'C');
+            
+            // Einzelpreis
+            $this->Cell(28, $cellHeight, number_format($item['unit_price'], 2, ',', '.') . ' EUR', 0, 0, 'R');
+            
+            // Steuersatz
+            $this->Cell(16, $cellHeight, number_format($item['tax_rate'], 0) . '%', 0, 0, 'C');
+            
+            // Gesamt
+            $this->Cell(28, $cellHeight, number_format($item['total'], 2, ',', '.') . ' EUR', 0, 1, 'R');
         }
         
         // Summen
