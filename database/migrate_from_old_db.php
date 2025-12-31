@@ -336,7 +336,7 @@ try {
                 $dueDate,
                 $status,
                 $taxRate, // Steuersatz basierend auf Kunde
-                "", // Notizen werden nicht übernommen
+                "-", // Notizen werden nicht übernommen
                 trim($oldInvoice['MESSAGE_DESC'] ?? '') ?: 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen.'
             ]);
             
@@ -443,7 +443,7 @@ try {
                 floatval($oldPayment['SUM_PAID'] ?? 0),
                 $method,
                 trim($oldPayment['METHOD_OF_PAY'] ?? '') ?: null,
-                "" // Notizen werden nicht übernommen
+                "-" // Notizen werden nicht übernommen
             ]);
             
             $migratedPayments++;
