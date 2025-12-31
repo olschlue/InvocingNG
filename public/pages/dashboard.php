@@ -16,9 +16,29 @@ $previousYear = $currentYear - 1;
 $totalRevenue = 0;
 $previousYearRevenue = 0;
 $openAmount = 0;
+$currentYearPayments = 0;
 
 // Umsatz pro Jahr für Chart sammeln
 $revenueByYear = [];
+$paymentsByYear = [];
+
+// Alle Zahlungen abrufen
+$allPayments = $paymentObj->getAll();
+foreach ($allPayments as $payment) {
+    $paymentYear = date('Y', strtotime($payment['payment_date']));
+    
+    // Zahlungen pro Jahr aggregieren
+    if (!isset($paymentsByYear[$paymentYear])) {
+        $paymentsByYear[$paymentYear] = 0;
+    }
+    $paymentsByYear[$paymentYear] += $payment['amount'];
+    
+    // Aktuelle Jahr Zahlungen
+    if ($paymentYear == $currentYear) {
+        $currentYearPayments += $payment['amount'];
+    }
+}
+
 foreach ($allInvoices as $inv) {
     $invoiceYear = date('Y', strtotime($inv['invoice_date']));
     
@@ -42,10 +62,24 @@ foreach ($allInvoices as $inv) {
     }
 }
 
-// Jahre sortieren
+// Jahre sortieren und synchronisieren
 ksort($revenueByYear);
-$chartYears = array_keys($revenueByYear);
-$chartRevenues = array_values($revenueByYear);
+ksort($paymentsByYear);
+
+// Alle Jahre sammeln (aus beiden Arrays)
+$allYears = array_unique(array_merge(array_keys($revenueByYear), array_keys($paymentsByYear)));
+sort($allYears);
+
+// Werte für Chart vorbereiten
+$chartYears = [];
+$chartRevenues = [];
+$chartPayments = [];
+
+foreach ($allYears as $year) {
+    $chartYears[] = $year;
+    $chartRevenues[] = $revenueByYear[$year] ?? 0;
+    $chartPayments[] = $paymentsByYear[$year] ?? 0;
+}
 
 $paymentStats = $paymentObj->getStatistics();
 $recentInvoices = array_slice($allInvoices, 0, 5);
@@ -86,13 +120,13 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         <div class="value"><?php echo number_format($totalRevenue, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
     <div class="stat-card">
+        <h3><?php echo __('received_payments'); ?> (<?php echo date('Y'); ?>)</h3>
+        <div class="value" style="color: #27ae60;"><?php echo number_format($currentYearPayments, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
+    </div>
+    <div class="stat-card">
         <h3><?php echo __('open_amount'); ?></h3>
         <div class="value" style="color: #e67e22;"><?php echo number_format($openAmount, 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></div>
     </div>
-    <div class="stat-card">
-        <h3><?php echo __('recent_payments'); ?></h3>
-        <div class="value" style="color: #27ae60;"><?php echo $paymentStats['total_payments'] ?? 0; ?></div>
-    </div> 
     <div class="stat-card">
         <h3><?php echo __('overdue_invoices'); ?></h3>
         <div class="value" style="color: #e74c3c;"><?php echo $overdueInvoices; ?></div>
@@ -161,14 +195,24 @@ const revenueChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: <?php echo json_encode($chartYears); ?>,
-        datasets: [{
-            label: '<?php echo __('total_revenue'); ?> (<?php echo APP_CURRENCY_SYMBOL; ?>)',
-            data: <?php echo json_encode($chartRevenues); ?>,
-            backgroundColor: 'rgba(52, 152, 219, 0.6)',
-            borderColor: 'rgba(52, 152, 219, 1)',
-            borderWidth: 2,
-            borderRadius: 5
-        }]
+        datasets: [
+            {
+                label: '<?php echo __('total_revenue'); ?>',
+                data: <?php echo json_encode($chartRevenues); ?>,
+                backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 2,
+                borderRadius: 5
+            },
+            {
+                label: '<?php echo __('received_payments'); ?>',
+                data: <?php echo json_encode($chartPayments); ?>,
+                backgroundColor: 'rgba(39, 174, 96, 0.6)',
+                borderColor: 'rgba(39, 174, 96, 1)',
+                borderWidth: 2,
+                borderRadius: 5
+            }
+        ]
     },
     options: {
         responsive: true,

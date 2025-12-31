@@ -23,6 +23,7 @@ $lang = [
     'paid_invoices' => 'Bezahlte Rechnungen',
     'overdue_invoices' => 'Überfällige Rechnungen',
     'total_revenue' => 'Gesamtumsatz',
+    'received_payments' => 'Erhaltene Zahlungen',
     'open_amount' => 'Offener Betrag',
     'recent_invoices' => 'Aktuelle Rechnungen',
     'recent_payments' => 'Aktuelle Zahlungen',

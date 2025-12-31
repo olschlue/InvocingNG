@@ -23,6 +23,7 @@ $lang = [
     'paid_invoices' => 'Paid Invoices',
     'overdue_invoices' => 'Overdue Invoices',
     'total_revenue' => 'Total Revenue',
+    'received_payments' => 'Received Payments',
     'open_amount' => 'Outstanding Amount',
     'recent_invoices' => 'Recent Invoices',
     'recent_payments' => 'Recent Payments',
