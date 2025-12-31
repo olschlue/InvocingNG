@@ -68,6 +68,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            color: <?php echo APP_TEXT_COLOR; ?>;
         }
         
         .card h2 {
@@ -87,6 +88,7 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            color: <?php echo APP_TEXT_COLOR; ?>;
         }
         
         th {
@@ -257,10 +259,11 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             text-align: center;
+            color: <?php echo APP_TEXT_COLOR; ?>;
         }
         
         .stat-card h3 {
-            color: #7f8c8d;
+            color: <?php echo APP_TEXT_COLOR; ?>;
             font-size: 14px;
             margin-bottom: 10px;
         }
@@ -268,7 +271,7 @@
         .stat-card .value {
             font-size: 32px;
             font-weight: 700;
-            color: #2c3e50;
+            color: <?php echo APP_TEXT_COLOR; ?>;
         }
         
         .action-links {
