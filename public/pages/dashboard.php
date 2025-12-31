@@ -10,11 +10,16 @@ $totalInvoices = count($allInvoices);
 $overdueInvoices = count($invoiceObj->getOverdue());
 $paidInvoices = count($invoiceObj->getAll('paid'));
 
-// Umsatzberechnung
+// Umsatzberechnung für aktuelles Jahr
+$currentYear = date('Y');
 $totalRevenue = 0;
 $openAmount = 0;
 foreach ($allInvoices as $inv) {
-    $totalRevenue += $inv['total_amount'];
+    // Nur Rechnungen des aktuellen Jahres für Gesamtumsatz
+    if (date('Y', strtotime($inv['invoice_date'])) == $currentYear) {
+        $totalRevenue += $inv['total_amount'];
+    }
+    // Offene Beträge (alle Jahre)
     if ($inv['status'] != 'paid' && $inv['status'] != 'cancelled') {
         $openAmount += $inv['total_amount'];
     }
