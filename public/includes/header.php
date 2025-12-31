@@ -33,8 +33,19 @@
             /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
         }
         
+        header .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        header .logo {
+            height: 60px;
+            width: auto;
+        }
+        
         header h1 {
-            margin-bottom: 10px;
+            margin: 0;
             color: <?php echo APP_PRIMARY_COLOR; ?>;
         }
         
@@ -292,7 +303,12 @@
 <body>
     <header>
         <div class="container">
-            <h1><?php echo APP_NAME; ?></h1>
+            <div class="header-content">
+                <?php if (defined('APP_LOGO') && file_exists(APP_LOGO)): ?>
+                    <img src="assets/logo.png" alt="<?php echo APP_NAME; ?>" class="logo">
+                <?php endif; ?>
+                <h1><?php echo APP_NAME; ?></h1>
+            </div>
         </div>
     </header>
     <nav>
