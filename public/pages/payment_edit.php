@@ -86,8 +86,12 @@ if ($action === 'edit' && $paymentId) {
 // Alle offenen Rechnungen laden (nur sent und overdue, nicht draft und paid)
 $allInvoices = $invoiceObj->getAll();
 // Filtere nur Rechnungen die für Zahlungen relevant sind
-$allInvoices = array_filter($allInvoices, function($inv) {
-    return in_array($inv['status'], ['sent', 'overdue']);
+// Beim Bearbeiten muss die zugehörige Rechnung auch angezeigt werden, selbst wenn sie bezahlt ist
+$currentInvoiceId = $payment['invoice_id'] ?? null;
+$allInvoices = array_filter($allInvoices, function($inv) use ($currentInvoiceId) {
+    // Bei neuer Zahlung: nur offene Rechnungen
+    // Beim Bearbeiten: auch die aktuelle Rechnung einschließen
+    return in_array($inv['status'], ['sent', 'overdue']) || ($inv['id'] == $currentInvoiceId);
 });
 
 // Rechnungsdaten für JavaScript vorbereiten
@@ -119,7 +123,7 @@ foreach ($allInvoices as $inv) {
             <select name="invoice_id" id="invoice_select" required>
                 <option value="">-- <?php echo __('select_invoice'); ?> --</option>
                 <?php foreach ($allInvoices as $invoice): ?>
-                    <option value="<?php echo $invoice['id']; ?>" <?php echo ($payment['invoice_id'] == $invoice['id']) ? 'selected' : ''; ?>>
+                    <option value="<?php echo $invoice['id']; ?>" <?php echo (isset($payment['invoice_id']) && $payment['invoice_id'] == $invoice['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($invoice['invoice_number'] . ' - ' . ($invoice['company_name'] ?: $invoice['first_name'] . ' ' . $invoice['last_name']) . ' (' . number_format($invoice['total_amount'], 2, ',', '.') . ' ' . APP_CURRENCY_SYMBOL . ')'); ?>
                     </option>
                 <?php endforeach; ?>
