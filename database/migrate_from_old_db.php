@@ -240,7 +240,7 @@ try {
                 INSERT INTO customers (
                     customer_number, company_name, first_name, last_name, 
                     email, phone, address_street, address_city, address_zip, 
-                    address_country, tax_id, notes
+                    address_country, vat_id, notes
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             
