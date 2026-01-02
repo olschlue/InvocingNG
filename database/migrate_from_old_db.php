@@ -149,7 +149,7 @@ if (!isset($_POST['confirm_migration'])) {
         
         <form method="POST">
             <p><strong>Sind Sie sicher, dass Sie fortfahren möchten?</strong></p>
-            <button type="submit" name="confirm_migration" value="yes" class="btn btn-danger">✓ Ja, Migration starten</button>
+            <button type="submit" name="confirm_migration" value="yes" class="btn btn-danger">Ja, Migration starten</button>
             <a href="/" class="btn btn-secondary">✗ Abbrechen</a>
         </form>
     <?php

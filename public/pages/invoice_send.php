@@ -82,7 +82,7 @@ $customerName = $invoice['company_name'] ?: ($invoice['first_name'] . ' ' . $inv
         
         <div class="form-actions">
             <button type="submit" class="btn btn-success">
-                <span style="margin-right: 5px;">✉</span> <?php echo __('send_email'); ?>
+                <?php echo __('send_email'); ?>
             </button>
             <a href="?page=invoices" class="btn btn-secondary"><?php echo __('cancel'); ?></a>
             <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank" style="margin-left: auto;">

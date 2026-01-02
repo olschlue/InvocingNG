@@ -78,7 +78,7 @@ try {
 ?>
 
 <div class="card">
-    <h2>🏢 <?php echo __('company_settings'); ?></h2>
+    <h2><?php echo __('company_settings'); ?></h2>
     
     <?php if ($message): ?>
         <div class="alert alert-success" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
@@ -157,9 +157,9 @@ try {
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn btn-success">💾 <?php echo __('save'); ?></button>
+            <button type="submit" class="btn btn-success"><?php echo __('save'); ?></button>
             <a href="?page=dashboard" class="btn btn-secondary"><?php echo __('cancel'); ?></a>
-            <a href="test_email.php" class="btn" style="background-color: #3498db; color: white; margin-left: auto;">✉ <?php echo __('test_email'); ?></a>
+            <a href="test_email.php" class="btn" style="background-color: #3498db; color: white; margin-left: auto;"><?php echo __('test_email'); ?></a>
         </div>
     </form>
 </div>
