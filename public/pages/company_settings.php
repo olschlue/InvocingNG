@@ -1,14 +1,15 @@
 <?php
 $settingsObj = new Settings();
+$db = Database::getInstance()->getConnection();
 $message = '';
 $error = '';
 
 // Formular verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // SMTP und App-Einstellungen in settings Tabelle speichern
     $settings = [
         'company_name' => $_POST['company_name'] ?? '',
         'app_name' => $_POST['app_name'] ?? '',
-        'company_vat_id' => $_POST['company_vat_id'] ?? '',
         'smtp_host' => $_POST['smtp_host'] ?? '',
         'smtp_port' => $_POST['smtp_port'] ?? '',
         'smtp_user' => $_POST['smtp_user'] ?? '',
@@ -22,7 +23,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $settings['smtp_pass'] = $_POST['smtp_pass'];
     }
     
-    if ($settingsObj->setMultiple($settings)) {
+    $success = true;
+    
+    // Settings speichern
+    if (!$settingsObj->setMultiple($settings)) {
+        $success = false;
+    }
+    
+    // VAT-ID in company_settings Tabelle speichern
+    try {
+        $vat_id = $_POST['company_vat_id'] ?? '';
+        
+        // Prüfen ob company_settings Eintrag existiert
+        $stmt = $db->query("SELECT COUNT(*) FROM company_settings");
+        $count = $stmt->fetchColumn();
+        
+        if ($count > 0) {
+            // Update
+            $stmt = $db->prepare("UPDATE company_settings SET vat_id = ? LIMIT 1");
+            $stmt->execute([$vat_id]);
+        } else {
+            // Insert - ersten Eintrag erstellen
+            $stmt = $db->prepare("INSERT INTO company_settings (company_name, vat_id) VALUES (?, ?)");
+            $stmt->execute([$_POST['company_name'] ?? 'Meine Firma', $vat_id]);
+        }
+    } catch (PDOException $e) {
+        $success = false;
+        error_log("Error saving VAT-ID: " . $e->getMessage());
+    }
+    
+    if ($success) {
         $message = 'Einstellungen erfolgreich gespeichert.';
         // Cache leeren damit neue Werte geladen werden
         Settings::clearCache();
@@ -33,6 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Aktuelle Einstellungen laden
 $currentSettings = $settingsObj->getAll();
+
+// VAT-ID aus company_settings Tabelle laden
+$company_vat_id = '';
+try {
+    $stmt = $db->query("SELECT vat_id FROM company_settings LIMIT 1");
+    $result = $stmt->fetch();
+    if ($result) {
+        $company_vat_id = $result['vat_id'] ?? '';
+    }
+} catch (PDOException $e) {
+    error_log("Error loading VAT-ID: " . $e->getMessage());
+}
 ?>
 
 <div class="card">
@@ -66,7 +108,7 @@ $currentSettings = $settingsObj->getAll();
         
         <div class="form-group">
             <label for="company_vat_id">USt-IdNr</label>
-            <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($currentSettings['company_vat_id'] ?? ''); ?>" placeholder="DE123456789">           
+            <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($company_vat_id); ?>" placeholder="DE123456789">           
         </div>
         
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
