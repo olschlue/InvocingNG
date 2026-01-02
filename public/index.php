@@ -60,6 +60,9 @@ switch ($page) {
     case 'change_password':
         include 'pages/change_password.php';
         break;
+    case 'company_settings':
+        include 'pages/company_settings.php';
+        break;
     case 'dashboard':
     default:
         include 'pages/dashboard.php';
