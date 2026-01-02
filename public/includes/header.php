@@ -34,7 +34,7 @@
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
+            z-index: 998;
             /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
         }
         
@@ -61,7 +61,7 @@
             top: 60px; /* Nach dem Header */
             left: 0;
             right: 0;
-            z-index: 999;
+            z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
