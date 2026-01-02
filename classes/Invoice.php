@@ -186,17 +186,17 @@ class Invoice {
     
     /**
      * Nächste Rechnungsnummer generieren
+     * Fortlaufende Nummer über Jahre hinweg
      */
     public function generateInvoiceNumber() {
         $year = date('Y');
         $stmt = $this->db->prepare("
             SELECT invoice_number 
             FROM invoices 
-            WHERE invoice_number LIKE ? 
             ORDER BY id DESC 
             LIMIT 1
         ");
-        $stmt->execute([$year . '%']);
+        $stmt->execute();
         $lastInvoice = $stmt->fetch();
         
         if ($lastInvoice) {
