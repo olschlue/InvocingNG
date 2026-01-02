@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS settings (
 INSERT INTO settings (setting_key, setting_value) VALUES
 ('company_name', 'Schlüter & Friends'),
 ('app_name', 'Rechnungen'),
+('company_vat_id', ''),
 ('smtp_host', 'smtp.ionos.de'),
 ('smtp_port', '465'),
 ('smtp_user', 'noreply@oschlueter.de'),

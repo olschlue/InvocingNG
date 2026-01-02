@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $settings = [
         'company_name' => $_POST['company_name'] ?? '',
         'app_name' => $_POST['app_name'] ?? '',
+        'company_vat_id' => $_POST['company_vat_id'] ?? '',
         'smtp_host' => $_POST['smtp_host'] ?? '',
         'smtp_port' => $_POST['smtp_port'] ?? '',
         'smtp_user' => $_POST['smtp_user'] ?? '',
@@ -61,6 +62,12 @@ $currentSettings = $settingsObj->getAll();
             <label for="app_name">Anwendungsname *</label>
             <input type="text" id="app_name" name="app_name" value="<?php echo htmlspecialchars($currentSettings['app_name'] ?? ''); ?>" required>
             <small>Dieser Name wird in der Anwendung angezeigt</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="company_vat_id">Umsatzsteuer-ID (USt-IdNr.)</label>
+            <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($currentSettings['company_vat_id'] ?? ''); ?>" placeholder="DE123456789">
+            <small>Die USt-IdNr. Ihrer Firma</small>
         </div>
         
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
