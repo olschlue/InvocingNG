@@ -315,8 +315,8 @@ $customers = $customerObj->getAll();
                                 <td><input type="number" step="0.01" name="item_tax_rate" value="<?php echo $item['tax_rate']; ?>" required style="width: 60px;"></td>
                                 <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                                 <td>
-                                    <button type="submit" name="update_item" class="btn btn-success" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 1;"><?php echo __('save'); ?></button>
-                                    <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 1; display: inline-block; vertical-align: middle; box-sizing: border-box;"><?php echo __('cancel'); ?></a>
+                                    <button type="submit" name="update_item" class="btn btn-success" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 18px;"><?php echo __('save'); ?></button>
+                                    <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 18px; display: inline-block; vertical-align: middle; box-sizing: border-box;"><?php echo __('cancel'); ?></a>
                                 </td>
                             </form>
                         </tr>
@@ -331,8 +331,8 @@ $customers = $customerObj->getAll();
                             <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                             <?php if (!isset($isLocked) || !$isLocked): ?>
                             <td>
-                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&edit_item=<?php echo $item['id']; ?>" class="btn" style="padding: 5px 10px; font-size: 12px; background-color: #3498db; color: white; height: 28px; line-height: 1; display: inline-block; vertical-align: middle; box-sizing: border-box;"><?php echo __('edit'); ?></a>
-                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&delete_item=<?php echo $item['id']; ?>" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 1; display: inline-block; vertical-align: middle; box-sizing: border-box;" onclick="return confirm('<?php echo __('confirm_delete'); ?>?');"><?php echo __('delete'); ?></a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&edit_item=<?php echo $item['id']; ?>" class="btn" style="padding: 5px 10px; font-size: 12px; background-color: #3498db; color: white; height: 28px; line-height: 18px; display: inline-block; vertical-align: middle; box-sizing: border-box;"><?php echo __('edit'); ?></a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&delete_item=<?php echo $item['id']; ?>" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 18px; display: inline-block; vertical-align: middle; box-sizing: border-box;" onclick="return confirm('<?php echo __('confirm_delete'); ?>?');"><?php echo __('delete'); ?></a>
                             </td>
                             <?php endif; ?>
                         </tr>
