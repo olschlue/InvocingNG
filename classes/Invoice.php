@@ -327,12 +327,15 @@ class Invoice {
         // Aktuelle Rechnung abrufen
         $invoice = $this->getById($id);
         if (!$invoice) {
+            error_log("appendNote: Invoice $id not found");
             return false;
         }
         
         // Neue Notiz zusammenstellen
         $currentNotes = $invoice['notes'] ?? '';
         $newNotes = $currentNotes;
+        
+        error_log("appendNote: Current notes for invoice $id: " . $currentNotes);
         
         // Trennzeichen hinzufügen, wenn bereits Notizen vorhanden sind
         if (!empty($currentNotes)) {
@@ -341,8 +344,12 @@ class Invoice {
         
         $newNotes .= $additionalNote;
         
+        error_log("appendNote: New notes for invoice $id: " . $newNotes);
+        
         // Notiz aktualisieren
         $stmt = $this->db->prepare("UPDATE invoices SET notes = ? WHERE id = ?");
-        return $stmt->execute([$newNotes, $id]);
+        $result = $stmt->execute([$newNotes, $id]);
+        error_log("appendNote: Update result for invoice $id: " . ($result ? 'success' : 'failed'));
+        return $result;
     }
 }

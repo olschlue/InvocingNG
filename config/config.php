@@ -105,3 +105,50 @@ function __($key) {
     global $lang;
     return $lang[$key] ?? $key;
 }
+
+/**
+ * Einstellungen aus Datenbank laden (überschreibt die Konstanten aus config.php)
+ */
+function loadSettingsFromDatabase() {
+    try {
+        $settingsObj = new Settings();
+        $dbSettings = $settingsObj->getAll();
+        
+        // SMTP-Einstellungen aus Datenbank überschreiben, falls vorhanden
+        if (!empty($dbSettings)) {
+            if (isset($dbSettings['smtp_host'])) {
+                define('SMTP_HOST_DB', $dbSettings['smtp_host']);
+            }
+            if (isset($dbSettings['smtp_port'])) {
+                define('SMTP_PORT_DB', $dbSettings['smtp_port']);
+            }
+            if (isset($dbSettings['smtp_user'])) {
+                define('SMTP_USER_DB', $dbSettings['smtp_user']);
+            }
+            if (isset($dbSettings['smtp_pass'])) {
+                define('SMTP_PASS_DB', $dbSettings['smtp_pass']);
+            }
+            if (isset($dbSettings['smtp_from'])) {
+                define('SMTP_FROM_DB', $dbSettings['smtp_from']);
+            }
+            if (isset($dbSettings['smtp_from_name'])) {
+                define('SMTP_FROM_NAME_DB', $dbSettings['smtp_from_name']);
+            }
+            if (isset($dbSettings['smtp_encryption'])) {
+                define('SMTP_ENCRYPTION_DB', $dbSettings['smtp_encryption']);
+            }
+            if (isset($dbSettings['app_name'])) {
+                define('APP_NAME_DB', $dbSettings['app_name']);
+            }
+            if (isset($dbSettings['company_name'])) {
+                define('COMPANY_NAME', $dbSettings['company_name']);
+            }
+        }
+    } catch (Exception $e) {
+        // Bei Fehler (z.B. Tabelle existiert noch nicht) einfach weitermachen
+        error_log("Could not load settings from database: " . $e->getMessage());
+    }
+}
+
+// Einstellungen aus Datenbank laden nach dem die Klassen verfügbar sind
+loadSettingsFromDatabase();

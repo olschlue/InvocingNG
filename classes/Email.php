@@ -18,13 +18,14 @@ class Email {
     private $lastError = '';
     
     public function __construct() {
-        $this->host = SMTP_HOST;
-        $this->port = SMTP_PORT;
-        $this->username = SMTP_USER;
-        $this->password = SMTP_PASS;
-        $this->from = SMTP_FROM;
-        $this->fromName = SMTP_FROM_NAME;
-        $this->encryption = SMTP_ENCRYPTION;
+        // Verwende Einstellungen aus Datenbank, falls vorhanden, sonst aus config.php
+        $this->host = defined('SMTP_HOST_DB') ? SMTP_HOST_DB : SMTP_HOST;
+        $this->port = defined('SMTP_PORT_DB') ? SMTP_PORT_DB : SMTP_PORT;
+        $this->username = defined('SMTP_USER_DB') ? SMTP_USER_DB : SMTP_USER;
+        $this->password = defined('SMTP_PASS_DB') ? SMTP_PASS_DB : SMTP_PASS;
+        $this->from = defined('SMTP_FROM_DB') ? SMTP_FROM_DB : SMTP_FROM;
+        $this->fromName = defined('SMTP_FROM_NAME_DB') ? SMTP_FROM_NAME_DB : SMTP_FROM_NAME;
+        $this->encryption = defined('SMTP_ENCRYPTION_DB') ? SMTP_ENCRYPTION_DB : SMTP_ENCRYPTION;
     }
     
     /**
@@ -158,7 +159,7 @@ class Email {
         }
         
         // E-Mail-Betreff und -Text
-        $customerName = $invoice['company_name'] ?: ($invoice['first_name'] . ' ' . $invoice['last_name']);
+        $customerName = $invoice['last_name'];
         $subject = __('email_invoice_subject') . ' ' . $invoice['invoice_number'];
         
         $body = __('email_greeting') . ' ' . $customerName . ',<br><br>';
@@ -199,10 +200,12 @@ class Email {
             // Versandzeitstempel zur Notiz hinzufügen
             $timestamp = date('d.m.Y H:i:s');
             $noteAddition = "Versendet am " . $timestamp;
-            $invoiceObj->appendNote($invoiceId, $noteAddition);
+            $appendResult = $invoiceObj->appendNote($invoiceId, $noteAddition);
+            error_log("Note appended to invoice $invoiceId: " . ($appendResult ? 'success' : 'failed'));
             
             return ['success' => true, 'message' => __('email_sent_success')];
         } else {
+            error_log("Email sending failed for invoice $invoiceId");
             return ['success' => false, 'message' => __('error_email_send') . ': ' . $this->getLastError()];
         }
     }

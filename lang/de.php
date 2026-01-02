@@ -196,5 +196,7 @@ $lang = [
     'error_no_email' => 'Keine E-Mail-Adresse vorhanden. Bitte geben Sie eine E-Mail-Adresse ein.',
     'error_pdf_generation' => 'Fehler beim Erstellen der PDF-Datei.',
     'error_email_send' => 'Fehler beim Senden der E-Mail. Bitte überprüfen Sie die SMTP-Einstellungen.',
+    
+    // Firmeneinstellungen
+    'company_settings' => 'Meine Firma',
 ];
-
