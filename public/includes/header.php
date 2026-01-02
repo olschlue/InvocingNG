@@ -28,7 +28,6 @@
         header {
             background: <?php echo APP_BACKGROUND_COLOR; ?>;
             color: <?php echo APP_TEXT_COLOR; ?>;
-            padding: 20px 0;
             margin-bottom: 5px;
             /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
         }
@@ -49,13 +48,14 @@
         }
         
         nav {
-            background: <?php echo APP_SECONDARY_COLOR; ?>;
+            /*background: <?php echo APP_SECONDARY_COLOR; ?>;*/
             padding: 10px 0;
             margin-bottom: 30px;
         }
         
         nav .container {
             max-width: 1200px;
+            background: <?php echo APP_SECONDARY_COLOR; ?>;
             margin: 0 auto;
             padding: 0 20px;
         }
