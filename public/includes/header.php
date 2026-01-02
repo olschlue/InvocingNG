@@ -323,7 +323,7 @@
                 <li><a href="?page=customers" <?php echo (isset($_GET['page']) && $_GET['page'] == 'customers') ? 'class="active"' : ''; ?>><?php echo __('customers'); ?></a></li>
                 <li><a href="?page=invoices" <?php echo (isset($_GET['page']) && $_GET['page'] == 'invoices') ? 'class="active"' : ''; ?>><?php echo __('invoices'); ?></a></li>
                 <li><a href="?page=payments" <?php echo (isset($_GET['page']) && $_GET['page'] == 'payments') ? 'class="active"' : ''; ?>><?php echo __('payments'); ?></a></li>
-                <li style="margin-left: auto;"><a href="?page=company_settings" <?php echo (isset($_GET['page']) && $_GET['page'] == 'company_settings') ? 'class="active"' : ''; ?>>🏢 <?php echo __('company_settings'); ?></a></li>
+                <li style="margin-left: auto;"><a href="?page=company_settings" <?php echo (isset($_GET['page']) && $_GET['page'] == 'company_settings') ? 'class="active"' : ''; ?>><?php echo __('company_settings'); ?></a></li>
                 <li><a href="?page=users" <?php echo (isset($_GET['page']) && $_GET['page'] == 'users') ? 'class="active"' : ''; ?>><?php echo __('users'); ?></a></li>                
                 <li><a href="?logout=1" onclick="return confirm('<?php echo __('confirm_logout'); ?>');"><?php echo __('logout'); ?></a></li>
             </ul>

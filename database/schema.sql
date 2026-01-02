@@ -117,18 +117,6 @@ CREATE TABLE IF NOT EXISTS settings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Standard-Einstellungen einfügen
-INSERT INTO settings (setting_key, setting_value) VALUES
-('company_name', 'Schlüter & Friends'),
-('app_name', 'Rechnungen'),
-('smtp_host', 'smtp.ionos.de'),
-('smtp_port', '465'),
-('smtp_user', 'noreply@oschlueter.de'),
-('smtp_pass', 'EE97mnee##'),
-('smtp_from', 'noreply@oschlueter.de'),
-('smtp_from_name', 'Schlüter & Friends'),
-('smtp_encryption', 'ssl')
-ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
 
 -- Trigger zum automatischen Aktualisieren der Rechnungssummen
 DELIMITER //
