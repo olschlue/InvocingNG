@@ -140,6 +140,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// GET-Parameter für Löschen verarbeiten
+if (isset($_GET['delete_item']) && $action === 'edit' && $invoiceId) {
+    $currentInvoice = $invoiceObj->getById($invoiceId);
+    if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
+        $message = '<div class="alert alert-error">Positionen können nicht gelöscht werden, da die Rechnung bereits versendet wurde.</div>';
+    } else {
+        $itemId = $_GET['delete_item'];
+        if ($invoiceObj->deleteItem($itemId)) {
+            header('Location: ?page=invoice_edit&id=' . $invoiceId);
+            exit;
+        } else {
+            $message = '<div class="alert alert-error">Fehler beim Löschen der Position.</div>';
+        }
+    }
+}
+
 // Rechnung laden
 if ($action === 'edit' && $invoiceId) {
     $invoice = $invoiceObj->getById($invoiceId);
@@ -316,10 +332,7 @@ $customers = $customerObj->getAll();
                             <?php if (!isset($isLocked) || !$isLocked): ?>
                             <td>
                                 <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&edit_item=<?php echo $item['id']; ?>" class="btn" style="padding: 5px 10px; font-size: 12px; background-color: #3498db; color: white; height: 28px; line-height: 1; display: inline-block; vertical-align: middle; box-sizing: border-box;"><?php echo __('edit'); ?></a>
-                                <form method="POST" style="display: inline;" onsubmit="return confirm('<?php echo __('confirm_delete'); ?>?');">
-                                    <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
-                                    <button type="submit" name="delete_item" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 1;"><?php echo __('delete'); ?></button>
-                                </form>
+                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&delete_item=<?php echo $item['id']; ?>" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 1; display: inline-block; vertical-align: middle; box-sizing: border-box;" onclick="return confirm('<?php echo __('confirm_delete'); ?>?');"><?php echo __('delete'); ?></a>
                             </td>
                             <?php endif; ?>
                         </tr>
