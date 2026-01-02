@@ -80,7 +80,6 @@ $lang = [
     'city' => 'Stadt',
     'zip' => 'PLZ',
     'country' => 'Land',
-    'tax_id' => 'Steuernummer',
     'vat_id' => 'USt-IdNr.',
     'notes' => 'Notizen',
     'save' => 'Speichern',

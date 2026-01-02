@@ -65,9 +65,8 @@ $currentSettings = $settingsObj->getAll();
         </div>
         
         <div class="form-group">
-            <label for="company_vat_id">Umsatzsteuer-ID (USt-IdNr.)</label>
-            <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($currentSettings['company_vat_id'] ?? ''); ?>" placeholder="DE123456789">
-            <small>Die USt-IdNr. Ihrer Firma</small>
+            <label for="company_vat_id">USt-IdNr</label>
+            <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($currentSettings['company_vat_id'] ?? ''); ?>" placeholder="DE123456789">           
         </div>
         
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
