@@ -44,8 +44,8 @@ class Customer {
         $sql = "INSERT INTO customers (
                     customer_number, company_name, first_name, last_name, 
                     email, phone, address_street, address_city, 
-                    address_zip, address_country, tax_id, notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    address_zip, address_country, tax_id, vat_id, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         $result = $stmt->execute([
@@ -60,6 +60,7 @@ class Customer {
             $data['address_zip'] ?? null,
             $data['address_country'] ?? 'Deutschland',
             $data['tax_id'] ?? null,
+            $data['vat_id'] ?? null,
             $data['notes'] ?? null
         ]);
         
@@ -74,7 +75,7 @@ class Customer {
                     customer_number = ?, company_name = ?, first_name = ?, 
                     last_name = ?, email = ?, phone = ?, address_street = ?, 
                     address_city = ?, address_zip = ?, address_country = ?, 
-                    tax_id = ?, notes = ?
+                    tax_id = ?, vat_id = ?, notes = ?
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -90,6 +91,7 @@ class Customer {
             $data['address_zip'] ?? null,
             $data['address_country'] ?? 'Deutschland',
             $data['tax_id'] ?? null,
+            $data['vat_id'] ?? null,
             $data['notes'] ?? null,
             $id
         ]);

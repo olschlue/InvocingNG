@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS customers (
     address_zip VARCHAR(20),
     address_country VARCHAR(100) DEFAULT 'Deutschland',
     tax_id VARCHAR(50),
+    vat_id VARCHAR(50),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

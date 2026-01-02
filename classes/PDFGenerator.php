@@ -110,6 +110,11 @@ class InvoicePDF extends FPDF {
         $this->Cell(0, 5, $this->convertEncoding($this->customer['address_street']), 0, 1);
         $this->Cell(0, 5, $this->convertEncoding($this->customer['address_zip'] . ' ' . $this->customer['address_city']), 0, 1);
         
+        // VAT-ID anzeigen falls vorhanden
+        if (!empty($this->customer['vat_id'])) {
+            $this->Cell(0, 5, $this->convertEncoding('USt-IdNr.: ' . $this->customer['vat_id']), 0, 1);
+        }
+        
         $this->Ln(10);
         
         // Rechnungsdaten
