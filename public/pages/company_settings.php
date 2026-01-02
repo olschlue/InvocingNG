@@ -53,11 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if ($success) {
-        $message = 'Einstellungen erfolgreich gespeichert.';
+        $message = __('settings_saved');
         // Cache leeren damit neue Werte geladen werden
         Settings::clearCache();
     } else {
-        $error = 'Fehler beim Speichern der Einstellungen.';
+        $error = __('settings_error');
     }
 }
 
@@ -93,43 +93,42 @@ try {
     <?php endif; ?>
     
     <form method="POST">
-        <h3>Firmeninformationen</h3>
+        <h3><?php echo __('company_information'); ?></h3>
         
         <div class="form-group">
-            <label for="company_name">Firmenname *</label>
+            <label for="company_name"><?php echo __('company_name_label'); ?> *</label>
             <input type="text" id="company_name" name="company_name" value="<?php echo htmlspecialchars($currentSettings['company_name'] ?? ''); ?>" required>
         </div>
         
         <div class="form-group">
-            <label for="app_name">Anwendungsname *</label>
+            <label for="app_name"><?php echo __('app_name_label'); ?> *</label>
             <input type="text" id="app_name" name="app_name" value="<?php echo htmlspecialchars($currentSettings['app_name'] ?? ''); ?>" required>
-            <small>Dieser Name wird in der Anwendung angezeigt</small>
         </div>
         
         <div class="form-group">
-            <label for="company_vat_id">USt-IdNr</label>
+            <label for="company_vat_id"><?php echo __('vat_id'); ?></label>
             <input type="text" id="company_vat_id" name="company_vat_id" value="<?php echo htmlspecialchars($company_vat_id); ?>" placeholder="DE123456789">           
         </div>
         
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
         
-        <h3>E-Mail-Server (SMTP) Einstellungen</h3>
+        <h2><?php echo __('smtp_settings'); ?></h2>
         
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
             <div class="form-group">
-                <label for="smtp_host">SMTP Server *</label>
+                <label for="smtp_host"><?php echo __('smtp_server'); ?> *</label>
                 <input type="text" id="smtp_host" name="smtp_host" value="<?php echo htmlspecialchars($currentSettings['smtp_host'] ?? ''); ?>" required placeholder="smtp.beispiel.de">
             </div>
             
             <div class="form-group">
-                <label for="smtp_port">SMTP Port *</label>
+                <label for="smtp_port"><?php echo __('smtp_port_label'); ?> *</label>
                 <input type="number" id="smtp_port" name="smtp_port" value="<?php echo htmlspecialchars($currentSettings['smtp_port'] ?? '465'); ?>" required>
-                <small>465 für SSL, 587 für TLS</small>
+                <small><?php echo __('smtp_port_hint'); ?></small>
             </div>
         </div>
         
         <div class="form-group">
-            <label for="smtp_encryption">Verschlüsselung *</label>
+            <label for="smtp_encryption"><?php echo __('smtp_encryption'); ?> *</label>
             <select id="smtp_encryption" name="smtp_encryption" required>
                 <option value="ssl" <?php echo ($currentSettings['smtp_encryption'] ?? 'ssl') === 'ssl' ? 'selected' : ''; ?>>SSL</option>
                 <option value="tls" <?php echo ($currentSettings['smtp_encryption'] ?? 'ssl') === 'tls' ? 'selected' : ''; ?>>TLS</option>
@@ -137,30 +136,30 @@ try {
         </div>
         
         <div class="form-group">
-            <label for="smtp_user">SMTP Benutzername *</label>
+            <label for="smtp_user"><?php echo __('smtp_username'); ?> *</label>
             <input type="text" id="smtp_user" name="smtp_user" value="<?php echo htmlspecialchars($currentSettings['smtp_user'] ?? ''); ?>" required>
         </div>
         
         <div class="form-group">
-            <label for="smtp_pass">SMTP Passwort</label>
-            <input type="password" id="smtp_pass" name="smtp_pass" placeholder="Leer lassen, um beizubehalten">
-            <small>Aus Sicherheitsgründen wird das aktuelle Passwort nicht angezeigt</small>
+            <label for="smtp_pass"><?php echo __('smtp_password'); ?></label>
+            <input type="password" id="smtp_pass" name="smtp_pass" placeholder="<?php echo __('smtp_password_hint'); ?>">
+            <small><?php echo __('smtp_password_security'); ?></small>
         </div>
         
         <div class="form-group">
-            <label for="smtp_from">Absender E-Mail *</label>
+            <label for="smtp_from"><?php echo __('smtp_from_email'); ?> *</label>
             <input type="email" id="smtp_from" name="smtp_from" value="<?php echo htmlspecialchars($currentSettings['smtp_from'] ?? ''); ?>" required>
         </div>
         
         <div class="form-group">
-            <label for="smtp_from_name">Absender Name *</label>
+            <label for="smtp_from_name"><?php echo __('smtp_from_name'); ?> *</label>
             <input type="text" id="smtp_from_name" name="smtp_from_name" value="<?php echo htmlspecialchars($currentSettings['smtp_from_name'] ?? ''); ?>" required>
         </div>
         
         <div class="form-actions">
             <button type="submit" class="btn btn-success">💾 <?php echo __('save'); ?></button>
             <a href="?page=dashboard" class="btn btn-secondary"><?php echo __('cancel'); ?></a>
-            <a href="test_email.php" class="btn" style="background-color: #3498db; color: white; margin-left: auto;">✉ E-Mail testen</a>
+            <a href="test_email.php" class="btn" style="background-color: #3498db; color: white; margin-left: auto;">✉ <?php echo __('test_email'); ?></a>
         </div>
     </form>
 </div>
