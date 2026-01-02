@@ -17,7 +17,7 @@
             background: <?php echo APP_BACKGROUND_COLOR; ?>;
             color: <?php echo APP_TEXT_COLOR; ?>;
             line-height: 1.6;
-            padding-top: 120px; /* Platz für sticky navbar */
+            padding-top: 130px; /* Platz für sticky navbar + header */
         }
         
         .container {
@@ -29,12 +29,12 @@
         header {
             background: <?php echo APP_BACKGROUND_COLOR; ?>;
             color: <?php echo APP_TEXT_COLOR; ?>;
-            margin-bottom: 5px;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 998;
+            z-index: 1000;
+            height: 70px;
             /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
         }
         
@@ -56,9 +56,8 @@
         nav {
             background: <?php echo APP_SECONDARY_COLOR; ?>;
             padding: 10px 0;
-            margin-bottom: 30px;
             position: fixed;
-            top: 60px; /* Nach dem Header */
+            top: 70px; /* Nach dem Header - gleiche Höhe wie header height */
             left: 0;
             right: 0;
             z-index: 1000;
