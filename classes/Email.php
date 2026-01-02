@@ -176,13 +176,34 @@ class Email {
         
         // Stelle sicher, dass das TEMP-Verzeichnis existiert
         if (!is_dir(TEMP_DIR)) {
-            mkdir(TEMP_DIR, 0755, true);
+            if (!mkdir(TEMP_DIR, 0755, true)) {
+                error_log("Failed to create TEMP_DIR: " . TEMP_DIR);
+                return ['success' => false, 'message' => __('error_pdf_generation') . ' (Verzeichnis konnte nicht erstellt werden)'];
+            }
         }
         
-        $pdfGenerator->generateInvoicePDF($invoiceId, 'F', $pdfPath);
+        // Prüfen ob Verzeichnis beschreibbar ist
+        if (!is_writable(TEMP_DIR)) {
+            error_log("TEMP_DIR is not writable: " . TEMP_DIR);
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Verzeichnis nicht beschreibbar)'];
+        }
+        
+        try {
+            $pdfGenerator->generateInvoicePDF($invoiceId, 'F', $pdfPath);
+        } catch (Exception $e) {
+            error_log("PDF Generation Error: " . $e->getMessage());
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (' . $e->getMessage() . ')'];
+        }
         
         if (!file_exists($pdfPath)) {
-            return ['success' => false, 'message' => __('error_pdf_generation')];
+            error_log("PDF file not created: " . $pdfPath);
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Datei wurde nicht erstellt)'];
+        }
+        
+        if (filesize($pdfPath) === 0) {
+            error_log("PDF file is empty: " . $pdfPath);
+            @unlink($pdfPath);
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Datei ist leer)'];
         }
         
         // E-Mail-Betreff und -Text

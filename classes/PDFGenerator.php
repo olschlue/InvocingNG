@@ -247,8 +247,13 @@ class PDFGenerator {
     
     /**
      * PDF für Rechnung erstellen
+     * 
+     * @param int $invoiceId Rechnungs-ID
+     * @param string $output Ausgabemodus: 'I' = inline, 'D' = download, 'F' = file, 'S' = string
+     * @param string $filePath Optional: Dateipfad für 'F' Modus
+     * @return mixed Bei 'S' Modus wird PDF-String zurückgegeben, sonst void
      */
-    public function generateInvoicePDF($invoiceId, $output = 'I') {
+    public function generateInvoicePDF($invoiceId, $output = 'I', $filePath = null) {
         // Rechnungsdaten laden
         $invoiceObj = new Invoice();
         $invoice = $invoiceObj->getById($invoiceId);
@@ -279,7 +284,13 @@ class PDFGenerator {
         $pdf->createInvoice();
         
         // Ausgeben oder speichern
-        $filename = (defined('PDF_FILENAME_SUFFIX') ? PDF_FILENAME_SUFFIX : 'Rechnung_') . $invoice['invoice_number'] . '.pdf';
-        $pdf->Output($output, $filename);
+        if ($output === 'F' && $filePath) {
+            // Als Datei speichern
+            return $pdf->Output($output, $filePath);
+        } else {
+            // Standard-Dateiname für Download/Inline
+            $filename = (defined('PDF_FILENAME_SUFFIX') ? PDF_FILENAME_SUFFIX : 'Rechnung_') . $invoice['invoice_number'] . '.pdf';
+            return $pdf->Output($output, $filename);
+        }
     }
 }
