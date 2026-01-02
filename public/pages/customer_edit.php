@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'address_city' => $_POST['address_city'],
         'address_zip' => $_POST['address_zip'],
         'address_country' => $_POST['address_country'],
-        'tax_id' => $_POST['tax_id'],
         'vat_id' => $_POST['vat_id'],
         'notes' => $_POST['notes']
     ];
@@ -60,7 +59,6 @@ if ($action === 'edit' && $customerId) {
         'address_city' => '',
         'address_zip' => '',
         'address_country' => 'Deutschland',
-        'tax_id' => '',
         'vat_id' => '',
         'notes' => ''
     ];
@@ -129,16 +127,9 @@ if ($action === 'edit' && $customerId) {
             <input type="text" name="address_country" value="<?php echo htmlspecialchars($customer['address_country']); ?>">
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="form-group">
-                <label><?php echo __('tax_id'); ?></label>
-                <input type="text" name="tax_id" value="<?php echo htmlspecialchars($customer['tax_id']); ?>">
-            </div>
-            
-            <div class="form-group">
-                <label><?php echo __('vat_id'); ?></label>
-                <input type="text" name="vat_id" value="<?php echo htmlspecialchars($customer['vat_id'] ?? ''); ?>">
-            </div>
+        <div class="form-group">
+            <label><?php echo __('vat_id'); ?></label>
+            <input type="text" name="vat_id" value="<?php echo htmlspecialchars($customer['vat_id'] ?? ''); ?>">
         </div>
         
         <div class="form-group">

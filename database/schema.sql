@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS customers (
     address_city VARCHAR(100),
     address_zip VARCHAR(20),
     address_country VARCHAR(100) DEFAULT 'Deutschland',
-    tax_id VARCHAR(50),
     vat_id VARCHAR(50),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -94,7 +93,6 @@ CREATE TABLE IF NOT EXISTS company_settings (
     phone VARCHAR(50),
     email VARCHAR(255),
     website VARCHAR(255),
-    tax_id VARCHAR(50),
     vat_id VARCHAR(50),
     bank_name VARCHAR(255),
     bank_account VARCHAR(100),
@@ -107,8 +105,8 @@ CREATE TABLE IF NOT EXISTS company_settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Beispieldaten einfügen
-INSERT INTO company_settings (company_name, address_street, address_city, address_zip, phone, email, tax_id, iban, bic)
-VALUES ('Ihre Firma GmbH', 'Musterstraße 123', 'Berlin', '10115', '+49 30 12345678', 'info@ihre-firma.de', 'DE123456789', 'DE89370400440532013000', 'COBADEFFXXX');
+INSERT INTO company_settings (company_name, address_street, address_city, address_zip, phone, email, iban, bic)
+VALUES ('Ihre Firma GmbH', 'Musterstraße 123', 'Berlin', '10115', '+49 30 12345678', 'info@ihre-firma.de', 'DE89370400440532013000', 'COBADEFFXXX');
 
 -- Tabelle für Firmen- und Systemeinstellungen
 CREATE TABLE IF NOT EXISTS settings (

@@ -14,7 +14,7 @@ try {
     $stmt = $db->query("SHOW COLUMNS FROM customers LIKE 'vat_id'");
     if ($stmt->rowCount() == 0) {
         echo "Füge vat_id Spalte zur customers Tabelle hinzu...\n";
-        $db->exec("ALTER TABLE customers ADD COLUMN vat_id VARCHAR(50) AFTER tax_id");
+        $db->exec("ALTER TABLE customers ADD COLUMN vat_id VARCHAR(50)");
         echo "✓ vat_id Spalte hinzugefügt\n";
     } else {
         echo "✓ vat_id Spalte existiert bereits\n";
@@ -24,7 +24,7 @@ try {
     $stmt = $db->query("SHOW COLUMNS FROM company_settings LIKE 'vat_id'");
     if ($stmt->rowCount() == 0) {
         echo "Füge vat_id Spalte zur company_settings Tabelle hinzu...\n";
-        $db->exec("ALTER TABLE company_settings ADD COLUMN vat_id VARCHAR(50) AFTER tax_id");
+        $db->exec("ALTER TABLE company_settings ADD COLUMN vat_id VARCHAR(50)");
         echo "✓ vat_id Spalte zu company_settings hinzugefügt\n";
     } else {
         echo "✓ vat_id Spalte in company_settings existiert bereits\n";
