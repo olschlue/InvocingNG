@@ -276,7 +276,8 @@ class PDFGenerator {
             'address_street' => $invoice['address_street'],
             'address_city' => $invoice['address_city'],
             'address_zip' => $invoice['address_zip'],
-            'customer_number' => $invoice['customer_number']
+            'customer_number' => $invoice['customer_number'],
+            'vat_id' => $invoice['vat_id']
         ];
         
         // Firmendaten
