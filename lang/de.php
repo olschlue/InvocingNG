@@ -43,6 +43,7 @@ $lang = [
     'new_user' => 'Neuer Benutzer',
     'edit_user' => 'Benutzer bearbeiten',
     'no_users_found' => 'Keine Benutzer gefunden',
+    'confirm_delete' => 'Möchten Sie dies wirklich löschen',
     'confirm_delete_user' => 'Möchten Sie diesen Benutzer wirklich löschen?',
     'error_delete_user' => 'Fehler beim Löschen des Benutzers',
     'username_required' => 'Benutzername ist erforderlich',

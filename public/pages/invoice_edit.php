@@ -101,6 +101,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = '<div class="alert alert-success">Position hinzugefügt.</div>';
             }
         }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_item'])) {
+        // Position löschen - nur wenn Rechnung noch nicht versendet ist
+        if ($action === 'edit' && $invoiceId) {
+            $currentInvoice = $invoiceObj->getById($invoiceId);
+            if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
+                $message = '<div class="alert alert-error">Positionen können nicht gelöscht werden, da die Rechnung bereits versendet wurde.</div>';
+            } else {
+                $itemId = $_POST['item_id'];
+                if ($invoiceObj->deleteItem($itemId)) {
+                    $message = '<div class="alert alert-success">Position gelöscht.</div>';
+                } else {
+                    $message = '<div class="alert alert-error">Fehler beim Löschen der Position.</div>';
+                }
+            }
+        }
     }
 }
 
@@ -243,6 +258,9 @@ $customers = $customerObj->getAll();
                         <th><?php echo __('unit_price'); ?></th>
                         <th><?php echo __('tax_rate'); ?> %</th>
                         <th><?php echo __('total'); ?></th>
+                        <?php if (!isset($isLocked) || !$isLocked): ?>
+                        <th><?php echo __('actions'); ?></th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -254,6 +272,14 @@ $customers = $customerObj->getAll();
                             <td><?php echo number_format($item['unit_price'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                             <td><?php echo number_format($item['tax_rate'], 0); ?>%</td>
                             <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
+                            <?php if (!isset($isLocked) || !$isLocked): ?>
+                            <td>
+                                <form method="POST" style="display: inline;" onsubmit="return confirm('<?php echo __('confirm_delete'); ?>?');">
+                                    <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
+                                    <button type="submit" name="delete_item" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">🗑️ <?php echo __('delete'); ?></button>
+                                </form>
+                            </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
