@@ -4,6 +4,9 @@
  * Versendet E-Mails mit PDFs über SMTP
  */
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class Email {
     private $host;
     private $port;
@@ -24,127 +27,57 @@ class Email {
     }
     
     /**
-     * Sendet eine E-Mail
+     * Sendet eine E-Mail mit PHPMailer
      * 
      * @param string $to Empfänger-E-Mail
      * @param string $subject Betreff
-     * @param string $body Nachrichtentext
+     * @param string $body Nachrichtentext (HTML)
      * @param array $attachments Array mit Dateianhängen ['path' => 'Pfad', 'name' => 'Dateiname']
      * @return bool Erfolg
      */
     public function send($to, $subject, $body, $attachments = []) {
-        // Boundary für Multipart-E-Mail
-        $boundary = md5(uniqid(time()));
+        $mail = new PHPMailer(true);
         
-        // Headers
-        $headers = [];
-        $headers[] = "From: {$this->fromName} <{$this->from}>";
-        $headers[] = "Reply-To: {$this->from}";
-        $headers[] = "MIME-Version: 1.0";
-        $headers[] = "Content-Type: multipart/mixed; boundary=\"{$boundary}\"";
-        
-        // E-Mail-Body zusammenstellen
-        $message = "--{$boundary}\r\n";
-        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-        $message .= $body . "\r\n\r\n";
-        
-        // Anhänge hinzufügen
-        foreach ($attachments as $attachment) {
-            if (file_exists($attachment['path'])) {
-                $fileContent = chunk_split(base64_encode(file_get_contents($attachment['path'])));
-                $message .= "--{$boundary}\r\n";
-                $message .= "Content-Type: application/pdf; name=\"{$attachment['name']}\"\r\n";
-                $message .= "Content-Disposition: attachment; filename=\"{$attachment['name']}\"\r\n";
-                $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
-                $message .= $fileContent . "\r\n\r\n";
-            }
-        }
-        
-        $message .= "--{$boundary}--";
-        
-        // E-Mail über SMTP senden
         try {
-            if ($this->encryption === 'ssl') {
-                $socket = @fsockopen("ssl://{$this->host}", $this->port, $errno, $errstr, 30);
-            } else {
-                $socket = @fsockopen($this->host, $this->port, $errno, $errstr, 30);
+            // Server-Einstellungen
+            $mail->isSMTP();
+            $mail->Host = $this->host;
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->username;
+            $mail->Password = $this->password;
+            $mail->SMTPSecure = $this->encryption === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = $this->port;
+            $mail->CharSet = 'UTF-8';
+            
+            // Debug-Modus (für Entwicklung)
+            // $mail->SMTPDebug = 2; // Aktivieren für detaillierte Debug-Ausgabe
+            
+            // Empfänger
+            $mail->setFrom($this->from, $this->fromName);
+            $mail->addAddress($to);
+            $mail->addReplyTo($this->from, $this->fromName);
+            
+            // Inhalt
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->AltBody = strip_tags(str_replace('<br>', "\n", $body));
+            
+            // Anhänge hinzufügen
+            foreach ($attachments as $attachment) {
+                if (file_exists($attachment['path'])) {
+                    $mail->addAttachment($attachment['path'], $attachment['name']);
+                }
             }
             
-            if (!$socket) {
-                error_log("SMTP Connection Error: {$errstr} ({$errno})");
-                return false;
-            }
-            
-            $this->getResponse($socket);
-            
-            // EHLO
-            fputs($socket, "EHLO {$this->host}\r\n");
-            $this->getResponse($socket);
-            
-            // STARTTLS wenn TLS verwendet wird
-            if ($this->encryption === 'tls') {
-                fputs($socket, "STARTTLS\r\n");
-                $this->getResponse($socket);
-                stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-                fputs($socket, "EHLO {$this->host}\r\n");
-                $this->getResponse($socket);
-            }
-            
-            // AUTH LOGIN
-            fputs($socket, "AUTH LOGIN\r\n");
-            $this->getResponse($socket);
-            
-            fputs($socket, base64_encode($this->username) . "\r\n");
-            $this->getResponse($socket);
-            
-            fputs($socket, base64_encode($this->password) . "\r\n");
-            $this->getResponse($socket);
-            
-            // MAIL FROM
-            fputs($socket, "MAIL FROM: <{$this->from}>\r\n");
-            $this->getResponse($socket);
-            
-            // RCPT TO
-            fputs($socket, "RCPT TO: <{$to}>\r\n");
-            $this->getResponse($socket);
-            
-            // DATA
-            fputs($socket, "DATA\r\n");
-            $this->getResponse($socket);
-            
-            // Headers und Message
-            fputs($socket, "To: {$to}\r\n");
-            fputs($socket, "Subject: {$subject}\r\n");
-            fputs($socket, implode("\r\n", $headers) . "\r\n\r\n");
-            fputs($socket, $message . "\r\n.\r\n");
-            $this->getResponse($socket);
-            
-            // QUIT
-            fputs($socket, "QUIT\r\n");
-            $this->getResponse($socket);
-            
-            fclose($socket);
+            $mail->send();
             return true;
             
         } catch (Exception $e) {
-            error_log("SMTP Error: " . $e->getMessage());
+            error_log("PHPMailer Error: " . $mail->ErrorInfo);
+            error_log("Exception: " . $e->getMessage());
             return false;
         }
-    }
-    
-    /**
-     * Liest die Antwort vom SMTP-Server
-     */
-    private function getResponse($socket) {
-        $response = '';
-        while ($line = fgets($socket, 515)) {
-            $response .= $line;
-            if (substr($line, 3, 1) == ' ') {
-                break;
-            }
-        }
-        return $response;
     }
     
     /**

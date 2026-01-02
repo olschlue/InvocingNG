@@ -74,6 +74,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Composer Autoloader laden
+if (file_exists(BASE_PATH . '/vendor/autoload.php')) {
+    require_once BASE_PATH . '/vendor/autoload.php';
+}
+
 // Autoloader
 spl_autoload_register(function ($class) {
     $file = BASE_PATH . '/classes/' . str_replace('\\', '/', $class) . '.php';
