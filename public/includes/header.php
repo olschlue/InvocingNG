@@ -40,7 +40,6 @@
         }
         
         header .logo {
-            height: 100px;
             width: auto;
         }
         
