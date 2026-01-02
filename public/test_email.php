@@ -8,6 +8,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $result = null;
 $error = null;
+$debugOutput = '';
+
+// Debug-Output Buffer starten
+ob_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $testEmail = $_POST['test_email'] ?? '';
@@ -30,13 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $success = $emailObj->send($testEmail, $subject, $body);
         
+        // Debug-Output erfassen
+        $debugOutput = ob_get_contents();
+        
         if ($success) {
             $result = 'Test-E-Mail erfolgreich gesendet an: ' . htmlspecialchars($testEmail);
         } else {
-            $error = 'Fehler beim Senden der Test-E-Mail. Bitte Fehlerprotokoll prüfen.';
+            $error = 'Fehler beim Senden der Test-E-Mail: ' . htmlspecialchars($emailObj->getLastError());
         }
     }
 }
+
+// Debug-Output Buffer beenden
+ob_end_clean();
 ?>
 
 <!DOCTYPE html>
@@ -163,6 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <button type="submit">✉ Test-E-Mail senden</button>
         </form>
+        
+        <?php if (!empty($debugOutput)): ?>
+            <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; max-height: 400px; overflow-y: auto;">
+                <h3 style="margin-top: 0;">Debug-Ausgabe:</h3>
+                <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word; font-size: 12px; font-family: 'Courier New', monospace;"><?php echo htmlspecialchars($debugOutput); ?></pre>
+            </div>
+        <?php endif; ?>
         
         <a href="../index.php?page=dashboard" class="back-link">← Zurück zum Dashboard</a>
     </div>

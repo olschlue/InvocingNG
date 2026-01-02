@@ -315,4 +315,34 @@ class Invoice {
         
         return false;
     }
+    
+    /**
+     * Notiz an Rechnung anhängen
+     * 
+     * @param int $id Rechnungs-ID
+     * @param string $additionalNote Zusätzliche Notiz zum Anhängen
+     * @return bool Erfolg
+     */
+    public function appendNote($id, $additionalNote) {
+        // Aktuelle Rechnung abrufen
+        $invoice = $this->getById($id);
+        if (!$invoice) {
+            return false;
+        }
+        
+        // Neue Notiz zusammenstellen
+        $currentNotes = $invoice['notes'] ?? '';
+        $newNotes = $currentNotes;
+        
+        // Trennzeichen hinzufügen, wenn bereits Notizen vorhanden sind
+        if (!empty($currentNotes)) {
+            $newNotes .= "\n\n";
+        }
+        
+        $newNotes .= $additionalNote;
+        
+        // Notiz aktualisieren
+        $stmt = $this->db->prepare("UPDATE invoices SET notes = ? WHERE id = ?");
+        return $stmt->execute([$newNotes, $id]);
+    }
 }

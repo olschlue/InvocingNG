@@ -15,6 +15,7 @@ class Email {
     private $from;
     private $fromName;
     private $encryption;
+    private $lastError = '';
     
     public function __construct() {
         $this->host = SMTP_HOST;
@@ -24,6 +25,13 @@ class Email {
         $this->from = SMTP_FROM;
         $this->fromName = SMTP_FROM_NAME;
         $this->encryption = SMTP_ENCRYPTION;
+    }
+    
+    /**
+     * Gibt den letzten Fehler zurück
+     */
+    public function getLastError() {
+        return $this->lastError;
     }
     
     /**
@@ -49,8 +57,15 @@ class Email {
             $mail->Port = $this->port;
             $mail->CharSet = 'UTF-8';
             
-            // Debug-Modus (für Entwicklung)
-            // $mail->SMTPDebug = 2; // Aktivieren für detaillierte Debug-Ausgabe
+            // Debug-Modus aktivieren
+            $mail->SMTPDebug = 2; // Detaillierte Debug-Ausgabe
+            $mail->Debugoutput = function($str, $level) {
+                error_log("SMTP Debug [$level]: $str");
+            };
+            
+            // Timeout erhöhen für langsame Server
+            $mail->Timeout = 30;
+            $mail->SMTPKeepAlive = true;
             
             // Empfänger
             $mail->setFrom($this->from, $this->fromName);
@@ -70,12 +85,15 @@ class Email {
                 }
             }
             
+            error_log("Attempting to send email to: $to via " . $this->host . ":" . $this->port);
             $mail->send();
+            error_log("Email sent successfully to: $to");
             return true;
             
         } catch (Exception $e) {
-            error_log("PHPMailer Error: " . $mail->ErrorInfo);
-            error_log("Exception: " . $e->getMessage());
+            $this->lastError = "PHPMailer Error: " . $mail->ErrorInfo . " | Exception: " . $e->getMessage();
+            error_log($this->lastError);
+            error_log("Full trace: " . $e->getTraceAsString());
             return false;
         }
     }
@@ -177,9 +195,15 @@ class Email {
         if ($result) {
             // Status auf "sent" setzen
             $invoiceObj->updateStatus($invoiceId, 'sent');
+            
+            // Versandzeitstempel zur Notiz hinzufügen
+            $timestamp = date('d.m.Y H:i:s');
+            $noteAddition = "Versendet am " . $timestamp;
+            $invoiceObj->appendNote($invoiceId, $noteAddition);
+            
             return ['success' => true, 'message' => __('email_sent_success')];
         } else {
-            return ['success' => false, 'message' => __('error_email_send')];
+            return ['success' => false, 'message' => __('error_email_send') . ': ' . $this->getLastError()];
         }
     }
 }
