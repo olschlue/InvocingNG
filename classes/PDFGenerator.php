@@ -112,7 +112,7 @@ class InvoicePDF extends FPDF {
         
         // VAT-ID anzeigen falls vorhanden
         if (!empty($this->customer['vat_id'])) {
-            $this->Cell(0, 5, $this->convertEncoding('USt-IdNr.: ' . $this->customer['vat_id']), 0, 1);
+            $this->Cell(0, 5, $this->convertEncoding(__('vat_id') . ': ' . $this->customer['vat_id']), 0, 1);
         }
         
         $this->Ln(10);
@@ -195,13 +195,13 @@ class InvoicePDF extends FPDF {
             $this->Cell(18, $cellHeight, number_format($item['quantity'], 2, ',', '.'), 0, 0, 'C');
             
             // Einzelpreis
-            $this->Cell(28, $cellHeight, number_format($item['unit_price'], 2, ',', '.') . ' EUR', 0, 0, 'R');
+            $this->Cell(28, $cellHeight, number_format($item['unit_price'], 2, ',', '.') . ' ' . CURRENCY, 0, 0, 'R');
             
             // Steuersatz
             $this->Cell(16, $cellHeight, number_format($item['tax_rate'], 0) . '%', 0, 0, 'C');
             
             // Gesamt
-            $this->Cell(28, $cellHeight, number_format($item['total'], 2, ',', '.') . ' EUR', 0, 1, 'R');
+            $this->Cell(28, $cellHeight, number_format($item['total'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         }
         
         // Summen
@@ -210,13 +210,13 @@ class InvoicePDF extends FPDF {
         $this->Cell(116, 6, '', 0, 0);
         $this->Cell(28, 6, $this->convertEncoding(__('subtotal')) . ':', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(26, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' EUR', 0, 1, 'R');
+        $this->Cell(26, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(116, 6, '', 0, 0);
         $this->Cell(28, 6, $this->convertEncoding(__('tax_amount')) . ' (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
         $this->SetFont('Arial', 'B', 9);
-        $this->Cell(26, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' EUR', 0, 1, 'R');
+        $this->Cell(26, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         
         $this->SetDrawColor(0, 0, 0);
         $this->Line(116, $this->GetY(), 190, $this->GetY());
@@ -225,7 +225,7 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(116, 7, '', 0, 0);
         $this->Cell(28, 7, $this->convertEncoding(__('total_amount')) . ':', 0, 0, 'R');
-        $this->Cell(26, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' EUR', 0, 1, 'R');
+        $this->Cell(26, 7, number_format($this->invoice['total_amount'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         
         // Zahlungshinweise
         if (!empty($this->invoice['payment_terms'])) {
