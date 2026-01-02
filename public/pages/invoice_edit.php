@@ -224,7 +224,7 @@ $customers = $customerObj->getAll();
                 <a href="?page=invoice_pdf&id=<?php echo $invoiceId; ?>" class="btn" target="_blank">PDF <?php echo __('preview'); ?></a>
                 <?php if ($invoice['status'] !== 'paid'): ?>
                     <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #27ae60;"><?php echo __('record_payment'); ?></a>
-                    <a href="?page=invoice_send&id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #3498db; color: white;" title="<?php echo __('send_invoice'); ?>">✉ <?php echo __('send_email'); ?></a>
+                    <a href="?page=invoice_send&id=<?php echo $invoiceId; ?>" class="btn" style="background-color: #3498db; color: white;" title="<?php echo __('send_invoice'); ?>"><?php echo __('send_email'); ?></a>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
