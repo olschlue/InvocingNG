@@ -118,6 +118,35 @@ CREATE TABLE IF NOT EXISTS settings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Standard-Einstellungen einfügen
+INSERT INTO settings (setting_key, setting_value) VALUES
+('company_name', 'Schlüter & Friends'),
+('app_name', 'Rechnungen'),
+('company_vat_id', ''),
+('smtp_host', 'smtp.ionos.de'),
+('smtp_port', '465'),
+('smtp_user', 'noreply@oschlueter.de'),
+('smtp_pass', 'EE97mnee##'),
+('smtp_from', 'noreply@oschlueter.de'),
+('smtp_from_name', 'Schlüter & Friends'),
+('smtp_encryption', 'ssl')
+ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
+
+-- Tabelle für Benutzer
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NULL,
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Standard-Admin-Benutzer erstellen (Passwort: ee97mnee)
+INSERT INTO users (username, password_hash) VALUES 
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
+ON DUPLICATE KEY UPDATE username = username;
+
 
 -- Trigger zum automatischen Aktualisieren der Rechnungssummen
 DELIMITER //
