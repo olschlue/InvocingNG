@@ -25,13 +25,17 @@ class Settings {
             return self::$cache[$key];
         }
         
-        $stmt = $this->db->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        $result = $stmt->fetch();
-        
-        if ($result) {
-            self::$cache[$key] = $result['setting_value'];
-            return $result['setting_value'];
+        try {
+            $stmt = $this->db->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+            $stmt->execute([$key]);
+            $result = $stmt->fetch();
+            
+            if ($result) {
+                self::$cache[$key] = $result['setting_value'];
+                return $result['setting_value'];
+            }
+        } catch (PDOException $e) {
+            error_log("Settings::get error: " . $e->getMessage());
         }
         
         return $default;
@@ -83,14 +87,19 @@ class Settings {
      * @return array Alle Einstellungen als Key-Value-Array
      */
     public function getAll() {
-        $stmt = $this->db->query("SELECT setting_key, setting_value FROM settings");
-        $settings = [];
-        
-        while ($row = $stmt->fetch()) {
-            $settings[$row['setting_key']] = $row['setting_value'];
+        try {
+            $stmt = $this->db->query("SELECT setting_key, setting_value FROM settings");
+            $settings = [];
+            
+            while ($row = $stmt->fetch()) {
+                $settings[$row['setting_key']] = $row['setting_value'];
+            }
+            
+            return $settings;
+        } catch (PDOException $e) {
+            error_log("Settings::getAll error: " . $e->getMessage());
+            return [];
         }
-        
-        return $settings;
     }
     
     /**

@@ -111,6 +111,11 @@ function __($key) {
  */
 function loadSettingsFromDatabase() {
     try {
+        // Prüfen ob Settings-Klasse existiert
+        if (!class_exists('Settings')) {
+            return;
+        }
+        
         $settingsObj = new Settings();
         $dbSettings = $settingsObj->getAll();
         
@@ -147,6 +152,9 @@ function loadSettingsFromDatabase() {
     } catch (Exception $e) {
         // Bei Fehler (z.B. Tabelle existiert noch nicht) einfach weitermachen
         error_log("Could not load settings from database: " . $e->getMessage());
+    } catch (PDOException $e) {
+        // Datenbankfehler (z.B. Tabelle existiert nicht)
+        error_log("Database error in loadSettingsFromDatabase: " . $e->getMessage());
     }
 }
 
