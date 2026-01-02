@@ -25,6 +25,7 @@ define('TEMP_DIR', BASE_PATH . '/temp');
 define('PDF_FONT', 'DejaVu Sans');
 define('PDF_FONT_SIZE', 10);
 define('PDF_BACKGROUND', BASE_PATH . '/public/assets/invoice_background.png');
+define('PDF_FILENAME_SUFFIX', 'SF-RE-');  // Suffix für PDF-Dateinamen
 
 // Design & Branding
 define('APP_LOGO', BASE_PATH . '/public/assets/logo.png');

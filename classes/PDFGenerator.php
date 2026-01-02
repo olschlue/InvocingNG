@@ -279,7 +279,7 @@ class PDFGenerator {
         $pdf->createInvoice();
         
         // Ausgeben oder speichern
-        $filename = 'Rechnung_' . $invoice['invoice_number'] . '.pdf';
+        $filename = (defined('PDF_FILENAME_SUFFIX') ? PDF_FILENAME_SUFFIX : 'Rechnung_') . $invoice['invoice_number'] . '.pdf';
         $pdf->Output($output, $filename);
     }
 }

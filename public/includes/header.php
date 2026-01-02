@@ -40,7 +40,7 @@
         }
         
         header .logo {
-            height: 60px;
+            height: 100px;
             width: auto;
         }
         
@@ -53,6 +53,12 @@
             background: <?php echo APP_SECONDARY_COLOR; ?>;
             padding: 10px 0;
             margin-bottom: 30px;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
         nav ul {
