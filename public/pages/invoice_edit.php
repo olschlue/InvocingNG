@@ -116,6 +116,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_item'])) {
+        // Position bearbeiten - nur wenn Rechnung noch nicht versendet ist
+        if ($action === 'edit' && $invoiceId) {
+            $currentInvoice = $invoiceObj->getById($invoiceId);
+            if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
+                $message = '<div class="alert alert-error">Positionen können nicht bearbeitet werden, da die Rechnung bereits versendet wurde.</div>';
+            } else {
+                $itemId = $_POST['item_id'];
+                $itemData = [
+                    'description' => $_POST['item_description'],
+                    'quantity' => $_POST['item_quantity'],
+                    'unit_price' => $_POST['item_unit_price'],
+                    'tax_rate' => $_POST['item_tax_rate']
+                ];
+                if ($invoiceObj->updateItem($itemId, $itemData)) {
+                    $message = '<div class="alert alert-success">Position aktualisiert.</div>';
+                } else {
+                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Position.</div>';
+                }
+            }
+        }
     }
 }
 
@@ -132,6 +153,7 @@ if ($action === 'edit' && $invoiceId) {
     $isLocked = in_array($invoice['status'], ['sent', 'paid', 'overdue']);
     
     $items = $invoiceObj->getItems($invoiceId);
+    $editItemId = $_GET['edit_item'] ?? null;
 } elseif ($action === 'new') {
     $isPaid = false;
     $isLocked = false;
@@ -265,6 +287,25 @@ $customers = $customerObj->getAll();
                 </thead>
                 <tbody>
                     <?php foreach ($items as $item): ?>
+                        <?php if (isset($editItemId) && $editItemId == $item['id'] && (!isset($isLocked) || !$isLocked)): ?>
+                        <!-- Bearbeitungsmodus -->
+                        <tr>
+                            <form method="POST">
+                                <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
+                                <td><?php echo $item['position']; ?></td>
+                                <td><input type="text" name="item_description" value="<?php echo htmlspecialchars($item['description']); ?>" required style="width: 100%;"></td>
+                                <td><input type="number" step="0.01" name="item_quantity" value="<?php echo $item['quantity']; ?>" required style="width: 80px;"></td>
+                                <td><input type="number" step="0.01" name="item_unit_price" value="<?php echo $item['unit_price']; ?>" required style="width: 100px;"></td>
+                                <td><input type="number" step="0.01" name="item_tax_rate" value="<?php echo $item['tax_rate']; ?>" required style="width: 60px;"></td>
+                                <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
+                                <td>
+                                    <button type="submit" name="update_item" class="btn btn-success" style="padding: 5px 10px; font-size: 12px;">✔️ <?php echo __('save'); ?></button>
+                                    <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">❌ <?php echo __('cancel'); ?></a>
+                                </td>
+                            </form>
+                        </tr>
+                        <?php else: ?>
+                        <!-- Anzeigemodus -->
                         <tr>
                             <td><?php echo $item['position']; ?></td>
                             <td><?php echo htmlspecialchars($item['description']); ?></td>
@@ -274,6 +315,7 @@ $customers = $customerObj->getAll();
                             <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                             <?php if (!isset($isLocked) || !$isLocked): ?>
                             <td>
+                                <a href="?page=invoice_edit&id=<?php echo $invoiceId; ?>&edit_item=<?php echo $item['id']; ?>" class="btn" style="padding: 5px 10px; font-size: 12px; background-color: #3498db; color: white;">✏️ <?php echo __('edit'); ?></a>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('<?php echo __('confirm_delete'); ?>?');">
                                     <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
                                     <button type="submit" name="delete_item" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">🗑️ <?php echo __('delete'); ?></button>
@@ -281,6 +323,7 @@ $customers = $customerObj->getAll();
                             </td>
                             <?php endif; ?>
                         </tr>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </tbody>
             </table>
