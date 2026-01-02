@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS company_settings (
     email VARCHAR(255),
     website VARCHAR(255),
     tax_id VARCHAR(50),
+    vat_id VARCHAR(50),
     bank_name VARCHAR(255),
     bank_account VARCHAR(100),
     bank_code VARCHAR(50),
@@ -122,7 +123,6 @@ CREATE TABLE IF NOT EXISTS settings (
 INSERT INTO settings (setting_key, setting_value) VALUES
 ('company_name', 'Schlüter & Friends'),
 ('app_name', 'Rechnungen'),
-('company_vat_id', ''),
 ('smtp_host', 'smtp.ionos.de'),
 ('smtp_port', '465'),
 ('smtp_user', 'noreply@oschlueter.de'),
@@ -142,10 +142,7 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_username (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Standard-Admin-Benutzer erstellen (Passwort: ee97mnee)
-INSERT INTO users (username, password_hash) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
-ON DUPLICATE KEY UPDATE username = username;
+
 
 
 -- Trigger zum automatischen Aktualisieren der Rechnungssummen

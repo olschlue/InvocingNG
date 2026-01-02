@@ -20,11 +20,15 @@ try {
         echo "✓ vat_id Spalte existiert bereits\n";
     }
     
-    // VAT-ID zur settings Tabelle hinzufügen
-    echo "Füge company_vat_id zu settings hinzu...\n";
-    $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('company_vat_id', '') ON DUPLICATE KEY UPDATE setting_key = setting_key");
-    $stmt->execute();
-    echo "✓ company_vat_id zu settings hinzugefügt\n";
+    // VAT-ID zur company_settings Tabelle hinzufügen
+    $stmt = $db->query("SHOW COLUMNS FROM company_settings LIKE 'vat_id'");
+    if ($stmt->rowCount() == 0) {
+        echo "Füge vat_id Spalte zur company_settings Tabelle hinzu...\n";
+        $db->exec("ALTER TABLE company_settings ADD COLUMN vat_id VARCHAR(50) AFTER tax_id");
+        echo "✓ vat_id Spalte zu company_settings hinzugefügt\n";
+    } else {
+        echo "✓ vat_id Spalte in company_settings existiert bereits\n";
+    }
     
     echo "\n✓ Migration erfolgreich abgeschlossen!\n";
     echo "Die VAT-ID Felder wurden hinzugefügt.\n";
