@@ -42,6 +42,9 @@ switch ($page) {
     case 'invoice_edit':
         include 'pages/invoice_edit.php';
         break;
+    case 'invoice_send':
+        include 'pages/invoice_send.php';
+        break;
     case 'payments':
         include 'pages/payments.php';
         break;

@@ -166,6 +166,25 @@ $lang = [
     'customer_saved' => 'Customer saved.',
     'payment_saved' => 'Payment saved.',
     
+    // Email
+    'send_invoice' => 'Send Invoice',
+    'send_email' => 'Send Email',
+    'recipient_email' => 'Recipient Email',
+    'custom_message' => 'Custom Message',
+    'custom_message_placeholder' => 'Optional: Add a personal message here...',
+    'custom_message_hint' => 'This message will be displayed in addition to the standard email',
+    'email_hint' => 'The recipient\'s email address. Default: Customer email',
+    'email_preview' => 'Email Preview',
+    'subject' => 'Subject',
+    'preview_pdf' => 'PDF Preview',
+    'email_sent_success' => 'Invoice was successfully sent by email and status set to "Sent".',
+    'email_invoice_subject' => 'Your Invoice',
+    'email_greeting' => 'Dear',
+    'email_invoice_body' => 'attached you will find your invoice as a PDF attachment.',
+    'email_invoice_details' => 'Invoice Details',
+    'email_invoice_attached' => 'You can find the invoice in the PDF attachment of this email.',
+    'email_regards' => 'Best regards',
+    
     // Errors
     'error' => 'Error',
     'error_required_fields' => 'Please fill in all required fields.',
@@ -174,4 +193,7 @@ $lang = [
     'error_payment_not_found' => 'Payment not found.',
     'error_payment_create' => 'Error creating payment.',
     'error_payment_update' => 'Error updating payment.',
+    'error_no_email' => 'No email address available. Please enter an email address.',
+    'error_pdf_generation' => 'Error generating PDF file.',
+    'error_email_send' => 'Error sending email. Please check SMTP settings.',
 ];

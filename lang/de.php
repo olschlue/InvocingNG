@@ -166,6 +166,25 @@ $lang = [
     'customer_saved' => 'Kunde gespeichert.',
     'payment_saved' => 'Zahlung gespeichert.',
     
+    // E-Mail
+    'send_invoice' => 'Rechnung versenden',
+    'send_email' => 'E-Mail senden',
+    'recipient_email' => 'Empfänger E-Mail',
+    'custom_message' => 'Persönliche Nachricht',
+    'custom_message_placeholder' => 'Optional: Fügen Sie hier eine persönliche Nachricht hinzu...',
+    'custom_message_hint' => 'Diese Nachricht wird zusätzlich zur Standard-E-Mail angezeigt',
+    'email_hint' => 'Die E-Mail-Adresse des Empfängers. Standard: Kunden-E-Mail',
+    'email_preview' => 'E-Mail-Vorschau',
+    'subject' => 'Betreff',
+    'preview_pdf' => 'PDF-Vorschau',
+    'email_sent_success' => 'Rechnung wurde erfolgreich per E-Mail versendet und der Status auf "Versendet" gesetzt.',
+    'email_invoice_subject' => 'Ihre Rechnung',
+    'email_greeting' => 'Sehr geehrte/r',
+    'email_invoice_body' => 'anbei erhalten Sie Ihre Rechnung als PDF-Anhang.',
+    'email_invoice_details' => 'Rechnungsdetails',
+    'email_invoice_attached' => 'Die Rechnung finden Sie im PDF-Anhang dieser E-Mail.',
+    'email_regards' => 'Mit freundlichen Grüßen',
+    
     // Fehler
     'error' => 'Fehler',
     'error_required_fields' => 'Bitte füllen Sie alle Pflichtfelder aus.',
@@ -174,5 +193,8 @@ $lang = [
     'error_payment_not_found' => 'Zahlung nicht gefunden.',
     'error_payment_create' => 'Fehler beim Erstellen der Zahlung.',
     'error_payment_update' => 'Fehler beim Aktualisieren der Zahlung.',
+    'error_no_email' => 'Keine E-Mail-Adresse vorhanden. Bitte geben Sie eine E-Mail-Adresse ein.',
+    'error_pdf_generation' => 'Fehler beim Erstellen der PDF-Datei.',
+    'error_email_send' => 'Fehler beim Senden der E-Mail. Bitte überprüfen Sie die SMTP-Einstellungen.',
 ];
 

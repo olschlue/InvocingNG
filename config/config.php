@@ -50,6 +50,15 @@ define('INVOICE_NUMBER_PREFIX', 'RE-');
 define('PDF_SHOW_SERVICE_DATE', true);  // Leistungsdatum auf PDF anzeigen
 define('PDF_SHOW_DUE_DATE', true);      // Fälligkeitsdatum auf PDF anzeigen
 
+// E-Mail-Konfiguration
+define('SMTP_HOST', 'smtp.ionos.de');        // SMTP-Server
+define('SMTP_PORT', 465);                       // SMTP-Port (587 für TLS, 465 für SSL)
+define('SMTP_USER', 'noreply@oschlueter.de');  // SMTP-Benutzername
+define('SMTP_PASS', 'EE97mnee##');           // SMTP-Passwort
+define('SMTP_FROM', 'noreply@oschlueter.de');  // Absender-E-Mail
+define('SMTP_FROM_NAME', 'Schlüter & Friends');         // Absender-Name
+define('SMTP_ENCRYPTION', 'ssl');               // Verschlüsselung: 'tls' oder 'ssl'
+
 // Sprache
 define('APP_LANGUAGE', 'de'); // 'de' oder 'en'
 

@@ -17,6 +17,16 @@ $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->get
 
 <div class="card">
     <h2><?php echo __('invoice_management'); ?></h2>
+    
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="alert alert-success" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+            <?php 
+            echo htmlspecialchars($_SESSION['success_message']); 
+            unset($_SESSION['success_message']);
+            ?>
+        </div>
+    <?php endif; ?>
+    
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <a href="?page=invoice_edit&action=new" class="btn btn-success"><?php echo __('new_invoice'); ?></a>
         
@@ -61,6 +71,9 @@ $invoices = $filter === 'overdue' ? $invoiceObj->getOverdue() : $invoiceObj->get
                                 <!-- <a href="?page=payment_edit&action=new&invoice_id=<?php echo $invoice['id']; ?>" class="btn btn-small" style="background-color: #27ae60;"><?php echo __('record_payment'); ?></a> -->
                             <?php endif; ?>
                             <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
+                            <?php if ($invoice['status'] !== 'paid'): ?>
+                                <a href="?page=invoice_send&id=<?php echo $invoice['id']; ?>" class="btn btn-small" style="background-color: #3498db; color: white;" title="<?php echo __('send_invoice'); ?>">✉ <?php echo __('send_email'); ?></a>
+                            <?php endif; ?>
                             <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('<?php echo __('copy_invoice_confirm'); ?>')"><?php echo __('copy'); ?></a>
                         </td>
                     </tr>
