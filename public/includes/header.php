@@ -60,20 +60,21 @@
         }
         
         nav {
-            background: <?php echo APP_SECONDARY_COLOR; ?>;
+            
             padding: 10px 0;
             position: fixed;
             /*top: 70px; /* Nach dem Header */
             left: 0;
             right: 0;
             z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            /*box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
         }
         
         nav .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            background: <?php echo APP_SECONDARY_COLOR; ?>;
         }
         
         nav ul {
