@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo __('login'); ?> - InvoicingNG</title>
+    <title><?php echo __('login'); ?> - <?php echo defined('APP_NAME_DB') ? APP_NAME_DB : APP_NAME; ?></title>
     <style>
         * {
             margin: 0;
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>InvoicingNG</h1>
+            <h1><?php echo defined('APP_NAME_DB') ? APP_NAME_DB : APP_NAME; ?></h1>
             <p><?php echo __('login_subtitle'); ?></p>
         </div>
         
