@@ -31,6 +31,7 @@ define('PDF_FILENAME_SUFFIX', 'SF-RE-');  // Suffix für PDF-Dateinamen
 define('APP_LOGO', BASE_PATH . '/public/assets/logo.png');
 define('APP_PRIMARY_COLOR', '#ffa011ff');      // Hauptfarbe (dunkelblau)
 define('APP_SECONDARY_COLOR', '#ffa0119f');    // Sekundärfarbe (grau-blau)
+define('APP_NAVBAR_COLOR', '#ffbf60ff');    // Navbar
 define('APP_ACCENT_COLOR', '#e2e2e2ff');       // Akzentfarbe (hellblau)
 define('APP_SUCCESS_COLOR', '#27ae60');      // Erfolgsfarbe (grün)
 define('APP_WARNING_COLOR', '#f39c12');      // Warnfarbe (orange)

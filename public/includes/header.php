@@ -74,14 +74,13 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-            background: <?php echo APP_SECONDARY_COLOR; ?>;
+            background: <?php echo APP_NAVBAR_COLOR; ?>;
         }
         
         nav ul {
             list-style: none;
             display: flex;
-            gap: 20px;
-            background: <?php echo APP_SECONDARY_COLOR; ?>;
+            gap: 20px;            
         }
         
         nav a {
