@@ -50,7 +50,7 @@
         
         header .logo {
             width: auto;
-            max-height: 40px;
+            max-height: 60px;
         }
         
         header h1 {
@@ -63,7 +63,7 @@
             background: <?php echo APP_SECONDARY_COLOR; ?>;
             padding: 10px 0;
             position: fixed;
-            top: 70px; /* Nach dem Header */
+            /*top: 70px; /* Nach dem Header */
             left: 0;
             right: 0;
             z-index: 1000;
