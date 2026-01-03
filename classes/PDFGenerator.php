@@ -120,27 +120,27 @@ class InvoicePDF extends FPDF {
         // Rechnungsdaten
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(47, 5, $this->convertEncoding(__('pdf_invoice_number')) . ':', 0, 0);
+        $this->Cell(49, 5, $this->convertEncoding(__('pdf_invoice_number')) . ':', 0, 0);
         $this->SetFont('Arial', 'B', 9);
         $invoiceNumberDisplay = (defined('INVOICE_NUMBER_PREFIX') ? INVOICE_NUMBER_PREFIX : '') . $this->invoice['invoice_number'];
         $this->Cell(0, 5, $invoiceNumberDisplay, 0, 1);
         
         $this->SetFont('Arial', '', 9);
         $this->Cell(100, 5, '', 0, 0);
-        $this->Cell(47, 5, $this->convertEncoding(__('pdf_invoice_date')) . ':', 0, 0);
+        $this->Cell(49, 5, $this->convertEncoding(__('pdf_invoice_date')) . ':', 0, 0);
         $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['invoice_date'])), 0, 1);
         
         // Leistungsdatum anzeigen (falls konfiguriert)
         if (defined('PDF_SHOW_SERVICE_DATE') && PDF_SHOW_SERVICE_DATE && !empty($this->invoice['service_date'])) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(47, 5, $this->convertEncoding(__('pdf_service_date')) . ':', 0, 0);
+            $this->Cell(49, 5, $this->convertEncoding(__('pdf_service_date')) . ':', 0, 0);
             $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['service_date'])), 0, 1);
         }
         
         // Fälligkeitsdatum anzeigen (falls konfiguriert)
         if (defined('PDF_SHOW_DUE_DATE') && PDF_SHOW_DUE_DATE) {
             $this->Cell(100, 5, '', 0, 0);
-            $this->Cell(47, 5, $this->convertEncoding(__('pdf_due_date')) . ':', 0, 0);
+            $this->Cell(49, 5, $this->convertEncoding(__('pdf_due_date')) . ':', 0, 0);
             $this->Cell(0, 5, date('d.m.Y', strtotime($this->invoice['due_date'])), 0, 1);
         }
         

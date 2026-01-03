@@ -17,7 +17,7 @@
             background: <?php echo APP_BACKGROUND_COLOR; ?>;
             color: <?php echo APP_TEXT_COLOR; ?>;
             line-height: 1.6;
-            padding-top: 80px; /* Platz für sticky navbar + header */
+            padding-top: 110px; /* Platz für sticky navbar + header */
         }
         
         .container {
