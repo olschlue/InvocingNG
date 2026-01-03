@@ -17,7 +17,7 @@
             background: <?php echo APP_BACKGROUND_COLOR; ?>;
             color: <?php echo APP_TEXT_COLOR; ?>;
             line-height: 1.6;
-            padding-top: 135px; /* Platz für sticky navbar + header */
+            /*padding-top: 80px; /* Platz für sticky navbar + header */
         }
         
         .container {
@@ -35,7 +35,7 @@
             right: 0;
             z-index: 999;
             padding: 10px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            /*box-shadow: 0 1px 3px rgba(0,0,0,0.1);*/
         }
         
         header .container {
@@ -81,6 +81,7 @@
             list-style: none;
             display: flex;
             gap: 20px;
+            background: <?php echo APP_SECONDARY_COLOR; ?>;
         }
         
         nav a {
