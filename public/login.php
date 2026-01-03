@@ -181,8 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1><?php echo defined('APP_NAME_DB') ? APP_NAME_DB : APP_NAME; ?></h1>
-            <p><?php echo __('login_subtitle'); ?></p>
+            <h1><?php echo defined('COMPANY_NAME') ? COMPANY_NAME : ''; ?></h1>
+            <p><?php echo defined('APP_NAME_DB') ? APP_NAME_DB : APP_NAME; ?></p>
         </div>
         
         <?php if ($error): ?>
