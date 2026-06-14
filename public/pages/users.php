@@ -28,11 +28,13 @@ $users = $userObj->getAll();
                         <td><?php echo htmlspecialchars($user['created_at'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($user['last_login'] ?? __('never')); ?></td>
                         <td class="action-links">
-                            <a href="?page=user_edit&id=<?php echo $user['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
+                            <a href="?page=user_edit&id=<?php echo $user['id']; ?>" class="btn btn-small icon-btn icon-edit" title="<?php echo __('edit'); ?>" aria-label="<?php echo __('edit'); ?>"></a>
                             <?php if ($user['username'] !== 'admin'): ?>
                                 <a href="?page=user_edit&action=delete&id=<?php echo $user['id']; ?>" 
-                                   class="btn btn-small btn-danger" 
-                                   onclick="return confirm('<?php echo __('confirm_delete_user'); ?>');"><?php echo __('delete'); ?></a>
+                                   class="btn btn-small btn-danger icon-btn icon-delete" 
+                                   title="<?php echo __('delete'); ?>"
+                                   aria-label="<?php echo __('delete'); ?>"
+                                   onclick="return confirm('<?php echo __('confirm_delete_user'); ?>');"></a>
                             <?php endif; ?>
                         </td>
                     </tr>

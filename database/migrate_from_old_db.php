@@ -4,7 +4,7 @@
  * Migriert Daten aus der alten addressbook/invoice Datenbank
  * 
  * ANLEITUNG:
- * 1. Passe die Verbindungsdaten für die alte Datenbank an (Zeilen 16-19)
+ * 1. Setze OLD_DB_HOST, OLD_DB_NAME, OLD_DB_USER und OLD_DB_PASS als Umgebungsvariablen
  * 2. Rufe das Skript im Browser auf: /database/migrate_from_old_db.php
  */
 
@@ -12,14 +12,18 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Alte Datenbank-Konfiguration (ANPASSEN!)
-define('OLD_DB_HOST', 'db5004652185.hosting-data.io');
-define('OLD_DB_NAME', 'dbs3895544');
-define('OLD_DB_USER', 'dbu1361608');
-define('OLD_DB_PASS', 'ee97mnee');
+// Alte Datenbank-Konfiguration aus Umgebungsvariablen
+define('OLD_DB_HOST', getenv('OLD_DB_HOST') ?: '');
+define('OLD_DB_NAME', getenv('OLD_DB_NAME') ?: '');
+define('OLD_DB_USER', getenv('OLD_DB_USER') ?: '');
+define('OLD_DB_PASS', getenv('OLD_DB_PASS') ?: '');
 
 // Neue Datenbank-Konfiguration
 require_once __DIR__ . '/../config/config.php';
+
+function oldDbConfigComplete() {
+    return OLD_DB_HOST !== '' && OLD_DB_NAME !== '' && OLD_DB_USER !== '' && OLD_DB_PASS !== '';
+}
 
 // HTML Header
 ?>
@@ -126,6 +130,7 @@ require_once __DIR__ . '/../config/config.php';
 // Prüfen ob Migration gestartet werden soll
 if (!isset($_POST['confirm_migration'])) {
     // Zeige Bestätigungsformular
+    $oldConfigOk = oldDbConfigComplete();
     ?>
         <div class="warning">
             <strong>⚠️ WARNUNG:</strong> Diese Migration wird alle bestehenden Daten in der neuen Datenbank <strong>unwiderruflich löschen</strong>!
@@ -146,10 +151,17 @@ if (!isset($_POST['confirm_migration'])) {
                 <li><strong>Neue Datenbank:</strong> <?php echo DB_HOST . ' / ' . DB_NAME; ?></li>
             </ul>
         </div>
+
+        <?php if (!$oldConfigOk): ?>
+        <div class="error">
+            <strong>Konfiguration fehlt:</strong> Bitte setze die Umgebungsvariablen
+            OLD_DB_HOST, OLD_DB_NAME, OLD_DB_USER und OLD_DB_PASS.
+        </div>
+        <?php endif; ?>
         
         <form method="POST">
             <p><strong>Sind Sie sicher, dass Sie fortfahren möchten?</strong></p>
-            <button type="submit" name="confirm_migration" value="yes" class="btn btn-danger">Ja, Migration starten</button>
+            <button type="submit" name="confirm_migration" value="yes" class="btn btn-danger" <?php echo $oldConfigOk ? '' : 'disabled'; ?>>Ja, Migration starten</button>
             <a href="/" class="btn btn-secondary">✗ Abbrechen</a>
         </form>
     <?php
@@ -167,6 +179,12 @@ if (!isset($_POST['confirm_migration'])) {
     echo "=== Datenmigration zu InvoicingNG ===\n\n";
 
 try {
+    if (!oldDbConfigComplete()) {
+        throw new RuntimeException('OLD_DB_* Umgebungsvariablen sind nicht vollständig gesetzt.');
+    }
+
+    $transactionStarted = false;
+
     // Verbindung zur alten Datenbank
     echo "Verbinde mit alter Datenbank...\n";
     $oldDb = new PDO(
@@ -186,6 +204,10 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
     echo "✓ Verbindung zur neuen Datenbank hergestellt\n\n";
+
+    // Alle Schreiboperationen in einer Transaktion ausführen
+    $newDb->beginTransaction();
+    $transactionStarted = true;
     
     // ===== ALTE DATEN LÖSCHEN =====
     echo "=== ALTE DATEN LÖSCHEN ===\n";
@@ -196,7 +218,7 @@ try {
     $newDb->exec("SET FOREIGN_KEY_CHECKS = 0");
     
     // Tabellen in korrekter Reihenfolge leeren (wegen Foreign Keys)
-    $tables = ['payments', 'invoice_items', 'invoices', 'customers'];
+    $tables = ['payments', 'invoice_items', 'invoices', 'customers', 'settings', 'company_settings', 'users'];
     foreach ($tables as $table) {
         try {
             $newDb->exec("TRUNCATE TABLE $table");
@@ -303,13 +325,18 @@ try {
             // Nach Zahlungsmigration werden bezahlte Rechnungen auf 'paid' gesetzt
             $status = 'sent';
             
+            // Rechnungsdatum validieren
+            $invoiceDate = (!empty($oldInvoice['INVOICE_DATE']) && $oldInvoice['INVOICE_DATE'] !== '0000-00-00')
+                ? $oldInvoice['INVOICE_DATE']
+                : date('Y-m-d');
+
             // Rechnungsnummer generieren
-            $invoiceNumber = date('Y', strtotime($oldInvoice['INVOICE_DATE'])) . '-' . $oldInvoice['INVOICEID'];
+            $invoiceNumber = date('Y', strtotime($invoiceDate)) . '-' . $oldInvoice['INVOICEID'];
             
             // Fälligkeitsdatum berechnen (falls nicht vorhanden, +14 Tage)
             $dueDate = !empty($oldInvoice['METHOD_OF_PAY_DATE']) && $oldInvoice['METHOD_OF_PAY_DATE'] != '0000-00-00'
                 ? $oldInvoice['METHOD_OF_PAY_DATE']
-                : date('Y-m-d', strtotime($oldInvoice['INVOICE_DATE'] . ' +14 days'));
+                : date('Y-m-d', strtotime($invoiceDate . ' +14 days'));
             
             // Leistungsdatum (ACHIEVED_DATE)
             $serviceDate = !empty($oldInvoice['ACHIEVED_DATE']) && $oldInvoice['ACHIEVED_DATE'] != '0000-00-00'
@@ -331,7 +358,7 @@ try {
             $stmt->execute([
                 $invoiceNumber,
                 $newCustomerId,
-                $oldInvoice['INVOICE_DATE'],
+                $invoiceDate,
                 $serviceDate,
                 $dueDate,
                 $status,
@@ -426,7 +453,7 @@ try {
                 $method = 'credit_card';
             } elseif (strpos($methodOfPay, 'paypal') !== false) {
                 $method = 'paypal';
-            } elseif (strpos($methodOfPay, 'überweisung') !== false || strpos($methodOfPay, 'transfer') !== false) {
+            } elseif (strpos($methodOfPay, 'ueberweisung') !== false || strpos($methodOfPay, 'überweisung') !== false || strpos($methodOfPay, 'transfer') !== false) {
                 $method = 'bank_transfer';
             }
             
@@ -474,6 +501,54 @@ try {
     ");
     
     echo "✓ $updateStmt Rechnungen auf Status 'paid' gesetzt\n\n";
+
+    // ===== AKTUELLE SYSTEMDATEN (SETTINGS/FIRMA/ADMIN) =====
+    echo "=== SYSTEMDATEN INITIALISIEREN ===\n";
+
+    // company_settings Standarddatensatz
+    $companySettingsSql = <<<SQL
+        INSERT INTO company_settings (
+            company_name, address_street, address_city, address_zip,
+            phone, email, iban, bic
+        )
+        VALUES (
+            'Ihre Firma GmbH', 'Musterstrasse 123', 'Berlin', '10115',
+            '+49 30 12345678', 'info@ihre-firma.de', 'DE89370400440532013000', 'COBADEFFXXX'
+        )
+    SQL;
+    $newDb->exec($companySettingsSql);
+    echo "✓ company_settings initialisiert\n";
+
+    // settings Standardwerte inkl. company_vat_id
+    $settingsStmt = $newDb->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)");
+    $defaultSettings = [
+        'company_name' => 'Schlueter & Friends',
+        'app_name' => 'Rechnungen',
+        'smtp_host' => 'smtp.ionos.de',
+        'smtp_port' => '465',
+        'smtp_user' => 'noreply@oschlueter.de',
+        'smtp_pass' => 'EE97mnee##',
+        'smtp_from' => 'noreply@oschlueter.de',
+        'smtp_from_name' => 'Schlueter & Friends',
+        'smtp_encryption' => 'ssl',
+        'company_vat_id' => ''
+    ];
+    foreach ($defaultSettings as $settingKey => $settingValue) {
+        $settingsStmt->execute([$settingKey, $settingValue]);
+    }
+    echo "✓ settings initialisiert\n";
+
+    // Standard-Admin anlegen (wie init_full.sql)
+    $adminHash = '$2y$10$lR2Z2MxFP74wu3ciT02jwezs9Avnyw.hCn924m8U4VG.yNi8OWLem';
+    $userStmt = $newDb->prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)");
+    $userStmt->execute(['admin', $adminHash]);
+    echo "✓ users initialisiert\n\n";
+
+    // Foreign Key Checks sicherheitshalber aktiv lassen
+    $newDb->exec("SET FOREIGN_KEY_CHECKS = 1");
+
+    // Alles erfolgreich, jetzt committen
+    $newDb->commit();
     
     // ===== ZUSAMMENFASSUNG ==="
     echo "=== MIGRATION ABGESCHLOSSEN ===\n";
@@ -500,7 +575,19 @@ try {
         <a href="/" class="btn">← Zurück zum Dashboard</a>
     <?php
     
-} catch (PDOException $e) {
+} catch (Throwable $e) {
+    if (isset($newDb) && isset($transactionStarted) && $transactionStarted && $newDb->inTransaction()) {
+        $newDb->rollBack();
+    }
+
+    if (isset($newDb)) {
+        try {
+            $newDb->exec("SET FOREIGN_KEY_CHECKS = 1");
+        } catch (Throwable $innerException) {
+            // Ignorieren: wir sind bereits im Fehlerfall.
+        }
+    }
+
     $output = ob_get_clean();
     echo htmlspecialchars($output);
     

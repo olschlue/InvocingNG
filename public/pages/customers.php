@@ -40,7 +40,7 @@ $customers = $customerObj->getAll();
                         <td><?php echo htmlspecialchars($customer['phone'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($customer['address_city'] ?? '-'); ?></td>
                         <td class="action-links">
-                            <a href="?page=customer_edit&id=<?php echo $customer['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
+                            <a href="?page=customer_edit&id=<?php echo $customer['id']; ?>" class="btn btn-small icon-btn icon-edit" title="<?php echo __('edit'); ?>" aria-label="<?php echo __('edit'); ?>"></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

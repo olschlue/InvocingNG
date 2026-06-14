@@ -171,12 +171,12 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
                         <td><span class="status-badge status-<?php echo $invoice['status']; ?>"><?php echo __('status_' . $invoice['status']); ?></span></td>
                         <td class="action-links">
                             <?php if ($invoice['status'] === 'paid'): ?>
-                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small"><?php echo __('view'); ?></a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small icon-btn icon-view" title="<?php echo __('view'); ?>" aria-label="<?php echo __('view'); ?>"></a>
                             <?php else: ?>
-                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
+                                <a href="?page=invoice_edit&id=<?php echo $invoice['id']; ?>" class="btn btn-small icon-btn icon-edit" title="<?php echo __('edit'); ?>" aria-label="<?php echo __('edit'); ?>"></a>
                             <?php endif; ?>
-                            <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success" target="_blank">PDF</a>
-                            <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary" onclick="return confirm('<?php echo __('copy_invoice_confirm'); ?>')"><?php echo __('copy'); ?></a>
+                            <a href="?page=invoice_pdf&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-success icon-btn icon-pdf" target="_blank" title="PDF" aria-label="PDF"></a>
+                            <a href="?page=invoices&action=copy&id=<?php echo $invoice['id']; ?>" class="btn btn-small btn-secondary icon-btn icon-copy" title="<?php echo __('copy'); ?>" aria-label="<?php echo __('copy'); ?>" onclick="return confirm('<?php echo __('copy_invoice_confirm'); ?>')"></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

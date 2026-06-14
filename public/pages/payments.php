@@ -55,8 +55,8 @@ $payments = $paymentObj->getAll();
                         <td><?php echo htmlspecialchars($payment['company_name'] ?? $payment['first_name'] . ' ' . $payment['last_name']); ?></td>
                         <td><?php echo number_format($payment['amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>                        
                         <td class="action-links">
-                            <a href="?page=payment_edit&id=<?php echo $payment['id']; ?>" class="btn btn-small"><?php echo __('edit'); ?></a>
-                            <a href="?page=payments&delete=1&id=<?php echo $payment['id']; ?>" class="btn btn-small btn-danger" onclick="return confirm('Zahlung wirklich löschen? Der Status der Rechnung wird automatisch angepasst.')"><?php echo __('delete'); ?></a>
+                            <a href="?page=payment_edit&id=<?php echo $payment['id']; ?>" class="btn btn-small icon-btn icon-edit" title="<?php echo __('edit'); ?>" aria-label="<?php echo __('edit'); ?>"></a>
+                            <a href="?page=payments&delete=1&id=<?php echo $payment['id']; ?>" class="btn btn-small btn-danger icon-btn icon-delete" title="<?php echo __('delete'); ?>" aria-label="<?php echo __('delete'); ?>" onclick="return confirm('Zahlung wirklich löschen? Der Status der Rechnung wird automatisch angepasst.')"></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
