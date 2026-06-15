@@ -180,7 +180,7 @@ if ($action === 'edit' && $invoiceId) {
         'service_date' => date('Y-m-d'),
         'due_date' => date('Y-m-d', strtotime('+14 days')),
         'status' => 'draft',
-        'tax_rate' => 19.00,
+        'tax_rate' => (defined('ENABLE_VAT') && ENABLE_VAT) ? DEFAULT_VAT_RATE : 0,
         'notes' => '',
         'payment_terms' => 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das unten angegebene Konto.'
     ];
@@ -254,10 +254,14 @@ $customers = $customerObj->getAll();
                 </select>
             </div>
             
+            <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
             <div class="form-group">
                 <label><?php echo __('tax_rate'); ?> (%)</label>
                 <input type="number" step="0.01" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>" <?php echo (isset($isLocked) && $isLocked) ? 'disabled' : ''; ?>>
             </div>
+            <?php else: ?>
+            <input type="hidden" name="tax_rate" value="<?php echo $invoice['tax_rate']; ?>">
+            <?php endif; ?>
         </div>
         
         <div class="form-group">
@@ -294,7 +298,9 @@ $customers = $customerObj->getAll();
                         <th><?php echo __('description'); ?></th>
                         <th><?php echo __('quantity'); ?></th>
                         <th><?php echo __('unit_price'); ?></th>
+                        <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                         <th><?php echo __('tax_rate'); ?> %</th>
+                        <?php endif; ?>
                         <th><?php echo __('total'); ?></th>
                         <?php if (!isset($isLocked) || !$isLocked): ?>
                         <th><?php echo __('actions'); ?></th>
@@ -312,7 +318,11 @@ $customers = $customerObj->getAll();
                                 <td><input type="text" name="item_description" value="<?php echo htmlspecialchars($item['description']); ?>" required style="width: 100%;"></td>
                                 <td><input type="number" step="0.01" name="item_quantity" value="<?php echo $item['quantity']; ?>" required style="width: 80px;"></td>
                                 <td><input type="number" step="0.01" name="item_unit_price" value="<?php echo $item['unit_price']; ?>" required style="width: 100px;"></td>
+                                <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                                 <td><input type="number" step="0.01" name="item_tax_rate" value="<?php echo $item['tax_rate']; ?>" required style="width: 60px;"></td>
+                                <?php else: ?>
+                                <input type="hidden" name="item_tax_rate" value="<?php echo $item['tax_rate']; ?>">
+                                <?php endif; ?>
                                 <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                                 <td>
                                     <button type="submit" name="update_item" class="btn btn-success" style="padding: 5px 10px; font-size: 12px; height: 28px; line-height: 18px;"><?php echo __('save'); ?></button>
@@ -327,7 +337,9 @@ $customers = $customerObj->getAll();
                             <td><?php echo htmlspecialchars($item['description']); ?></td>
                             <td><?php echo number_format($item['quantity'], 2, ',', '.'); ?></td>
                             <td><?php echo number_format($item['unit_price'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
+                            <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                             <td><?php echo number_format($item['tax_rate'], 0); ?>%</td>
+                            <?php endif; ?>
                             <td><?php echo number_format($item['total'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>
                             <?php if (!isset($isLocked) || !$isLocked): ?>
                             <td>
@@ -343,7 +355,9 @@ $customers = $customerObj->getAll();
             
             <div style="margin-top: 20px; text-align: right;">
                 <strong><?php echo __('subtotal'); ?>: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                 <strong><?php echo __('tax_amount'); ?>: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
+                <?php endif; ?>
                 <strong style="font-size: 18px;"><?php echo __('total_amount'); ?>: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong>
             </div>
         <?php endif; ?>
@@ -351,7 +365,7 @@ $customers = $customerObj->getAll();
         <?php if (!isset($isLocked) || !$isLocked): ?>
         <h4 style="margin-top: 30px;"><?php echo __('add_item'); ?></h4>
         <form method="POST">
-            <div style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; gap: 10px; align-items: end;">
+            <div style="display: grid; grid-template-columns: <?php echo (defined('ENABLE_VAT') && ENABLE_VAT) ? '3fr 1fr 1fr 1fr' : '4fr 1fr 1fr'; ?>; gap: 10px; align-items: end;">
                 <div class="form-group">
                     <label><?php echo __('description'); ?></label>
                     <input type="text" name="item_description" required>
@@ -364,10 +378,14 @@ $customers = $customerObj->getAll();
                     <label><?php echo __('unit_price'); ?></label>
                     <input type="number" step="0.01" name="item_unit_price" required>
                 </div>
+                <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                 <div class="form-group">
                     <label><?php echo __('tax_rate'); ?> %</label>
-                    <input type="number" step="0.01" name="item_tax_rate" value="19" required>
+                    <input type="number" step="0.01" name="item_tax_rate" value="<?php echo DEFAULT_VAT_RATE; ?>" required>
                 </div>
+                <?php else: ?>
+                <input type="hidden" name="item_tax_rate" value="0">
+                <?php endif; ?>
             </div>
             <button type="submit" name="add_item" class="btn btn-success"><?php echo __('add_item'); ?></button>
         </form>

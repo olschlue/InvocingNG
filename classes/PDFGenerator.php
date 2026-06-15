@@ -212,11 +212,14 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(26, 6, number_format($this->invoice['subtotal'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         
-        $this->SetFont('Arial', '', 9);
-        $this->Cell(116, 6, '', 0, 0);
-        $this->Cell(28, 6, $this->convertEncoding(__('tax_amount')) . ' (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
-        $this->SetFont('Arial', 'B', 9);
-        $this->Cell(26, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
+        // Steuerbetrag nur anzeigen, wenn VAT aktiviert ist
+        if (defined('ENABLE_VAT') && ENABLE_VAT) {
+            $this->SetFont('Arial', '', 9);
+            $this->Cell(116, 6, '', 0, 0);
+            $this->Cell(28, 6, $this->convertEncoding(__('tax_amount')) . ' (' . number_format($this->invoice['tax_rate'], 0) . '%):', 0, 0, 'R');
+            $this->SetFont('Arial', 'B', 9);
+            $this->Cell(26, 6, number_format($this->invoice['tax_amount'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
+        }
         
         $this->SetDrawColor(0, 0, 0);
         $this->Line(116, $this->GetY(), 190, $this->GetY());

@@ -47,6 +47,10 @@ define('APP_CURRENCY_SYMBOL', '€');
 // Rechnungsnummer
 define('INVOICE_NUMBER_PREFIX', 'RE-');
 
+// Umsatzsteuer-Einstellungen
+define('ENABLE_VAT', true);             // Umsatzsteuer berechnen (deutsches System: 19%)
+define('DEFAULT_VAT_RATE', 19.00);      // Standard-Steuersatz für neue Rechnungen
+
 // PDF-Anzeige Optionen
 define('PDF_SHOW_SERVICE_DATE', true);  // Leistungsdatum auf PDF anzeigen
 define('PDF_SHOW_DUE_DATE', true);      // Fälligkeitsdatum auf PDF anzeigen

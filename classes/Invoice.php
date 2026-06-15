@@ -236,7 +236,13 @@ class Invoice {
             $subtotal += $item['total'];
         }
         
-        $taxAmount = $subtotal * ($taxRate / 100);
+        // Steuerbetrag nur berechnen, wenn VAT aktiviert ist
+        if (defined('ENABLE_VAT') && ENABLE_VAT) {
+            $taxAmount = $subtotal * ($taxRate / 100);
+        } else {
+            $taxAmount = 0;
+        }
+        
         $totalAmount = $subtotal + $taxAmount;
         
         // In Datenbank aktualisieren
