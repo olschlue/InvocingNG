@@ -92,7 +92,9 @@ class InvoicePDF extends FPDF {
     
     // Rechnung erstellen
     public function createInvoice() {
-        $showVat = defined('ENABLE_VAT') && ENABLE_VAT;
+        $showVat = defined('ENABLE_VAT')
+            && ENABLE_VAT
+            && ((float) ($this->invoice['tax_amount'] ?? 0) > 0.00001);
         $positionWidth = 10;
         $descriptionWidth = $showVat ? 70 : 86;
         $quantityWidth = 18;

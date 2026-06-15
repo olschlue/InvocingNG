@@ -354,7 +354,7 @@ $customers = $customerObj->getAll();
             </table>
             
             <div style="margin-top: 20px; text-align: right;">
-                <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
+                <?php if (defined('ENABLE_VAT') && ENABLE_VAT && (float)($invoice['tax_amount'] ?? 0) > 0): ?>
                 <strong><?php echo __('subtotal'); ?>: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
                 <strong><?php echo __('tax_amount'); ?>: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
                 <?php endif; ?>
