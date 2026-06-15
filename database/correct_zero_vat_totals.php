@@ -1,6 +1,7 @@
 <?php
 /**
  * Berechnet gespeicherte Rechnungs-Gesamtsummen für alle Rechnungen neu.
+ * Die Umsatzsteuer wird dabei immer auf 0 gesetzt.
  *
  * Verwendung:
  *   php database/correct_zero_vat_totals.php
@@ -32,8 +33,9 @@ try {
     echo "Starte Korrektur aller Rechnungen...\n";
 
     $sql = "
-        SELECT id, invoice_number, tax_rate, subtotal, tax_amount, total_amount
+        SELECT id, invoice_number, subtotal, tax_amount, total_amount
         FROM invoices
+        WHERE 1 = 1
     ";
     $params = [];
 
@@ -60,15 +62,16 @@ try {
     $corrected = 0;
     foreach ($invoices as $invoice) {
         $itemsStmt = $db->prepare("
-            SELECT COALESCE(SUM(total), 0) AS subtotal
+            SELECT COALESCE(SUM(total), 0) AS subtotal,
+                   COALESCE(SUM(total * tax_rate / 100), 0) AS tax_amount
             FROM invoice_items
             WHERE invoice_id = ?
         ");
         $itemsStmt->execute([$invoice['id']]);
-        $subtotal = (float) $itemsStmt->fetchColumn();
-        $taxRate = (float) $invoice['tax_rate'];
-        $taxAmount = $subtotal * ($taxRate / 100);
-        $totalAmount = $subtotal + $taxAmount;
+        $itemTotals = $itemsStmt->fetch();
+        $subtotal = (float) ($itemTotals['subtotal'] ?? 0);
+        $taxAmount = 0.0;
+        $totalAmount = $subtotal;
 
         $changed = ((float) $invoice['subtotal'] !== $subtotal)
             || ((float) $invoice['tax_amount'] !== $taxAmount)
