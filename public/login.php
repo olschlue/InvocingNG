@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? 'de', ENT_QUOTES, 'UTF-8'); ?>">
+<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? APP_LANGUAGE, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

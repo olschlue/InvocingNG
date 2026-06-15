@@ -104,11 +104,20 @@ define('CURRENT_LANGUAGE', $requestedLanguage);
 $_SESSION['lang'] = CURRENT_LANGUAGE;
 
 $langFile = BASE_PATH . '/lang/' . CURRENT_LANGUAGE . '.php';
+$defaultLangFile = BASE_PATH . '/lang/' . APP_LANGUAGE . '.php';
 if (file_exists($langFile)) {
     require_once $langFile;
+} elseif (file_exists($defaultLangFile)) {
+    require_once $defaultLangFile;
 } else {
-    // Fallback auf Deutsch
-    require_once BASE_PATH . '/lang/de.php';
+    // Letzter Fallback: erste verfügbare Sprachdatei aus den unterstützten Sprachen
+    foreach ($supportedLanguages as $fallbackLanguage) {
+        $fallbackFile = BASE_PATH . '/lang/' . $fallbackLanguage . '.php';
+        if (file_exists($fallbackFile)) {
+            require_once $fallbackFile;
+            break;
+        }
+    }
 }
 
 /**
