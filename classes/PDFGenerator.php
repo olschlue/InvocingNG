@@ -92,6 +92,14 @@ class InvoicePDF extends FPDF {
     
     // Rechnung erstellen
     public function createInvoice() {
+        $showVat = defined('ENABLE_VAT') && ENABLE_VAT;
+        $positionWidth = 10;
+        $descriptionWidth = $showVat ? 70 : 86;
+        $quantityWidth = 18;
+        $unitPriceWidth = 28;
+        $taxWidth = 16;
+        $totalWidth = 28;
+
         // Ränder auf 20mm links und rechts setzen
         $this->SetLeftMargin(20);
         $this->SetRightMargin(20);
@@ -154,12 +162,14 @@ class InvoicePDF extends FPDF {
         // Tabellenkopf
         $this->SetFont('Arial', 'B', 9);
         $this->SetFillColor(230, 230, 230);
-        $this->Cell(10, 7, $this->convertEncoding(__('position')), 0, 0, 'C', true);
-        $this->Cell(70, 7, $this->convertEncoding(__('description')), 0, 0, 'L', true);
-        $this->Cell(18, 7, $this->convertEncoding(__('quantity')), 0, 0, 'C', true);
-        $this->Cell(28, 7, $this->convertEncoding(__('unit_price')), 0, 0, 'R', true);
-        $this->Cell(16, 7, $this->convertEncoding(__('tax_rate')), 0, 0, 'C', true);
-        $this->Cell(28, 7, $this->convertEncoding(__('total')), 0, 1, 'R', true);
+        $this->Cell($positionWidth, 7, $this->convertEncoding(__('position')), 0, 0, 'C', true);
+        $this->Cell($descriptionWidth, 7, $this->convertEncoding(__('description')), 0, 0, 'L', true);
+        $this->Cell($quantityWidth, 7, $this->convertEncoding(__('quantity')), 0, 0, 'C', true);
+        $this->Cell($unitPriceWidth, 7, $this->convertEncoding(__('unit_price')), 0, 0, 'R', true);
+        if ($showVat) {
+            $this->Cell($taxWidth, 7, $this->convertEncoding(__('tax_rate')), 0, 0, 'C', true);
+        }
+        $this->Cell($totalWidth, 7, $this->convertEncoding(__('total')), 0, 1, 'R', true);
         
         // Untere Linie unter Header
         $this->SetDrawColor(200, 200, 200);
@@ -171,8 +181,6 @@ class InvoicePDF extends FPDF {
         $this->SetFont('Arial', '', 9);
         foreach ($this->items as $item) {
             // Höhe für diese Zeile berechnen (abhängig von Beschreibungslänge)
-            $descriptionWidth = 70; // Breite der Beschreibungsspalte
-            
             // Anzahl der Zeilen für die Beschreibung berechnen
             $nbLines = $this->NbLines($descriptionWidth, $this->convertEncoding($item['description']));
             $lineHeight = 5;
@@ -183,25 +191,27 @@ class InvoicePDF extends FPDF {
             $y = $this->GetY();
             
             // Position
-            $this->Cell(10, $cellHeight, $item['position'], 0, 0, 'C');
+            $this->Cell($positionWidth, $cellHeight, $item['position'], 0, 0, 'C');
             
             // Beschreibung mit MultiCell (erlaubt Umbruch)
             $this->MultiCell($descriptionWidth, $lineHeight, $this->convertEncoding($item['description']), 0, 'L');
             
             // Zurück zur Ausgangshöhe für die anderen Spalten
-            $this->SetXY($x + 10 + $descriptionWidth, $y);
+            $this->SetXY($x + $positionWidth + $descriptionWidth, $y);
             
             // Menge
-            $this->Cell(18, $cellHeight, number_format($item['quantity'], 2, ',', '.'), 0, 0, 'C');
+            $this->Cell($quantityWidth, $cellHeight, number_format($item['quantity'], 2, ',', '.'), 0, 0, 'C');
             
             // Einzelpreis
-            $this->Cell(28, $cellHeight, number_format($item['unit_price'], 2, ',', '.') . ' ' . CURRENCY, 0, 0, 'R');
+            $this->Cell($unitPriceWidth, $cellHeight, number_format($item['unit_price'], 2, ',', '.') . ' ' . CURRENCY, 0, 0, 'R');
             
-            // Steuersatz
-            $this->Cell(16, $cellHeight, number_format($item['tax_rate'], 0) . '%', 0, 0, 'C');
+            // Steuersatz nur bei aktivierter VAT anzeigen
+            if ($showVat) {
+                $this->Cell($taxWidth, $cellHeight, number_format($item['tax_rate'], 0) . '%', 0, 0, 'C');
+            }
             
             // Gesamt
-            $this->Cell(28, $cellHeight, number_format($item['total'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
+            $this->Cell($totalWidth, $cellHeight, number_format($item['total'], 2, ',', '.') . ' ' . CURRENCY, 0, 1, 'R');
         }
         
         // Summen
