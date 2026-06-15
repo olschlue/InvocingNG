@@ -149,7 +149,7 @@ foreach ($allInvoices as $inv) {
             
             <div class="form-group">
                 <label><?php echo __('amount'); ?> *</label>
-                <input type="number" step="0.01" name="amount" value="<?php echo $payment['amount']; ?>" required>
+                <input type="number" step="1" name="amount" value="<?php echo $payment['amount']; ?>" required>
             </div>
         </div>
         

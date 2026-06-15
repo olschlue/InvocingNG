@@ -316,8 +316,8 @@ $customers = $customerObj->getAll();
                                 <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
                                 <td><?php echo $item['position']; ?></td>
                                 <td><input type="text" name="item_description" value="<?php echo htmlspecialchars($item['description']); ?>" required style="width: 100%;"></td>
-                                <td><input type="number" step="0.01" name="item_quantity" value="<?php echo $item['quantity']; ?>" required style="width: 80px;"></td>
-                                <td><input type="number" step="0.01" name="item_unit_price" value="<?php echo $item['unit_price']; ?>" required style="width: 100px;"></td>
+                                <td><input type="number" step="1" name="item_quantity" value="<?php echo $item['quantity']; ?>" required style="width: 80px;"></td>
+                                <td><input type="number" step="1" name="item_unit_price" value="<?php echo $item['unit_price']; ?>" required style="width: 100px;"></td>
                                 <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                                 <td><input type="number" step="0.01" name="item_tax_rate" value="<?php echo $item['tax_rate']; ?>" required style="width: 60px;"></td>
                                 <?php else: ?>
@@ -372,11 +372,11 @@ $customers = $customerObj->getAll();
                 </div>
                 <div class="form-group">
                     <label><?php echo __('quantity'); ?></label>
-                    <input type="number" step="0.01" name="item_quantity" value="1" required>
+                    <input type="number" step="1" name="item_quantity" value="1" required>
                 </div>
                 <div class="form-group">
                     <label><?php echo __('unit_price'); ?></label>
-                    <input type="number" step="0.01" name="item_unit_price" required>
+                    <input type="number" step="1" name="item_unit_price" required>
                 </div>
                 <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
                 <div class="form-group">
