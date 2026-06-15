@@ -20,6 +20,7 @@ define('BASE_URL', 'http://localhost');
 define('UPLOAD_DIR', BASE_PATH . '/uploads');
 define('PDF_DIR', BASE_PATH . '/pdfs');
 define('TEMP_DIR', BASE_PATH . '/temp');
+define('APP_FAVICON', '/assets/favicon.ico');
 
 // PDF-Einstellungen
 define('PDF_FONT', 'DejaVu Sans');

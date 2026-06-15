@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="<?php echo APP_FAVICON; ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo APP_FAVICON; ?>" type="image/x-icon">
     <title><?php echo APP_NAME; ?> - Rechnungsverwaltung</title>
     <style>
         * {
