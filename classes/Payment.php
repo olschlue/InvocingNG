@@ -166,6 +166,10 @@ class Payment {
      * Rechnungsstatus basierend auf Zahlungen aktualisieren
      */
     private function updateInvoiceStatus($invoiceId) {
+        // Totals vor Statusprüfung neu berechnen (respektiert ENABLE_VAT)
+        $invoiceObj = new Invoice();
+        $invoiceObj->calculateTotals($invoiceId);
+
         // Rechnungssumme abrufen
         $stmt = $this->db->prepare("SELECT total_amount FROM invoices WHERE id = ?");
         $stmt->execute([$invoiceId]);

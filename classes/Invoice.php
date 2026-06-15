@@ -34,6 +34,9 @@ class Invoice {
      * Rechnung nach ID abrufen
      */
     public function getById($id) {
+        // Summen vor dem Laden mit aktueller VAT-Konfiguration synchronisieren
+        $this->calculateTotals($id);
+
         $stmt = $this->db->prepare("
             SELECT i.*, c.* 
             FROM invoices i
@@ -227,8 +230,13 @@ class Invoice {
         $subtotal = 0;
         $taxAmount = 0;
         
-        // Rechnung abrufen für Steuersatz
-        $invoice = $this->getById($invoiceId);
+        // Steuersatz direkt laden (ohne getById, um Rekursion zu vermeiden)
+        $stmt = $this->db->prepare("SELECT tax_rate FROM invoices WHERE id = ?");
+        $stmt->execute([$invoiceId]);
+        $invoice = $stmt->fetch();
+        if (!$invoice) {
+            return false;
+        }
         $taxRate = $invoice['tax_rate'];
         
         // Summen berechnen
