@@ -49,7 +49,7 @@ define('APP_CURRENCY_SYMBOL', '€');
 define('INVOICE_NUMBER_PREFIX', 'RE-');
 
 // Umsatzsteuer-Einstellungen
-define('ENABLE_VAT', true);             // Umsatzsteuer berechnen (deutsches System: 19%)
+define('ENABLE_VAT', false);            // Umsatzsteuer deaktiviert
 define('DEFAULT_VAT_RATE', 19.00);      // Standard-Steuersatz für neue Rechnungen
 
 // PDF-Anzeige Optionen

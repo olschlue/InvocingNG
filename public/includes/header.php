@@ -1,4 +1,7 @@
-<?php header('Content-Type: text/html; charset=UTF-8'); ?>
+<?php
+header('Content-Type: text/html; charset=UTF-8');
+$hasLogo = defined('APP_LOGO') && file_exists(APP_LOGO);
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -49,6 +52,12 @@
             align-items: center;
             gap: 20px;
         }
+
+        <?php if (!$hasLogo): ?>
+        header .header-content {
+            min-height: 75px;
+        }
+        <?php endif; ?>
         
         header .logo {
             width: auto;
@@ -378,7 +387,7 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <?php if (defined('APP_LOGO') && file_exists(APP_LOGO)): ?>
+                <?php if ($hasLogo): ?>
                     <img src="assets/logo.png" alt="<?php echo APP_NAME; ?>" class="logo">
                 <?php endif; ?>
                 <h1><?php echo APP_NAME; ?></h1>
