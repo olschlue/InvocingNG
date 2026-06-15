@@ -11,7 +11,7 @@ define('DB_PASS', 'EE97mnee##ee');
 define('DB_CHARSET', 'utf8mb4');
 
 // Applikations-Einstellungen
-define('APP_NAME', 'Rechnungen');
+define('APP_NAME', 'InvoicingNG');
 define('APP_VERSION', '1.0.0');
 define('BASE_PATH', dirname(__DIR__));
 define('BASE_URL', 'http://localhost');
@@ -93,8 +93,17 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Sprachdatei laden
-$langFile = BASE_PATH . '/lang/' . APP_LANGUAGE . '.php';
+// Sprachdatei laden (Session/Query-String überschreibt den Default)
+$supportedLanguages = ['de', 'en'];
+$requestedLanguage = $_GET['lang'] ?? ($_SESSION['lang'] ?? APP_LANGUAGE);
+if (!in_array($requestedLanguage, $supportedLanguages, true)) {
+    $requestedLanguage = APP_LANGUAGE;
+}
+
+define('CURRENT_LANGUAGE', $requestedLanguage);
+$_SESSION['lang'] = CURRENT_LANGUAGE;
+
+$langFile = BASE_PATH . '/lang/' . CURRENT_LANGUAGE . '.php';
 if (file_exists($langFile)) {
     require_once $langFile;
 } else {

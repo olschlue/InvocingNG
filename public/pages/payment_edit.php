@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             // Validierung
             if (empty($data['invoice_id'])) {
-                throw new Exception('Bitte wählen Sie eine Rechnung aus.');
+                throw new Exception(__('error_select_invoice'));
             }
             if (empty($data['payment_date'])) {
-                throw new Exception('Bitte geben Sie ein Zahlungsdatum an.');
+                throw new Exception(__('error_payment_date_required'));
             }
             if (empty($data['amount']) || $data['amount'] <= 0) {
-                throw new Exception('Bitte geben Sie einen gültigen Betrag an.');
+                throw new Exception(__('error_valid_amount_required'));
             }
             
             $result = $paymentObj->create($data);
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if ($action === 'edit' && $paymentId) {
     $payment = $paymentObj->getById($paymentId);
     if (!$payment) {
-        die('Zahlung nicht gefunden');
+        die(__('error_payment_not_found'));
     }
 } elseif ($action === 'new') {
     $invoiceIdFromUrl = $_GET['invoice_id'] ?? '';
@@ -80,7 +80,7 @@ if ($action === 'edit' && $paymentId) {
             $customerName = !empty($invoice['company_name']) 
                 ? $invoice['company_name'] 
                 : $invoice['first_name'] . ' ' . $invoice['last_name'];
-            $prefilledReference = 'Rechnung ' . $invoice['invoice_number'] . ' - ' . $customerName;
+            $prefilledReference = __('invoice') . ' ' . $invoice['invoice_number'] . ' - ' . $customerName;
         }
     }
     
@@ -197,7 +197,7 @@ document.getElementById('invoice_select').addEventListener('change', function() 
         amountField.value = data.remaining.toFixed(2);
         
         // Referenz vorbelegen
-        referenceField.value = 'Rechnung ' + data.invoice_number + ' - ' + data.customer_name;
+        referenceField.value = <?php echo json_encode(__('invoice')); ?> + ' ' + data.invoice_number + ' - ' + data.customer_name;
     } else {
         // Felder leeren wenn keine Rechnung ausgewählt
         amountField.value = '';

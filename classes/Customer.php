@@ -103,12 +103,12 @@ class Customer {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM invoices WHERE customer_id = ?");
         $stmt->execute([$id]);
         if ($stmt->fetchColumn() > 0) {
-            return ['success' => false, 'message' => 'Kunde kann nicht gelöscht werden, da Rechnungen vorhanden sind.'];
+            return ['success' => false, 'message' => __('error_customer_has_invoices')];
         }
         
         $stmt = $this->db->prepare("DELETE FROM customers WHERE id = ?");
         $result = $stmt->execute([$id]);
-        return ['success' => $result, 'message' => $result ? 'Kunde erfolgreich gelöscht.' : 'Fehler beim Löschen.'];
+        return ['success' => $result, 'message' => $result ? __('customer_deleted_success') : __('error_customer_delete')];
     }
     
     /**

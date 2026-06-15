@@ -11,14 +11,7 @@ require_once '../config/config.php';
 require_once '../classes/Database.php';
 require_once '../classes/User.php';
 
-// Sprachwahl
-$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'de';
-$_SESSION['lang'] = $lang;
-
-$langFile = '../lang/' . $lang . '.php';
-if (file_exists($langFile)) {
-    require_once $langFile;
-}
+$lang = defined('CURRENT_LANGUAGE') ? CURRENT_LANGUAGE : ($_GET['lang'] ?? $_SESSION['lang'] ?? 'de');
 
 $error = '';
 $success = '';
@@ -46,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
+<html lang="<?php echo htmlspecialchars($lang, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

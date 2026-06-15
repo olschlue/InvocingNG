@@ -28,15 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ?page=customers');
             exit;
         } else {
-            $message = '<div class="alert alert-error">Fehler beim Erstellen des Kunden.</div>';
+            $message = '<div class="alert alert-error">' . __('error_customer_create') . '</div>';
         }
     } else {
         $result = $customerObj->update($customerId, $data);
         if ($result) {
-            $message = '<div class="alert alert-success">Kunde erfolgreich aktualisiert.</div>';
+            $message = '<div class="alert alert-success">' . __('customer_updated_success') . '</div>';
             $customer = $customerObj->getById($customerId);
         } else {
-            $message = '<div class="alert alert-error">Fehler beim Aktualisieren des Kunden.</div>';
+            $message = '<div class="alert alert-error">' . __('error_customer_update') . '</div>';
         }
     }
 }
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if ($action === 'edit' && $customerId) {
     $customer = $customerObj->getById($customerId);
     if (!$customer) {
-        die('Kunde nicht gefunden');
+        die(__('error_customer_not_found'));
     }
 } elseif ($action === 'new') {
     $customer = [
@@ -58,7 +58,7 @@ if ($action === 'edit' && $customerId) {
         'address_street' => '',
         'address_city' => '',
         'address_zip' => '',
-        'address_country' => 'Deutschland',
+        'address_country' => __('country_default'),
         'vat_id' => '',
         'notes' => ''
     ];

@@ -4,7 +4,7 @@ require_once '../config/config.php';
 $invoiceId = $_GET['id'] ?? null;
 
 if (!$invoiceId) {
-    die('Keine Rechnungs-ID angegeben');
+    die(__('error_invoice_id_missing'));
 }
 
 // PDF generieren und direkt im Browser anzeigen

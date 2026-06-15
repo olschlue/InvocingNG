@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'edit' && $invoiceId) {
         $currentInvoice = $invoiceObj->getById($invoiceId);
         if ($currentInvoice && $currentInvoice['status'] === 'paid') {
-            $message = '<div class="alert alert-error">Bezahlte Rechnungen können nicht bearbeitet werden.</div>';
+            $message = '<div class="alert alert-error">' . __('invoice_paid_locked') . '</div>';
             $_SERVER['REQUEST_METHOD'] = 'GET'; // Verarbeitung stoppen
         }
     }
@@ -36,9 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
                 $result = $invoiceObj->update($invoiceId, $data);
                 if ($result) {
-                    $message = '<div class="alert alert-success">Status erfolgreich aktualisiert.</div>';
+                    $message = '<div class="alert alert-success">' . __('invoice_status_updated_success') . '</div>';
                 } else {
-                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren des Status.</div>';
+                    $message = '<div class="alert alert-error">' . __('error_invoice_status_update') . '</div>';
                 }
                 // Verarbeitung beenden - nicht weiter zum normalen Update
             } else {
@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $result = $invoiceObj->update($invoiceId, $data);
                 if ($result) {
-                    $message = '<div class="alert alert-success">Rechnung erfolgreich aktualisiert.</div>';
+                    $message = '<div class="alert alert-success">' . __('invoice_updated_success') . '</div>';
                 } else {
-                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Rechnung.</div>';
+                    $message = '<div class="alert alert-error">' . __('error_invoice_update') . '</div>';
                 }
             }
         } else {
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ?page=invoice_edit&id=' . $result);
                 exit;
             } else {
-                $message = '<div class="alert alert-error">Fehler beim Erstellen der Rechnung.</div>';
+                $message = '<div class="alert alert-error">' . __('error_invoice_create') . '</div>';
             }
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_item'])) {
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'edit' && $invoiceId) {
             $currentInvoice = $invoiceObj->getById($invoiceId);
             if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
-                $message = '<div class="alert alert-error">Positionen können nicht mehr hinzugefügt werden, da die Rechnung bereits versendet wurde.</div>';
+                $message = '<div class="alert alert-error">' . __('error_item_add_blocked') . '</div>';
             } else {
                 $itemData = [
                     'description' => $_POST['item_description'],
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'tax_rate' => $_POST['item_tax_rate']
                 ];
                 $invoiceObj->addItem($invoiceId, $itemData);
-                $message = '<div class="alert alert-success">Position hinzugefügt.</div>';
+                $message = '<div class="alert alert-success">' . __('item_added_success') . '</div>';
             }
         }
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_item'])) {
@@ -106,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'edit' && $invoiceId) {
             $currentInvoice = $invoiceObj->getById($invoiceId);
             if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
-                $message = '<div class="alert alert-error">Positionen können nicht gelöscht werden, da die Rechnung bereits versendet wurde.</div>';
+                $message = '<div class="alert alert-error">' . __('error_item_delete_blocked') . '</div>';
             } else {
                 $itemId = $_POST['item_id'];
                 if ($invoiceObj->deleteItem($itemId)) {
-                    $message = '<div class="alert alert-success">Position gelöscht.</div>';
+                    $message = '<div class="alert alert-success">' . __('item_deleted_success') . '</div>';
                 } else {
-                    $message = '<div class="alert alert-error">Fehler beim Löschen der Position.</div>';
+                    $message = '<div class="alert alert-error">' . __('error_item_delete') . '</div>';
                 }
             }
         }
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'edit' && $invoiceId) {
             $currentInvoice = $invoiceObj->getById($invoiceId);
             if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
-                $message = '<div class="alert alert-error">Positionen können nicht bearbeitet werden, da die Rechnung bereits versendet wurde.</div>';
+                $message = '<div class="alert alert-error">' . __('error_item_update_blocked') . '</div>';
             } else {
                 $itemId = $_POST['item_id'];
                 $itemData = [
@@ -131,9 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'tax_rate' => $_POST['item_tax_rate']
                 ];
                 if ($invoiceObj->updateItem($itemId, $itemData)) {
-                    $message = '<div class="alert alert-success">Position aktualisiert.</div>';
+                    $message = '<div class="alert alert-success">' . __('item_updated_success') . '</div>';
                 } else {
-                    $message = '<div class="alert alert-error">Fehler beim Aktualisieren der Position.</div>';
+                    $message = '<div class="alert alert-error">' . __('error_item_update') . '</div>';
                 }
             }
         }
@@ -144,14 +144,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['delete_item']) && $action === 'edit' && $invoiceId) {
     $currentInvoice = $invoiceObj->getById($invoiceId);
     if ($currentInvoice && in_array($currentInvoice['status'], ['sent', 'paid', 'overdue'])) {
-        $message = '<div class="alert alert-error">Positionen können nicht gelöscht werden, da die Rechnung bereits versendet wurde.</div>';
+        $message = '<div class="alert alert-error">' . __('error_item_delete_blocked') . '</div>';
     } else {
         $itemId = $_GET['delete_item'];
         if ($invoiceObj->deleteItem($itemId)) {
             header('Location: ?page=invoice_edit&id=' . $invoiceId);
             exit;
         } else {
-            $message = '<div class="alert alert-error">Fehler beim Löschen der Position.</div>';
+            $message = '<div class="alert alert-error">' . __('error_item_delete') . '</div>';
         }
     }
 }
@@ -160,7 +160,7 @@ if (isset($_GET['delete_item']) && $action === 'edit' && $invoiceId) {
 if ($action === 'edit' && $invoiceId) {
     $invoice = $invoiceObj->getById($invoiceId);
     if (!$invoice) {
-        die('Rechnung nicht gefunden');
+        die(__('error_invoice_not_found'));
     }
     
     // Prüfen ob Rechnung bezahlt ist
@@ -182,7 +182,7 @@ if ($action === 'edit' && $invoiceId) {
         'status' => 'draft',
         'tax_rate' => (defined('ENABLE_VAT') && ENABLE_VAT) ? DEFAULT_VAT_RATE : 0,
         'notes' => '',
-        'payment_terms' => 'Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das unten angegebene Konto.'
+        'payment_terms' => __('default_payment_terms')
     ];
     $items = [];
 }

@@ -89,8 +89,8 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
 ?>
 <?php if ($overdueInvoices > 0): ?>
     <div class="alert alert-error">
-        <strong>Achtung!</strong> Sie haben <?php echo $overdueInvoices; ?> überfällige Rechnung(en).
-        <a href="?page=invoices&filter=overdue">Jetzt anzeigen</a>
+        <strong><?php echo __('dashboard_alert_attention'); ?></strong> <?php echo sprintf(__('dashboard_overdue_alert'), $overdueInvoices); ?>
+        <a href="?page=invoices&filter=overdue"><?php echo __('dashboard_show_now'); ?></a>
     </div>
 <?php endif; ?>
 <!--
@@ -184,7 +184,7 @@ $recentInvoices = array_slice($allInvoices, 0, 5);
         </table>
         
         <p style="margin-top: 20px;">
-            <a href="?page=invoices">Alle Rechnungen anzeigen →</a>
+            <a href="?page=invoices"><?php echo __('dashboard_show_all_invoices'); ?> →</a>
         </p>
     <?php endif; ?>
 </div>

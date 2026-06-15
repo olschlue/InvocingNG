@@ -17,20 +17,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $testEmail = $_POST['test_email'] ?? '';
     
     if (empty($testEmail)) {
-        $error = 'Bitte E-Mail-Adresse eingeben';
+        $error = __('error_enter_email_address');
     } else {
         $emailObj = new Email();
         
-        $subject = 'Test-E-Mail von InvoicingNG';
-        $body = '<h2>Test-E-Mail</h2>';
-        $body .= '<p>Dies ist eine Test-E-Mail von Ihrem InvoicingNG System.</p>';
-        $body .= '<p><strong>SMTP-Server:</strong> ' . SMTP_HOST . '</p>';
+        $subject = __('test_email_subject');
+        $body = '<h2>' . __('test_email_heading') . '</h2>';
+        $body .= '<p>' . __('test_email_body') . '</p>';
+        $body .= '<p><strong>' . __('smtp_server') . ':</strong> ' . SMTP_HOST . '</p>';
         $body .= '<p><strong>Port:</strong> ' . SMTP_PORT . '</p>';
-        $body .= '<p><strong>Verschlüsselung:</strong> ' . SMTP_ENCRYPTION . '</p>';
-        $body .= '<p><strong>Von:</strong> ' . SMTP_FROM . '</p>';
-        $body .= '<p><strong>Zeitpunkt:</strong> ' . date('d.m.Y H:i:s') . '</p>';
+        $body .= '<p><strong>' . __('smtp_encryption') . ':</strong> ' . SMTP_ENCRYPTION . '</p>';
+        $body .= '<p><strong>' . __('from_label') . ':</strong> ' . SMTP_FROM . '</p>';
+        $body .= '<p><strong>' . __('timestamp_label') . ':</strong> ' . date('d.m.Y H:i:s') . '</p>';
         $body .= '<hr>';
-        $body .= '<p style="color: green;"><strong>✓ E-Mail-Konfiguration funktioniert!</strong></p>';
+        $body .= '<p style="color: green;"><strong>' . __('test_email_success_marker') . '</strong></p>';
         
         $success = $emailObj->send($testEmail, $subject, $body);
         
@@ -38,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $debugOutput = ob_get_contents();
         
         if ($success) {
-            $result = 'Test-E-Mail erfolgreich gesendet an: ' . htmlspecialchars($testEmail);
+            $result = __('test_email_success') . ': ' . htmlspecialchars($testEmail);
         } else {
-            $error = 'Fehler beim Senden der Test-E-Mail: ' . htmlspecialchars($emailObj->getLastError());
+            $error = __('test_email_failure') . ': ' . htmlspecialchars($emailObj->getLastError());
         }
     }
 }
@@ -50,11 +50,11 @@ ob_end_clean();
 ?>
 
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? 'de', ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Mail Test - InvoicingNG</title>
+    <title><?php echo __('test_email_title'); ?> - InvoicingNG</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -142,7 +142,7 @@ ob_end_clean();
 </head>
 <body>
     <div class="card">
-        <h1>📧 E-Mail Konfiguration Testen</h1>
+        <h1>📧 <?php echo __('test_email_heading_page'); ?></h1>
         
         <?php if ($result): ?>
             <div class="alert alert-success">
@@ -157,31 +157,31 @@ ob_end_clean();
         <?php endif; ?>
         
         <div class="config-info">
-            <h3>Aktuelle SMTP-Konfiguration</h3>
-            <p><strong>Server:</strong> <?php echo htmlspecialchars(SMTP_HOST); ?></p>
-            <p><strong>Port:</strong> <?php echo htmlspecialchars(SMTP_PORT); ?></p>
-            <p><strong>Verschlüsselung:</strong> <?php echo htmlspecialchars(SMTP_ENCRYPTION); ?></p>
-            <p><strong>Benutzername:</strong> <?php echo htmlspecialchars(SMTP_USER); ?></p>
-            <p><strong>Von:</strong> <?php echo htmlspecialchars(SMTP_FROM); ?> (<?php echo htmlspecialchars(SMTP_FROM_NAME); ?>)</p>
+            <h3><?php echo __('current_smtp_configuration'); ?></h3>
+            <p><strong><?php echo __('smtp_server'); ?>:</strong> <?php echo htmlspecialchars(SMTP_HOST); ?></p>
+            <p><strong><?php echo __('smtp_port_label'); ?>:</strong> <?php echo htmlspecialchars(SMTP_PORT); ?></p>
+            <p><strong><?php echo __('smtp_encryption'); ?>:</strong> <?php echo htmlspecialchars(SMTP_ENCRYPTION); ?></p>
+            <p><strong><?php echo __('smtp_username'); ?>:</strong> <?php echo htmlspecialchars(SMTP_USER); ?></p>
+            <p><strong><?php echo __('smtp_from_email'); ?>:</strong> <?php echo htmlspecialchars(SMTP_FROM); ?> (<?php echo htmlspecialchars(SMTP_FROM_NAME); ?>)</p>
         </div>
         
         <form method="POST">
             <div class="form-group">
-                <label for="test_email">Test-E-Mail senden an:</label>
-                <input type="email" id="test_email" name="test_email" required placeholder="ihre-email@beispiel.de">
+                <label for="test_email"><?php echo __('send_test_email_to'); ?></label>
+                <input type="email" id="test_email" name="test_email" required placeholder="name@example.com">
             </div>
             
-            <button type="submit">✉ Test-E-Mail senden</button>
+            <button type="submit">✉ <?php echo __('send_test_email'); ?></button>
         </form>
         
         <?php if (!empty($debugOutput)): ?>
             <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; max-height: 400px; overflow-y: auto;">
-                <h3 style="margin-top: 0;">Debug-Ausgabe:</h3>
+                <h3 style="margin-top: 0;"><?php echo __('debug_output'); ?>:</h3>
                 <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word; font-size: 12px; font-family: 'Courier New', monospace;"><?php echo htmlspecialchars($debugOutput); ?></pre>
             </div>
         <?php endif; ?>
         
-        <a href="../index.php?page=dashboard" class="back-link">← Zurück zum Dashboard</a>
+        <a href="../index.php?page=dashboard" class="back-link">← <?php echo __('back_to_dashboard'); ?></a>
     </div>
 </body>
 </html>

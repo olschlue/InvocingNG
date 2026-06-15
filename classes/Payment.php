@@ -102,7 +102,7 @@ class Payment {
             
             return false;
         } catch (PDOException $e) {
-            throw new Exception('Fehler beim Speichern der Zahlung: ' . $e->getMessage());
+            throw new Exception(__('error_payment_create') . ': ' . $e->getMessage());
         }
     }
     
@@ -138,7 +138,7 @@ class Payment {
             
             return $result;
         } catch (PDOException $e) {
-            throw new Exception('Fehler beim Aktualisieren der Zahlung: ' . $e->getMessage());
+            throw new Exception(__('error_payment_update') . ': ' . $e->getMessage());
         }
     }
     
@@ -156,10 +156,10 @@ class Payment {
         if ($result) {
             // Rechnungsstatus aktualisieren
             $this->updateInvoiceStatus($invoiceId);
-            return ['success' => true, 'message' => 'Zahlung erfolgreich gelöscht.'];
+            return ['success' => true, 'message' => __('payment_deleted_success')];
         }
         
-        return ['success' => false, 'message' => 'Fehler beim Löschen.'];
+        return ['success' => false, 'message' => __('error_payment_delete')];
     }
     
     /**

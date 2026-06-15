@@ -3,13 +3,13 @@ header('Content-Type: text/html; charset=UTF-8');
 $hasLogo = defined('APP_LOGO') && file_exists(APP_LOGO);
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? 'de', ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="<?php echo APP_FAVICON; ?>" type="image/x-icon">
     <link rel="shortcut icon" href="<?php echo APP_FAVICON; ?>" type="image/x-icon">
-    <title><?php echo APP_NAME; ?> - Rechnungsverwaltung</title>
+    <title><?php echo APP_NAME; ?> - <?php echo __('invoice_management'); ?></title>
     <style>
         * {
             margin: 0;

@@ -282,7 +282,7 @@ class PDFGenerator {
         $items = $invoiceObj->getItems($invoiceId);
         
         if (!$invoice) {
-            die('Rechnung nicht gefunden');
+            die(__('error_invoice_not_found'));
         }
         
         // Kundendaten
@@ -312,7 +312,7 @@ class PDFGenerator {
             return $pdf->Output($output, $filePath);
         } else {
             // Standard-Dateiname für Download/Inline
-            $filename = (defined('PDF_FILENAME_SUFFIX') ? PDF_FILENAME_SUFFIX : 'Rechnung_') . $invoice['invoice_number'] . '.pdf';
+            $filename = (defined('PDF_FILENAME_SUFFIX') ? PDF_FILENAME_SUFFIX : __('invoice') . '_') . $invoice['invoice_number'] . '.pdf';
             return $pdf->Output($output, $filename);
         }
     }

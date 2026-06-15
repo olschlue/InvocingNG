@@ -130,14 +130,14 @@ class Email {
         if (!is_dir(TEMP_DIR)) {
             if (!mkdir(TEMP_DIR, 0755, true)) {
                 error_log("Failed to create TEMP_DIR: " . TEMP_DIR);
-                return ['success' => false, 'message' => __('error_pdf_generation') . ' (Verzeichnis konnte nicht erstellt werden)'];
+                return ['success' => false, 'message' => __('error_pdf_generation') . ' (' . __('error_temp_dir_create') . ')'];
             }
         }
         
         // Prüfen ob Verzeichnis beschreibbar ist
         if (!is_writable(TEMP_DIR)) {
             error_log("TEMP_DIR is not writable: " . TEMP_DIR);
-            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Verzeichnis nicht beschreibbar)'];
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (' . __('error_temp_dir_not_writable') . ')'];
         }
         
         try {
@@ -149,13 +149,13 @@ class Email {
         
         if (!file_exists($pdfPath)) {
             error_log("PDF file not created: " . $pdfPath);
-            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Datei wurde nicht erstellt)'];
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (' . __('error_pdf_file_not_created') . ')'];
         }
         
         if (filesize($pdfPath) === 0) {
             error_log("PDF file is empty: " . $pdfPath);
             @unlink($pdfPath);
-            return ['success' => false, 'message' => __('error_pdf_generation') . ' (Datei ist leer)'];
+            return ['success' => false, 'message' => __('error_pdf_generation') . ' (' . __('error_pdf_file_empty') . ')'];
         }
         
         // E-Mail-Betreff und -Text
@@ -199,7 +199,7 @@ class Email {
             
             // Versandzeitstempel zur Notiz hinzufügen
             $timestamp = date('d.m.Y H:i:s');
-            $noteAddition = "Versendet am " . $timestamp;
+            $noteAddition = __('sent_on_note_prefix') . ' ' . $timestamp;
             $appendResult = $invoiceObj->appendNote($invoiceId, $noteAddition);
             error_log("Note appended to invoice $invoiceId: " . ($appendResult ? 'success' : 'failed'));
             

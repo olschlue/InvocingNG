@@ -11,7 +11,7 @@ if (isset($_GET['delete']) && isset($_GET['id'])) {
         header('Location: ?page=payments&deleted=1');
         exit;
     } else {
-        $message = '<div class="alert alert-error">Fehler: ' . $result['message'] . '</div>';
+        $message = '<div class="alert alert-error">' . __('error') . ': ' . $result['message'] . '</div>';
     }
 }
 
@@ -21,7 +21,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
     $message = '<div class="alert alert-success">' . __('payment_saved') . '</div>';
 }
 if (isset($_GET['deleted']) && $_GET['deleted'] == 1) {
-    $message = '<div class="alert alert-success">Zahlung erfolgreich gelöscht.</div>';
+    $message = '<div class="alert alert-success">' . __('payment_deleted_success') . '</div>';
 }
 
 // Alle Zahlungen abrufen
@@ -56,7 +56,7 @@ $payments = $paymentObj->getAll();
                         <td><?php echo number_format($payment['amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></td>                        
                         <td class="action-links">
                             <a href="?page=payment_edit&id=<?php echo $payment['id']; ?>" class="btn btn-small icon-btn icon-edit" title="<?php echo __('edit'); ?>" aria-label="<?php echo __('edit'); ?>"></a>
-                            <a href="?page=payments&delete=1&id=<?php echo $payment['id']; ?>" class="btn btn-small btn-danger icon-btn icon-delete" title="<?php echo __('delete'); ?>" aria-label="<?php echo __('delete'); ?>" onclick="return confirm('Zahlung wirklich löschen? Der Status der Rechnung wird automatisch angepasst.')"></a>
+                            <a href="?page=payments&delete=1&id=<?php echo $payment['id']; ?>" class="btn btn-small btn-danger icon-btn icon-delete" title="<?php echo __('delete'); ?>" aria-label="<?php echo __('delete'); ?>" onclick="return confirm('<?php echo __('confirm_delete_payment'); ?>')"></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

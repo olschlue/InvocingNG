@@ -118,13 +118,13 @@ class Invoice {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM payments WHERE invoice_id = ?");
         $stmt->execute([$id]);
         if ($stmt->fetchColumn() > 0) {
-            return ['success' => false, 'message' => 'Rechnung kann nicht gelöscht werden, da Zahlungen vorhanden sind.'];
+            return ['success' => false, 'message' => __('error_invoice_has_payments')];
         }
         
         // Rechnungspositionen werden durch CASCADE automatisch gelöscht
         $stmt = $this->db->prepare("DELETE FROM invoices WHERE id = ?");
         $result = $stmt->execute([$id]);
-        return ['success' => $result, 'message' => $result ? 'Rechnung erfolgreich gelöscht.' : 'Fehler beim Löschen.'];
+        return ['success' => $result, 'message' => $result ? __('invoice_deleted_success') : __('error_invoice_delete')];
     }
     
     /**
