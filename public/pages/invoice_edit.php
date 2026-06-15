@@ -354,8 +354,8 @@ $customers = $customerObj->getAll();
             </table>
             
             <div style="margin-top: 20px; text-align: right;">
-                <strong><?php echo __('subtotal'); ?>: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
                 <?php if (defined('ENABLE_VAT') && ENABLE_VAT): ?>
+                <strong><?php echo __('subtotal'); ?>: <?php echo number_format($invoice['subtotal'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
                 <strong><?php echo __('tax_amount'); ?>: <?php echo number_format($invoice['tax_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong><br>
                 <?php endif; ?>
                 <strong style="font-size: 18px;"><?php echo __('total_amount'); ?>: <?php echo number_format($invoice['total_amount'], 2, ',', '.'); ?> <?php echo APP_CURRENCY_SYMBOL; ?></strong>
