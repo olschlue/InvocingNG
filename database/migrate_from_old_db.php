@@ -28,7 +28,7 @@ function oldDbConfigComplete() {
 // HTML Header
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? 'de', ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

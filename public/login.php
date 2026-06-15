@@ -11,8 +11,6 @@ require_once '../config/config.php';
 require_once '../classes/Database.php';
 require_once '../classes/User.php';
 
-$lang = defined('CURRENT_LANGUAGE') ? CURRENT_LANGUAGE : ($_GET['lang'] ?? $_SESSION['lang'] ?? 'de');
-
 $error = '';
 $success = '';
 
@@ -39,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo htmlspecialchars($lang, ENT_QUOTES, 'UTF-8'); ?>">
+<html lang="<?php echo htmlspecialchars(CURRENT_LANGUAGE ?? 'de', ENT_QUOTES, 'UTF-8'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
