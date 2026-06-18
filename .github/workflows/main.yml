@@ -1,0 +1,50 @@
+name: Deploy PHP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target:
+          - host: ${{ secrets.SERVER1_HOST }}
+            user: ${{ secrets.SERVER1_USER }}
+            pass: ${{ secrets.SERVER1_PASS }}
+            path: /invoicing/gassur
+
+          - host: ${{ secrets.SERVER1_HOST }}
+            user: ${{ secrets.SERVER1_USER }}
+            pass: ${{ secrets.SERVER1_PASS }}
+            path: /invoicing/sf
+
+          - host: ${{ secrets.SERVER2_HOST }}
+            user: ${{ secrets.SERVER2_USER }}
+            pass: ${{ secrets.SERVER2_PASS }}
+            path: /be/lambeth
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ matrix.target.host }}
+          username: ${{ matrix.target.user }}
+          password: ${{ matrix.target.pass }}
+          port: 22
+          local_path: "./"
+          remote_path: ${{ matrix.target.path }}
+          sftp_only: true
+          delete_remote_files: false
+          exclude: |
+            .git/**
+            .github/**
+            config/**
+            database/**
+            .env
+            .env.*
